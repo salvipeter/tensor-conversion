@@ -53,7 +53,7 @@ end
 function ^(u::Poly2D, n::Integer)
     @assert n >= 0 "Only non-negative (integer) exponents are supported."
     n == 0 && return one(Poly2D)
-    n == 1 ? u : u^(n-1) * u
+    n == 1 ? u : u ^ (n-1) * u
 end
 
 zero(::Type{Poly2D}) = Poly2D(1, zeros(Float64, 1, 1))
@@ -84,7 +84,26 @@ end
 
 lines(poly) = [line(p, q) for (p, q) in zip([[poly[end]]; poly[1:end-1]], poly)]
 
-blend(L, i) = prod(j -> L[j]^exponent, setdiff(1:length(L), i))
+function polyeval(poly, uv)
+    result = 0
+    for i in 1:poly.n, j in 1:poly.n
+        result += poly.coeff[i,j] * uv[1] ^ (i - 1) * uv[2] ^ (j - 1)
+    end
+    result
+end
+
+function normalized_lines(poly)
+    n = length(poly)
+    result = []
+    for i in 1:n
+        l = line(poly[mod1(i-1,n)], poly[i])
+        l *= 1.0 / polyeval(l, poly[mod1(i+1,n)])
+        push!(result, l)
+    end
+    result
+end
+
+blend(L, i) = prod(j -> L[j] ^ exponent, setdiff(1:length(L), i))
 
 binom(n, k) = binomial(Int64(n), Int64(k))
 
@@ -97,7 +116,7 @@ function kato(ribbons)
     for i in 1:n
         im = mod1(i - 1, n)
         ip = mod1(i + 1, n)
-        denominator *= (L[im] + L[ip])^ds
+        denominator *= (L[im] + L[ip]) ^ ds
     end
     numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
     for c in 1:3
@@ -114,14 +133,14 @@ function kato(ribbons)
                         p = p0 + (p - p0) * ds
                     end
                     term = one(Poly2D) * p
-                    term *= L[im]^j * L[ip]^(ds - j) * float(binom(ds, j))
+                    term *= L[im] ^ j * L[ip] ^ (ds - j) * float(binom(ds, j))
                     for l in 1:n
                         l == i && continue
                         lm = mod1(l - 1, n)
                         lp = mod1(l + 1, n)
-                        term *= (L[lm] + L[lp])^ds
+                        term *= (L[lm] + L[lp]) ^ ds
                     end
-                    term *= L[i]^k * (one(Poly2D) - L[i])^(dh - k) * float(binom(dh, k))
+                    term *= L[i] ^ k * (one(Poly2D) - L[i]) ^ (dh - k) * float(binom(dh, k))
                     R += term
                 end
             end
@@ -131,22 +150,60 @@ function kato(ribbons)
     (numerator, denominator)
 end
 
+blend2(L, i) = prod(j -> L[j] ^ exponent, setdiff(1:length(L), [mod1(i-1,length(L)), i]))
+
+function gregory(ribbons)
+    n, ds = ribbons.n, ribbons.d
+    poly = regularpoly(n)
+    L = normalized_lines(poly)
+    denominator = sum(i -> blend2(L, i), 1:n)
+    numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
+    for c in 1:3
+        for i in 1:n
+            im = mod1(i - 1, n)
+            function ribbon(s, h)
+                R = zero(Poly2D)
+                for j in 0:ds
+                    p1 = ribbons.cpts[i-1,j,0][c]
+                    p2 = ribbons.cpts[i-1,j,1][c]
+                    term = one(Poly2D) * p1 + h * (p2 - p1) * float(ds)
+                    term *= s ^ j * (one(Poly2D) - s) ^ (ds - j) * float(binom(ds, j))
+                    R += term
+                end
+                R
+            end
+            r1 = ribbon(one(Poly2D) - L[i], L[im])
+            r2 = ribbon(L[im], L[i])
+            corner = ribbons.cpts[i-1,0,0][c]
+            twist  = ribbons.cpts[i-1,1,1][c]
+            left   = ribbons.cpts[i-1,1,0][c]
+            right  = ribbons.cpts[i-1,0,1][c]
+            q = one(Poly2D) * corner +
+                L[im] * float(ds) * (left - corner) +
+                L[i] * float(ds) * (right - corner) +
+                L[im] * L[i] * float(ds * ds) * (twist - left - right + corner)
+            numerator[c] += (r1 + r2 - q) * blend2(L, i)
+        end
+    end
+    (numerator, denominator)
+end
+
 function eval(kato, uv)
     num, den = kato
     d = 0
     for i in 1:den.n
-        u = uv[1]^(i - 1)
+        u = uv[1] ^ (i - 1)
         for j in 1:den.n
-            v = uv[2]^(j - 1)
+            v = uv[2] ^ (j - 1)
             d += den.coeff[i,j] * u * v
         end
     end
     p = [0., 0, 0]
     for c in 1:3
         for i in 1:num[c].n
-            u = uv[1]^(i - 1)
+            u = uv[1] ^ (i - 1)
             for j in 1:num[c].n
-                v = uv[2]^(j - 1)
+                v = uv[2] ^ (j - 1)
                 p[c] += num[c].coeff[i,j] * u * v
             end
         end
@@ -164,7 +221,7 @@ function frombezier(d)
     result
 end
 
-tobezier(d) = frombezier(d)^-1
+tobezier(d) = frombezier(d) ^ -1
 
 function tobezier(coeff, d)
     C = tobezier(d)
@@ -179,13 +236,12 @@ end
 
 function tensor(kato)
     num, den = kato
+    println("Degree: $(num[1].n-1)/$(den.n-1)")
     d = max(num[1].n, den.n) - 1
     w = tobezier(den.coeff, d)
-    scale = maximum(w)
-    w /= scale
-    px = tobezier(num[1].coeff, d) / scale ./ w
-    py = tobezier(num[2].coeff, d) / scale ./ w
-    pz = tobezier(num[3].coeff, d) / scale ./ w
+    px = tobezier(num[1].coeff, d)
+    py = tobezier(num[2].coeff, d)
+    pz = tobezier(num[3].coeff, d)
     result = Array{Float64}(undef, d + 1, d + 1, 4)
     for i in 0:d, j in 0:d
         result[i+1,j+1,1] = px[i+1,j+1]
@@ -203,7 +259,7 @@ function evaltensor(surf, uv)
     for i in 0:d, j in 0:d
         result += surf[i+1,j+1,:] * bezier(i, uv[1]) * bezier(j, uv[2])
     end
-    abs(result[4]) < 1.0e-5 ? [0.0, 0.0, 0.0] : result[1:3] / result[4]
+    result[1:3] / result[4]
 end
 
 
@@ -333,7 +389,7 @@ function write_cnet(surf, filename)
     d = size(surf, 1) - 1
     open(filename, "w") do f
         for i in 0:d, j in 0:d
-            p = surf[i+1,j+1,1:3]
+            p = surf[i+1,j+1,1:3] / surf[i+1,j+1,4]
             println(f, "v $(p[1]) $(p[2]) $(p[3])")
         end
         for i in 1:d+1, j in 1:d
@@ -367,20 +423,44 @@ function write_surface(fn, surf, n, resolution, filename)
     writeOBJ(verts, tris, filename)
 end
 
+function write_ribbon(ribbons, filename, index, resolution)
+    bezier(n, k, x) = binomial(n, k) * x ^ k * (1 - x) ^ (n - k)
+    samples = [[u, v] for u in range(0.0, stop=1.0, length=resolution)
+                      for v in range(0.0, stop=1.0, length=resolution)]
+    d = ribbons.d
+    verts = map(samples) do p
+        result = [0, 0, 0]
+        for i in 0:d, j in 0:1
+            result += ribbons[index,i,j] * bezier(d, i, p[1]) * bezier(1, j, p[2])
+        end
+        result
+    end
+    tris = []
+    for i in 2:resolution, j in 2:resolution
+        index = (j - 1) * resolution + i
+        push!(tris, [index - resolution - 1, index - resolution, index])
+        push!(tris, [index, index - 1, index - resolution - 1])
+    end
+    writeOBJ(verts, tris, filename)
+end
+
 
 # Test
 
-function test(filename, resolution = 15)
+function test(filename, resolution = 15, surftype = :gregory)
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
-    surf = kato(ribbons)
+    surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
     tsurf = tensor(surf)
-    # write_frames(ribbons, "$filename-frames.obj")
-    # write_surface(eval, surf, n, resolution, "$filename.obj")
-    # write_surface(eval, surf, 0, resolution, "$filename-full.obj")
+    write_frames(ribbons, "$filename-frames.obj")
+    write_surface(eval, surf, n, resolution, "$filename.obj")
+    write_surface(eval, surf, 0, resolution, "$filename-full.obj")
     write_cnet(tsurf, "$filename-cnet.obj")
     write_surface(evaltensor, tsurf, n, resolution, "$filename-tensor.obj")
-    # write_surface(evaltensor, tsurf, 0, resolution, "$filename-tensor-full.obj")
+    write_surface(evaltensor, tsurf, 0, resolution, "$filename-tensor-full.obj")
+    for i in 1:n
+        write_ribbon(ribbons, "$filename-$i.obj", i - 1, resolution)
+    end
 end
 
 end # module
