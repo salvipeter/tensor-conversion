@@ -488,7 +488,7 @@ R_{i}(s,h) & =\sum_{j=0}^{d_{s}}(P_{j,0}^{i}+h(P_{j,1}^{i}-P_{j,0}^{i}))B_{j}^{d
 Q_{i-1,i}(L_{i-1},L_{i}) & =P_{0,0}^{i}+L_{i-1}(P_{1,0}^{i}-P_{0,0}^{i})+L_{i}(P_{0,1}^{i}-P_{0,0}^{i})\\
  & +L_{i-1}L_{i}d_{s}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i}),\\
 \Gamma_{i-1,i}(u,v) & =\hat{\Gamma}_{i-1,i}(u,v)/\sum_{j}\hat{\Gamma}_{j-1,j}(u,v),\\
-\hat{\Gamma}_{i-1,i}(u,v) & =\prod_{j\neq i-1,i}h_{j}^{2}.
+\hat{\Gamma}_{i-1,i}(u,v) & =\prod_{j\neq i-1,i}L_{j}^{2}.
 \end{align*}
 
 \end_inset
@@ -628,6 +628,40 @@ Control network of a Gregory patch converted to Bézier form.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+While this works, 
+\begin_inset Formula $R_{i}(s,h)$
+\end_inset
+
+ is evaluated at 
+\begin_inset Formula $s<0$
+\end_inset
+
+, 
+\begin_inset Formula $s>1$
+\end_inset
+
+ and 
+\begin_inset Formula $d>1$
+\end_inset
+
+ for some parts of the domain (a large part, when 
+\begin_inset Formula $n>5$
+\end_inset
+
+), and this harms surface quality to a great extent.
+ It would be nice if we had a parameterization that is (i) 
+\begin_inset Formula $0\rightarrow1$
+\end_inset
+
+ linear on the adjacent sides, (ii) always in 
+\begin_inset Formula $[0,1]$
+\end_inset
+
+.
+ Maybe this can be done by a quadratic function.
 \end_layout
 
 \end_body

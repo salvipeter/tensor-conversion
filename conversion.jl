@@ -150,7 +150,7 @@ function kato(ribbons)
     (numerator, denominator)
 end
 
-blend2(L, i) = prod(j -> L[j] ^ exponent, setdiff(1:length(L), [mod1(i-1,length(L)), i]))
+blend2(L, i) = prod(j -> L[j] ^ 2, setdiff(1:length(L), [mod1(i-1,length(L)), i]))
 
 function gregory(ribbons)
     n, ds = ribbons.n, ribbons.d
@@ -161,7 +161,7 @@ function gregory(ribbons)
     for c in 1:3
         for i in 1:n
             im = mod1(i - 1, n)
-            function ribbon(s, h)
+            function ribbon(i, s, h)
                 R = zero(Poly2D)
                 for j in 0:ds
                     p1 = ribbons.cpts[i-1,j,0][c]
@@ -172,8 +172,8 @@ function gregory(ribbons)
                 end
                 R
             end
-            r1 = ribbon(one(Poly2D) - L[i], L[im])
-            r2 = ribbon(L[im], L[i])
+            r1 = ribbon(im, one(Poly2D) - L[i], L[im])
+            r2 = ribbon(i, L[im], L[i])
             corner = ribbons.cpts[i-1,0,0][c]
             twist  = ribbons.cpts[i-1,1,1][c]
             left   = ribbons.cpts[i-1,1,0][c]
