@@ -9,12 +9,6 @@ delta = 0.0
 resolution = 15
 density = 0.1
 
-# 3 => 0.0
-# 4 => 0.0
-# 5 => 0.4
-# 6 => 0.35
-# 7 => 0.2?
-
 curves = []
 
 struct Poly2D
@@ -238,6 +232,20 @@ end
     draw_segments(ctx, map(s -> (s[1] * size, s[2] * size), curves))
 end
 
+macro add_spinbox(layout, label, var, min, max, step, valtype)
+    return quote
+        push!($(esc(layout)), GtkLabel($label))
+        local sb = GtkSpinButton($min, $max, $step)
+        set_gtk_property!(sb, :value, $var)
+        signal_connect(sb, "value-changed") do sb
+            global $var = get_gtk_property(sb, :value, $valtype)
+            generate_curves()
+            draw($(esc(:(canvas))))
+        end
+        push!($(esc(layout)), sb)
+    end
+end
+
 function run()
     win = GtkWindow("Parameterization Test")
     vbox = GtkBox(:v)
@@ -250,45 +258,10 @@ function run()
     hbox = GtkBox(:h)
     push!(vbox, hbox)
 
-    push!(hbox, GtkLabel("# of sides: "))
-    sides_sb = GtkSpinButton(3, 10, 1)
-    set_gtk_property!(sides_sb, :value, sides)
-    signal_connect(sides_sb, "value-changed") do sb
-        global sides = get_gtk_property(sb, :value, Int)
-        generate_curves()
-        draw(canvas)
-    end
-    push!(hbox, sides_sb)
-
-    push!(hbox, GtkLabel("Delta: "))
-    delta_sb = GtkSpinButton(0.0, 2.0, 0.01)
-    set_gtk_property!(delta_sb, :value, delta)
-    signal_connect(delta_sb, "value-changed") do sb
-        global delta = get_gtk_property(sb, :value, Float64)
-        generate_curves()
-        draw(canvas)
-    end
-    push!(hbox, delta_sb)
-
-    push!(hbox, GtkLabel("Resolution: "))
-    resolution_sb = GtkSpinButton(5, 100, 5)
-    set_gtk_property!(resolution_sb, :value, resolution)
-    signal_connect(resolution_sb, "value-changed") do sb
-        global resolution = get_gtk_property(sb, :value, Int)
-        generate_curves()
-        draw(canvas)
-    end
-    push!(hbox, resolution_sb)
-
-    push!(hbox, GtkLabel("Density: "))
-    density_sb = GtkSpinButton(0.01, 0.2, 0.05)
-    set_gtk_property!(density_sb, :value, density)
-    signal_connect(density_sb, "value-changed") do sb
-        global density = get_gtk_property(sb, :value, Float64)
-        generate_curves()
-        draw(canvas)
-    end
-    push!(hbox, density_sb)
+    @add_spinbox(hbox, "# of sides: ", sides, 3, 10, 1, Int)
+    @add_spinbox(hbox, "Delta: ", delta, 0.0, 2.0, 0.01, Float64)
+    @add_spinbox(hbox, "Resolution: ", resolution, 5, 100, 5, Int)
+    @add_spinbox(hbox, "Density: ", density, 0.01, 0.2, 0.05, Float64)
 
     showall(win)
     generate_curves()
