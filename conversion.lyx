@@ -664,5 +664,48 @@ While this works,
  Maybe this can be done by a quadratic function.
 \end_layout
 
+\begin_layout Subsection
+Better parameterization
+\end_layout
+
+\begin_layout Standard
+Let us define the parameter 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ as
+\begin_inset Formula 
+\[
+h_{i}=L_{i}(1-\delta_{n}L_{i-1}L_{i+1}),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta_{n}$
+\end_inset
+
+ is a scalar constant.
+ This is to be used everywhere except the blending function 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+.
+ This results in much nicer patches.
+ The correct choice of 
+\begin_inset Formula $\delta_{n}$
+\end_inset
+
+ should be investigated for every 
+\begin_inset Formula $n$
+\end_inset
+
+ (at least for 
+\begin_inset Formula $3\leq n\leq8$
+\end_inset
+
+).
+\end_layout
+
 \end_body
 \end_document

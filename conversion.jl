@@ -4,6 +4,7 @@ import Base: +, -, *, ^, zero, one, getindex, setindex!
 using LinearAlgebra
 
 exponent = 2
+delta = 0.5
 
 struct Poly2D
     n::Int
@@ -156,6 +157,12 @@ function gregory(ribbons)
     n, ds = ribbons.n, ribbons.d
     poly = regularpoly(n)
     L = normalized_lines(poly)
+    H = []
+    for i in 1:n
+        im = mod1(i - 1, n)
+        ip = mod1(i + 1, n)
+        push!(H, L[i] * (one(Poly2D) - L[im] * L[ip] * delta))
+    end
     denominator = sum(i -> blend2(L, i), 1:n)
     numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
     for c in 1:3
@@ -172,16 +179,16 @@ function gregory(ribbons)
                 end
                 R
             end
-            r1 = ribbon(im, one(Poly2D) - L[i], L[im])
-            r2 = ribbon(i, L[im], L[i])
+            r1 = ribbon(im, one(Poly2D) - H[i], H[im])
+            r2 = ribbon(i, H[im], H[i])
             corner = ribbons.cpts[i-1,0,0][c]
             twist  = ribbons.cpts[i-1,1,1][c]
             left   = ribbons.cpts[i-1,1,0][c]
             right  = ribbons.cpts[i-1,0,1][c]
             q = one(Poly2D) * corner +
-                L[im] * float(ds) * (left - corner) +
-                L[i] * float(ds) * (right - corner) +
-                L[im] * L[i] * float(ds * ds) * (twist - left - right + corner)
+                H[im] * float(ds) * (left - corner) +
+                H[i] * float(ds) * (right - corner) +
+                H[im] * H[i] * float(ds * ds) * (twist - left - right + corner)
             numerator[c] += (r1 + r2 - q) * blend2(L, i)
         end
     end
