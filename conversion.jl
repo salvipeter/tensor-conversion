@@ -160,6 +160,7 @@ blend2(L, i) = prod(j -> L[j] ^ 2, setdiff(1:length(L), [mod1(i-1,length(L)), i]
 
 function gregory(ribbons)
     n, ds = ribbons.n, ribbons.d
+    n == 3 && return gregory3(ribbons)
     poly = regularpoly(n)
     L = normalized_lines(poly)
     function multiplier(on_0, on_d1)
@@ -202,6 +203,42 @@ function gregory(ribbons)
                 L[i] * multiplier([], [im]) * float(ds) * (right - corner) +
                 L[im] * L[i] * multiplier([], [i, im]) * float(ds * ds) *
                 (twist - left - right + corner)
+            numerator[c] += (r1 + r2 - q) * blend2(L, i)
+        end
+    end
+    (numerator, denominator)
+end
+
+function gregory3(ribbons)
+    n, ds = 3, ribbons.d
+    poly = regularpoly(n)
+    L = normalized_lines(poly)
+    denominator = sum(i -> blend2(L, i), 1:n)
+    numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
+    for c in 1:3
+        for i in 1:n
+            im = mod1(i - 1, n)
+            function ribbon(i, s, h)
+                R = zero(Poly2D)
+                for j in 0:ds
+                    p1 = ribbons.cpts[i-1,j,0][c]
+                    p2 = ribbons.cpts[i-1,j,1][c]
+                    term = one(Poly2D) * p1 + h * (p2 - p1) * float(ds)
+                    term *= s ^ j * (one(Poly2D) - s) ^ (ds - j) * binom(ds, j)
+                    R += term
+                end
+                R
+            end
+            r1 = ribbon(im, one(Poly2D) - L[i], L[im])
+            r2 = ribbon(i, L[im], L[i])
+            corner = ribbons.cpts[i-1,0,0][c]
+            twist  = ribbons.cpts[i-1,1,1][c]
+            left   = ribbons.cpts[i-1,1,0][c]
+            right  = ribbons.cpts[i-1,0,1][c]
+            q = one(Poly2D) * corner +
+                L[im] * float(ds) * (left - corner) +
+                L[i] * float(ds) * (right - corner) +
+                L[im] * L[i] * float(ds * ds) * (twist - left - right + corner)
             numerator[c] += (r1 + r2 - q) * blend2(L, i)
         end
     end
