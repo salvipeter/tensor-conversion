@@ -6,9 +6,11 @@ using LinearAlgebra
 exponent = 2
 delta = 0.5
 
+const Real = BigFloat # Float64
+
 struct Poly2D
     n::Int
-    coeff::Array{Float64,2}
+    coeff::Array{Real,2}
 end
 
 function +(u::Poly2D, v::Poly2D)
@@ -38,7 +40,7 @@ end
 
 function *(u::Poly2D, v::Poly2D)
     n = u.n + v.n - 1
-    m = zeros(Float64, n, n)
+    m = zeros(Real, n, n)
     len = u.n - 1
     for i in 1:v.n, j in 1:v.n
         x = v.coeff[i,j]
@@ -49,7 +51,10 @@ function *(u::Poly2D, v::Poly2D)
     simplify(Poly2D(n, m))
 end
 
-*(u::Poly2D, x::Float64) = Poly2D(u.n, copy(u.coeff) * x)
+*(u::Poly2D, x::Real) = Poly2D(u.n, copy(u.coeff) * x)
+if Real != Float64
+    *(u::Poly2D, x::Float64) = u * Real(x)
+end
 
 function ^(u::Poly2D, n::Integer)
     @assert n >= 0 "Only non-negative (integer) exponents are supported."
@@ -57,14 +62,14 @@ function ^(u::Poly2D, n::Integer)
     n == 1 ? u : u ^ (n-1) * u
 end
 
-zero(::Type{Poly2D}) = Poly2D(1, zeros(Float64, 1, 1))
+zero(::Type{Poly2D}) = Poly2D(1, zeros(Real, 1, 1))
 
-one(::Type{Poly2D}) = Poly2D(1, ones(Float64, 1, 1))
+one(::Type{Poly2D}) = Poly2D(1, ones(Real, 1, 1))
 
 regularpoly(n) = [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(0.0, length=n+1, stop=2pi)][1:n]
 
 function line(p, q)
-    m = zeros(Float64, 2, 2)
+    m = zeros(Real, 2, 2)
     d = q - p
     if abs(d[2]) > abs(d[1])
         x = d[1] / d[2]
@@ -106,7 +111,7 @@ end
 
 blend(L, i) = prod(j -> L[j] ^ exponent, setdiff(1:length(L), i))
 
-binom(n, k) = binomial(Int64(n), Int64(k))
+binom(n, k) = Real(binomial(Int64(n), Int64(k)))
 
 function kato(ribbons)
     n, ds = ribbons.n, ribbons.d
@@ -134,14 +139,14 @@ function kato(ribbons)
                         p = p0 + (p - p0) * ds
                     end
                     term = one(Poly2D) * p
-                    term *= L[im] ^ j * L[ip] ^ (ds - j) * float(binom(ds, j))
+                    term *= L[im] ^ j * L[ip] ^ (ds - j) * binom(ds, j)
                     for l in 1:n
                         l == i && continue
                         lm = mod1(l - 1, n)
                         lp = mod1(l + 1, n)
                         term *= (L[lm] + L[lp]) ^ ds
                     end
-                    term *= L[i] ^ k * (one(Poly2D) - L[i]) ^ (dh - k) * float(binom(dh, k))
+                    term *= L[i] ^ k * (one(Poly2D) - L[i]) ^ (dh - k) * binom(dh, k)
                     R += term
                 end
             end
@@ -181,7 +186,7 @@ function gregory(ribbons)
                     p1 = ribbons.cpts[i-1,j,0][c]
                     p2 = ribbons.cpts[i-1,j,1][c]
                     term = (h + h1) * p1 + h * (p2 - p1) * float(ds)
-                    term *= s ^ j * s1 ^ (ds - j) * float(binom(ds, j))
+                    term *= s ^ j * s1 ^ (ds - j) * binom(ds, j)
                     R += term
                 end
                 R * multiplier([i], [i1])
@@ -227,7 +232,7 @@ function eval(kato, uv)
 end
 
 function frombezier(d)
-    result = zeros(d + 1, d + 1)
+    result = zeros(Real, d + 1, d + 1)
     for i in 0:d
         for j in 0:d-i
             result[i+1,i+j+1] = binom(d, i) * binom(d - i, j) * (isodd(j) ? -1 : 1)
