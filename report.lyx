@@ -1,0 +1,1130 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Research report
+\end_layout
+
+\begin_layout Author
+Exact transfinite 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ trim conversion
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The topic of this research was to investigate methods of converting transfinite
+ interpolation surfaces into tensor-product rational Bézier form.
+ After examining the different transfinite surface representations, we have
+ found that there are two types that can be represented as relatively low-degree
+ rational polynomials: the side-based patch of Kato (SB), and the corner-based
+ patch of Gregory (CB).
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+For details on these and related patches, see
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "cagd-cikk"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In general, these 
+\begin_inset Formula $n$
+\end_inset
+
+-sided surfaces are defined over a polygonal domain in the 
+\begin_inset Formula $uv$
+\end_inset
+
+-plane; we will use regular polygons.
+ The three main constituents of a patch are: (i) the ribbons, (ii) the parameter
+ization, and (iii) the blending function.
+ In the following, we will look at the above mentioned two representations,
+ and their conversion into tensor-product form.
+\end_layout
+
+\begin_layout Section
+SB patch
+\end_layout
+
+\begin_layout Standard
+As a side-based approach, each ribbon surface is a side interpolant.
+ Since we aim at a polynomial representation, each ribbon surface 
+\begin_inset Formula $R_{i}$
+\end_inset
+
+ will be represented as a tensor-product Bézier surface of degrees 
+\begin_inset Formula $d_{s}\times d_{h}$
+\end_inset
+
+ with a local parameterization 
+\begin_inset Formula $(s_{i},h_{i})$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{equation}
+R_{i}(s_{i},h_{i})=\sum_{j=0}^{d_{s}}\sum_{k=0}^{d_{h}}P_{j,k}^{i}B_{j}^{d_{s}}(s_{i})B_{k}^{d_{h}}(h_{i}),
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $P_{j,k}^{i}$
+\end_inset
+
+ are the corresponding control points.
+ The local parameters are defined such that 
+\begin_inset Formula $s_{i}\in[0,1]$
+\end_inset
+
+, 
+\begin_inset Formula $d_{i}\geq0$
+\end_inset
+
+ for the whole domain, and 
+\begin_inset Formula $d_{i}=0$
+\end_inset
+
+ for points on the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side of the domain polygon.
+ Then the surface equation is
+\begin_inset Formula 
+\begin{equation}
+S(u,v)=\sum_{i=1}^{n}R_{i}(s_{i},h_{i})\Gamma_{i}^{p}(u,v),
+\end{equation}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{equation}
+\Gamma_{i}^{p}(u,v)=\frac{\prod_{j\neq i}h_{j}^{p}}{\sum_{k}\prod_{j\neq k}h_{j}^{p}}=:\frac{\hat{\Gamma}_{i}^{p}(u,v)}{\sum_{j}\hat{\Gamma}_{j}^{p}(u,v)}
+\end{equation}
+
+\end_inset
+
+is the side blending function, and the exponent 
+\begin_inset Formula $p$
+\end_inset
+
+ guarantees 
+\begin_inset Formula $G^{p-1}$
+\end_inset
+
+ continuity with adjacent patches.
+ Note that this blending function is singular at the corners of the domain.
+\end_layout
+
+\begin_layout Subsection
+Parameterization
+\end_layout
+
+\begin_layout Standard
+For the above patch to be a rational polynomial, we need the local parameterizat
+ions to be rational polynomials.
+ A simple construction is
+\begin_inset Formula 
+\begin{equation}
+s_{i}=\frac{L_{i-1}}{L_{i-1}+L_{i+1}},\qquad h_{i}=L_{i},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ is the (normalized) implicit equation of the line containing the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side of the domain polygon.
+ Then the surface equation becomes
+\begin_inset Formula 
+\begin{align}
+S(u,v)= & \frac{1}{\sum_{i}\hat{\Gamma}_{i}^{p}(u,v)}\cdot\frac{1}{\prod_{i}(L_{i-1}+L_{i+1})^{d_{s}}}\cdot\nonumber \\
+ & \sum_{i=1}^{n}\sum_{j=0}^{d_{s}}\sum_{k=0}^{d_{h}}P_{j,k}^{i}\left[\binom{d_{s}}{j}L_{i-1}^{j}L_{i+1}^{d_{s}-j}\prod_{k\neq i}(L_{k-1}+L_{k+1})^{d_{s}}\right]\cdot\nonumber \\
+ & \qquad\qquad\qquad\quad\left[\binom{d_{h}}{k}L_{i}^{k}(1-L_{i})^{d_{h}-k}\right]\hat{\Gamma}_{i}^{p}(u,v),
+\end{align}
+
+\end_inset
+
+which has the rational degree
+\begin_inset Formula 
+\begin{equation}
+\frac{n\cdot d_{s}+(n-1)p+d_{h}}{n\cdot d_{s}+(n-1)p}.
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bézier form
+\end_layout
+
+\begin_layout Standard
+For the conversion to tensor product rational Bézier surface, we need the
+ numerator and denominator to be of the same degree: 
+\begin_inset Formula 
+\begin{equation}
+d:=n\cdot d_{s}+(n-1)p+d_{h}.
+\end{equation}
+
+\end_inset
+
+ Converting a polynomial in Bernstein form to power basis can be done using
+ an upper triangular matrix 
+\begin_inset Formula $C=\{c_{i,j}\}$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{equation}
+c_{i,i+j}=(-1)^{j}\binom{d}{i}\binom{d-i}{j},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $i=0\dots d$
+\end_inset
+
+ and 
+\begin_inset Formula $j=0\dots d-i$
+\end_inset
+
+.
+ For the other way around, we need the inverse, so converting a matrix 
+\begin_inset Formula $M$
+\end_inset
+
+ with 
+\begin_inset Formula $m_{ij}$
+\end_inset
+
+ being the coefficient of 
+\begin_inset Formula $u^{i}v^{j}$
+\end_inset
+
+ (
+\begin_inset Formula $i,j=0\dots d$
+\end_inset
+
+) we get
+\begin_inset Formula 
+\begin{equation}
+\hat{M}=(C^{-1})^{T}MC^{-1},
+\end{equation}
+
+\end_inset
+
+resulting in a matrix 
+\begin_inset Formula $\hat{M}$
+\end_inset
+
+ where 
+\begin_inset Formula $\hat{m}_{ij}$
+\end_inset
+
+ is the coefficient of 
+\begin_inset Formula $B_{i}^{d}(u)B_{j}^{d}(v)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Having determined the numerator (a vector polynomial) and the denominator
+ (a scalar polynomial) of the surface, we want to convert it to the form
+\begin_inset Formula 
+\begin{equation}
+\frac{\sum_{i=0}^{d}\sum_{j=0}^{d}P_{ij}w_{ij}B_{i}^{d}(u)B_{j}^{d}(v)}{\sum_{i=0}^{d}\sum_{j=0}^{d}w_{ij}B_{i}^{d}(u)B_{j}^{d}(v)}.
+\end{equation}
+
+\end_inset
+
+The Bernstein form of the denominator contains the 
+\begin_inset Formula $w_{ij}$
+\end_inset
+
+ weights; that of the numerator gives us the control points.
+\end_layout
+
+\begin_layout Standard
+Since the matrices in these equations may contain very large values (e.g.,
+ for a 
+\begin_inset Formula $G^{1}$
+\end_inset
+
+ 6-sided quintic surface, the degree is 41), care should be taken to evaluate
+ the above operations with sufficient precision.
+ Once the Bézier form is acquired, the coefficients should lie in a ``normal''
+ range.
+\end_layout
+
+\begin_layout Section
+CB patch
+\end_layout
+
+\begin_layout Standard
+As a corner-based approach, each ribbon surface is a corner interpolant.
+ The ribbon between the 
+\begin_inset Formula $i$
+\end_inset
+
+-th and 
+\begin_inset Formula $(i+1)$
+\end_inset
+
+-th sides is denoted by 
+\begin_inset Formula $I_{i-1,i}$
+\end_inset
+
+, and is parameterized by 
+\begin_inset Formula $s_{i-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{equation}
+I_{i-1,i}(s_{i-1},s_{i})=R_{i-1}(s_{i-1},s_{i})+R_{i}(s_{i},1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_{i}),
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $Q_{i-1,i}$
+\end_inset
+
+ is the corner correction patch
+\begin_inset Formula 
+\begin{align}
+Q_{i-1,i}(s_{i-1},s_{i}) & =P_{0,0}^{i}+s_{i}d_{s}(P_{1,0}^{i}-P_{0,0}^{i})+(1-s_{i-1})d_{s}(P_{0,1}^{i}-P_{0,0}^{i})\nonumber \\
+ & +s_{i}(1-s_{i-1})d_{s}^{2}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i}).
+\end{align}
+
+\end_inset
+
+We assume that the 
+\begin_inset Formula $R_{i}$
+\end_inset
+
+ ribbons are twist-compatible, i.e., 
+\begin_inset Formula $P_{0,0}^{i}=P_{d_{s},0}^{i-1}$
+\end_inset
+
+, 
+\begin_inset Formula $P_{1,0}^{i}=P_{d_{s},1}^{i-1}$
+\end_inset
+
+, 
+\begin_inset Formula $P_{0,1}^{i}=P_{d_{s}-1,0}^{i-1}$
+\end_inset
+
+, and 
+\begin_inset Formula $P_{1,1}^{i}=P_{d_{s}-1,1}^{i-1}$
+\end_inset
+
+.
+ Also, while 
+\begin_inset Formula $G^{2}$
+\end_inset
+
+-continuous Gregory patches do exist
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "g2-cikk"
+literal "false"
+
+\end_inset
+
+, here we limit the discussion to the 
+\begin_inset Formula $G^{1}$
+\end_inset
+
+ case, so
+\begin_inset Formula 
+\begin{align}
+R_{i-1}(s_{i-1},s_{i}) & =\sum_{j=0}^{d_{s}}(P_{j,0}^{i-1}+s_{i}d_{s}(P_{j,1}^{i-1}-P_{j,0}^{i-1}))B_{j}^{d_{s}}(s_{i-1}),\nonumber \\
+R_{i}(s_{i},1-s_{i-1}) & =\sum_{j=0}^{d_{s}}(P_{j,0}^{i}+(1-s_{i-1})d_{s}(P_{j,1}^{i}-P_{j,0}^{i}))B_{j}^{d_{s}}(s_{i}).
+\end{align}
+
+\end_inset
+
+Here we used two-layered twist-compatible GB control networks
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "g2-cikk"
+literal "false"
+
+\end_inset
+
+; in other words, the cross derivatives are scaled by 
+\begin_inset Formula $d_{s}$
+\end_inset
+
+, so the defining control points have more natural positions.
+\end_layout
+
+\begin_layout Standard
+There are two constraints on the 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ parameters: 
+\begin_inset Formula $s_{i-1}+s_{i+1}=1$
+\end_inset
+
+ and 
+\begin_inset Formula $s_{i+1}=0$
+\end_inset
+
+ for points on the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side.
+ The 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ parameter defined above satisfies these.
+\end_layout
+
+\begin_layout Standard
+The patch equation is
+\begin_inset Formula 
+\begin{equation}
+S(u,v)=\sum_{i=1}^{n}I_{i-1,i}(s_{i-1},s_{i})\Gamma_{i-1,i}(u,v),
+\end{equation}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{equation}
+\Gamma_{i-1,i}(u,v)=\frac{\prod_{j\neq i-1,i}h_{j}^{2}}{\sum_{k}\prod_{j\neq k-1,k}h_{j}^{2}}=:\frac{\hat{\Gamma}_{i-1,i}(u,v)}{\sum_{j}\hat{\Gamma}_{j-1,j}(u,v)}
+\end{equation}
+
+\end_inset
+
+is the corner blending function.
+\end_layout
+
+\begin_layout Standard
+Similarly to the SB patch, this can be transformed into
+\begin_inset Formula 
+\begin{align}
+S(u,v)= & \frac{1}{\sum_{i}\hat{\Gamma}_{i-1,i}(u,v)}\cdot\frac{1}{\prod_{i}(L_{i-1}+L_{i+1})^{d_{s}}}\cdot\nonumber \\
+ & \sum_{i=1}^{n}\left(\left[\sum_{j=0}^{d_{s}}(P_{j,0}^{i-1}+L_{i-1}(L_{i-1}+L_{i+1})^{d_{s}-1}d_{s}(P_{j,1}^{i-1}-P_{j,0}^{i-1}))\cdot\right.\right.\nonumber \\
+ & \qquad\qquad\left.\binom{d_{s}}{j}L_{i-2}^{j}L_{i}^{d_{s}-j}\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d_{s}}\right]+\nonumber \\
+ & \qquad\left[\sum_{j=0}^{d_{s}}(P_{j,0}^{i}+L_{i}(L_{i-2}+L_{i})^{d_{s}-1}d_{s}(P_{j,1}^{i}-P_{j,0}^{i}))\cdot\right.\nonumber \\
+ & \qquad\qquad\left.\binom{d_{s}}{j}L_{i-1}^{j}L_{i+1}^{d_{s}-j}\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d_{s}}\right]-\nonumber \\
+ & \qquad\left[\prod_{k}(L_{k-1}+L_{k+1})^{d_{s}}P_{0,0}^{i}+\right.\nonumber \\
+ & \qquad\qquad L_{i-1}(L_{i-1}+L_{i+1})^{d_{s}-1}\prod_{k\neq i}(L_{k-1}+L_{k+1})^{d_{s}}d_{s}(P_{1,0}^{i}-P_{0,0}^{i})+\nonumber \\
+ & \qquad\qquad L_{i}(L_{i-2}+L_{i})^{d_{s}-1}\prod_{k\neq i-1}(L_{k-1}+L_{k+1})^{d_{s}}d_{s}(P_{0,1}^{i}-P_{0,0}^{i})+\nonumber \\
+ & \qquad\qquad L_{i-1}(L_{i-1}+L_{i+1})^{d_{s}-1}L_{i}(L_{i-2}+L_{i})^{d_{s}-1}\cdot\nonumber \\
+ & \qquad\qquad\left.\left.\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d_{s}}d_{s}^{2}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i})\right]\right)\cdot\nonumber \\
+ & \hat{\Gamma}_{i-1,i}(u,v),
+\end{align}
+
+\end_inset
+
+which has the rational degree
+\begin_inset Formula 
+\begin{equation}
+\frac{nd_{s}+2(n-2)}{nd_{s}+2(n-2)},
+\end{equation}
+
+\end_inset
+
+which is 3 degrees lower than the equivalent SB patch, and it is free from
+ singularities (except for 3-sided patches, see below).
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Triangular-patches"
+
+\end_inset
+
+Triangular patches
+\end_layout
+
+\begin_layout Standard
+The blending function 
+\begin_inset Formula $\Gamma_{i-1,i}$
+\end_inset
+
+ is singular for triangular domains.
+ However, for this case, a very low-degree variation of the CB patch can
+ be constructed, by using 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ parameters instead of 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ parameters:
+\begin_inset Formula 
+\begin{align}
+S(u,v) & =\sum_{i=1}^{n}I_{i-1,i}(h_{i-1},h_{i})\Gamma_{i-1,i}(u,v),\nonumber \\
+I_{i-1,i}(h_{i-1},h_{i}) & =R_{i-1}(1-h_{i},h_{i-1})+R_{i}(h_{i-1},h_{i})-Q_{i-1,i}(h_{i-1},h_{i}),\nonumber \\
+Q_{i-1,i}(h_{i-1},h_{i}) & =P_{0,0}^{i}+h_{i-1}d_{s}(P_{1,0}^{i}-P_{0,0}^{i})+h_{i}d_{s}(P_{0,1}^{i}-P_{0,0}^{i})\nonumber \\
+ & +h_{i-1}h_{i}d_{s}^{2}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i}),
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are two constraints on the 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ parameters: 
+\begin_inset Formula $h_{i-1}+h_{i+1}=1$
+\end_inset
+
+ and 
+\begin_inset Formula $h_{i}=0$
+\end_inset
+
+ for points on the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side.
+ The 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ parameter defined above satisfies these.
+ The equation we arrive at is
+\begin_inset Formula 
+\begin{align}
+S(u,v)= & \frac{1}{\sum_{i}\hat{\Gamma}_{i}^{p}(u,v)}\cdot\nonumber \\
+ & \sum_{i=1}^{n}\left(\left[\sum_{j=0}^{d_{s}}(P_{j,0}^{i-1}+L_{i-1}d_{s}(P_{j,1}^{i-1}-P_{j,0}^{i-1}))\binom{d_{s}}{j}(1-L_{i})^{j}L_{i}^{d_{s}-j}\right]\right.+\nonumber \\
+ & \qquad\ \left[\sum_{j=0}^{d_{s}}(P_{j,0}^{i}+L_{i}d_{s}(P_{j,1}^{i}-P_{j,0}^{i}))\binom{d_{s}}{j}L_{i-1}^{j}(1-L_{i-1})^{d_{s}-j}\right]-\nonumber \\
+ & \qquad\ \ \Biggl[P_{0,0}^{i}+L_{i-1}d_{s}(P_{1,0}^{i}-P_{0,0}^{i})+L_{i}d_{s}(P_{0,1}^{i}-P_{0,0}^{i})+\nonumber \\
+ & \qquad\ \ L_{i-1}L_{i}d_{s}^{2}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i})\Biggr]\Biggr)\cdot\hat{\Gamma}_{i-1,i}(u,v),
+\end{align}
+
+\end_inset
+
+which has the rational degree
+\begin_inset Formula 
+\begin{equation}
+\frac{2(n-2)+d_{s}+1}{2(n-2)},
+\end{equation}
+
+\end_inset
+
+which is 
+\begin_inset Formula $(d_{s}+3)/2$
+\end_inset
+
+ for triangular patches.
+\end_layout
+
+\begin_layout Standard
+This, in principle, should work also for general 
+\begin_inset Formula $n$
+\end_inset
+
+, but for 
+\begin_inset Formula $n>3$
+\end_inset
+
+ the ribbons will be evaluated outside the 
+\begin_inset Formula $[0,1]\times[0,1]$
+\end_inset
+
+ range (especially for 
+\begin_inset Formula $n>5$
+\end_inset
+
+).
+ Since the algebraic extension of polynomial surfaces is very unstable,
+ its use is not recommended.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+The tensor-product reconstruction of the two transfinite representations
+ are both usable, with the following remarks (see also Figures
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:A-five-sided-quintic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:A-six-sided-quintic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Enumerate
+Corners of the boundary loop are singular for the SB patch, so the surface
+ cannot be evaluated there.
+\end_layout
+
+\begin_layout Enumerate
+Due to the singular nature of the SB patch, the control points outside the
+ 
+\begin_inset Formula $n$
+\end_inset
+
+-sided domain region have very erratic behavior.
+ Compare these with the relatively smooth configuration of the CB control
+ points.
+\end_layout
+
+\begin_layout Enumerate
+The CB patch has slightly less degree (and much less degree in the triangular
+ case).
+\end_layout
+
+\begin_layout Enumerate
+The CB patch, at least in its current form, can only be used with ribbons
+ that are linear in the cross-derivative direction, while the SB patch is
+ more general.
+\end_layout
+
+\begin_layout Standard
+In summary, when nonlinear ribbons are not needed, the CB patch is favorable.
+ It would also be interesting to look at other simple parameterizations
+ for the CB patch variation described in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Triangular-patches"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/cagd86-sb.png
+	display false
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Trimmed SB patch with control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/cagd86-cb.png
+	display false
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Trimmed CB patch with control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/cagd86-sb-full.png
+	display false
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Full SB patch with defining ribbons
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/cagd86-cb-full.png
+	display false
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Full CB patch with defining ribbons
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:A-five-sided-quintic"
+
+\end_inset
+
+A five-sided quintic configuration.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/dolphin-sb.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SB patch with control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/dolphin-cb.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CB patch with control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:A-six-sided-quintic"
+
+\end_inset
+
+A six-sided quintic configuration.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "cagd-cikk"
+literal "false"
+
+\end_inset
+
+P.
+\begin_inset space ~
+\end_inset
+
+Salvi, T.
+\begin_inset space ~
+\end_inset
+
+Várady, A.
+\begin_inset space ~
+\end_inset
+
+Rockwood, 
+\emph on
+Ribbon-based transfinite surfaces
+\emph default
+.
+ Computer Aided Geometric Design, Vol.
+\begin_inset space ~
+\end_inset
+
+31(9), pp.
+\begin_inset space ~
+\end_inset
+
+613--630, 2014.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "g2-cikk"
+literal "false"
+
+\end_inset
+
+P.
+\begin_inset space ~
+\end_inset
+
+Salvi, T.
+\begin_inset space ~
+\end_inset
+
+Várady, 
+\emph on
+
+\begin_inset Formula $G^{2}$
+\end_inset
+
+ surface interpolation over general topology curve networks
+\emph default
+.
+ Computer Graphics Forum, Vol.
+\begin_inset space ~
+\end_inset
+
+33(7), pp.
+\begin_inset space ~
+\end_inset
+
+151--160, 2014.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "concave-cikk"
+literal "false"
+
+\end_inset
+
+P.
+\begin_inset space ~
+\end_inset
+
+Salvi, T.
+\begin_inset space ~
+\end_inset
+
+Várady, 
+\emph on
+Multi-sided Bézier surfaces over concave polygonal domains
+\emph default
+.
+ Computers & Graphics, Vol.
+\begin_inset space ~
+\end_inset
+
+74, pp.
+\begin_inset space ~
+\end_inset
+
+56–65, 2018.
+\end_layout
+
+\end_body
+\end_document
