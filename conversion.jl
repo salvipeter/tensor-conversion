@@ -157,38 +157,46 @@ function gregory(ribbons)
     n, ds = ribbons.n, ribbons.d
     poly = regularpoly(n)
     L = normalized_lines(poly)
-    H = []
-    for i in 1:n
-        im = mod1(i - 1, n)
-        ip = mod1(i + 1, n)
-        push!(H, L[i] * (one(Poly2D) - L[im] * L[ip] * delta))
+    function multiplier(on_0, on_d1)
+        term = one(Poly2D)
+        for i in 1:n
+            i in on_0 && continue
+            im = mod1(i - 1, n)
+            ip = mod1(i + 1, n)
+            d = i in on_d1 ? ds - 1 : ds
+            term *= (L[im] + L[ip]) ^ d
+        end
+        term
     end
-    denominator = sum(i -> blend2(L, i), 1:n)
+    denominator = sum(i -> blend2(L, i), 1:n) * multiplier([], [])
     numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
     for c in 1:3
         for i in 1:n
             im = mod1(i - 1, n)
-            function ribbon(i, s, h)
+            imm = mod1(im - 1, n)
+            ip = mod1(i + 1, n)
+            function ribbon(i, i1, s, s1, h, h1)
                 R = zero(Poly2D)
                 for j in 0:ds
                     p1 = ribbons.cpts[i-1,j,0][c]
                     p2 = ribbons.cpts[i-1,j,1][c]
-                    term = one(Poly2D) * p1 + h * (p2 - p1) * float(ds)
-                    term *= s ^ j * (one(Poly2D) - s) ^ (ds - j) * float(binom(ds, j))
+                    term = (h + h1) * p1 + h * (p2 - p1) * float(ds)
+                    term *= s ^ j * s1 ^ (ds - j) * float(binom(ds, j))
                     R += term
                 end
-                R
+                R * multiplier([i], [i1])
             end
-            r1 = ribbon(im, one(Poly2D) - H[i], H[im])
-            r2 = ribbon(i, H[im], H[i])
+            r1 = ribbon(im, i, L[imm], L[i], L[im], L[ip])
+            r2 = ribbon(i, im, L[im], L[ip], L[i], L[imm])
             corner = ribbons.cpts[i-1,0,0][c]
             twist  = ribbons.cpts[i-1,1,1][c]
             left   = ribbons.cpts[i-1,1,0][c]
             right  = ribbons.cpts[i-1,0,1][c]
-            q = one(Poly2D) * corner +
-                H[im] * float(ds) * (left - corner) +
-                H[i] * float(ds) * (right - corner) +
-                H[im] * H[i] * float(ds * ds) * (twist - left - right + corner)
+            q = multiplier([], []) * corner +
+                L[im] * multiplier([], [i]) * float(ds) * (left - corner) +
+                L[i] * multiplier([], [im]) * float(ds) * (right - corner) +
+                L[im] * L[i] * multiplier([], [i, im]) * float(ds * ds) *
+                (twist - left - right + corner)
             numerator[c] += (r1 + r2 - q) * blend2(L, i)
         end
     end

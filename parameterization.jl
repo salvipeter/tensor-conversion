@@ -25,7 +25,8 @@ function generate_curves()
     end
     vert = vertices(poly, resolution)
     tri = triangles(n, resolution)
-    f(uv) = polyeval(H[1], uv)
+    # f(uv) = polyeval(H[1], uv)
+    f(uv) = polyeval(L[1], uv) / polyeval(L[1] + L[3], uv)
     function slice(i, j)
         x, y = f(vert[i]), f(vert[j])
         if y > x

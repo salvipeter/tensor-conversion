@@ -80,6 +80,12 @@ Exact conversion of transfinite surfaces
 \end_layout
 
 \begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Surface-equation"
+
+\end_inset
+
 Surface equation
 \end_layout
 
@@ -722,6 +728,74 @@ where
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Standard
+...
+ looks like this is not really good for 
+\begin_inset Formula $n>6$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Back to 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Use the 
+\begin_inset Formula $s$
+\end_inset
+
+-parameterization of the Kato-patch! Let the surface be
+\begin_inset Formula 
+\[
+S(u,v)=\sum_{i}I_{i-1,i}(s_{i-1},s_{i})\Gamma_{i-1,i}(u,v),
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+I_{i-1,i}(s_{i-1},s_{i}) & =R_{i-1}(s_{i-1},s_{i})+R_{i}(s_{i},1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_{i}),\\
+R_{i}(s,h) & =\sum_{j=0}^{d_{s}}(P_{j,0}^{i}+h(P_{j,1}^{i}-P_{j,0}^{i}))B_{j}^{d_{s}}(s_{i}),\\
+Q_{i-1,i}(s_{i-1},s_{i}) & =P_{0,0}^{i}+s_{i}(P_{1,0}^{i}-P_{0,0}^{i})+(1-s_{i-1})(P_{0,1}^{i}-P_{0,0}^{i})\\
+ & +s_{i}(1-s_{i-1})d_{s}(P_{1,1}^{i}-P_{1,0}^{i}-P_{0,1}^{i}+P_{0,0}^{i}),\\
+\Gamma_{i-1,i}(u,v) & =\hat{\Gamma}_{i-1,i}(u,v)/\sum_{j}\hat{\Gamma}_{j-1,j}(u,v),\\
+\hat{\Gamma}_{i-1,i}(u,v) & =\prod_{j\neq i-1,i}L_{j}^{2}.
+\end{align*}
+
+\end_inset
+
+The rational degree is
+\begin_inset Formula 
+\[
+\frac{nd_{s}+2(n-2)}{nd_{s}+2(n-2)}.
+\]
+
+\end_inset
+
+This is 3 degrees lower than the equivalent Kato-patch in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Surface-equation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and it is free from singularities (except for 3-sided).
 \end_layout
 
 \end_body
