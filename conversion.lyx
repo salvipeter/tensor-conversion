@@ -661,7 +661,24 @@ While this works,
 \end_inset
 
 .
- Maybe this can be done by a quadratic function.
+ (For the surface to interpolate the boundary constraints, we only need
+ a 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ parameterization for which 
+\begin_inset Formula $h_{i}=0$
+\end_inset
+
+ and 
+\begin_inset Formula $h_{i-1}=h_{i+1}$
+\end_inset
+
+ on the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side.)
 \end_layout
 
 \begin_layout Subsection

@@ -1,8 +1,10 @@
 module ParamTest
 
-import Base: +, -, *, ^, zero, one
 import Graphics
 using Gtk
+
+using ..TensorKato: Poly2D, regularpoly, normalized_lines,
+    vertices, triangles, polyeval, affine_combine
 
 sides = 5
 delta = 0.0
@@ -10,146 +12,6 @@ resolution = 15
 density = 0.1
 
 curves = []
-
-struct Poly2D
-    n::Int
-    coeff::Array{Float64,2}
-end
-
-function +(u::Poly2D, v::Poly2D)
-    if u.n < v.n
-        m = copy(v.coeff)
-        m[1:u.n,1:u.n] += u.coeff
-        return Poly2D(v.n, m)
-    elseif u.n > v.n
-        m = copy(u.coeff)
-        m[1:v.n,1:v.n] += v.coeff
-        return Poly2D(u.n, m)
-    end
-    Poly2D(u.n, u.coeff + v.coeff)
-end
-
--(u::Poly2D) = Poly2D(u.n, -copy(u.coeff))
-
--(u::Poly2D, v::Poly2D) = u + (-v)
-
-function simplify(u::Poly2D)
-    n = u.n
-    for i in 1:n
-        (u.coeff[i,end] != 0 || u.coeff[end,i] != 0) && return u
-    end
-    n == 1 ? u : simplify(Poly2D(n - 1, u.coeff[1:n-1,1:n-1]))
-end
-
-function *(u::Poly2D, v::Poly2D)
-    n = u.n + v.n - 1
-    m = zeros(Float64, n, n)
-    len = u.n - 1
-    for i in 1:v.n, j in 1:v.n
-        x = v.coeff[i,j]
-        if x != 0
-            m[i:i+len,j:j+len] += u.coeff * x
-        end
-    end
-    simplify(Poly2D(n, m))
-end
-
-*(u::Poly2D, x::Float64) = Poly2D(u.n, copy(u.coeff) * x)
-
-function ^(u::Poly2D, n::Integer)
-    @assert n >= 0 "Only non-negative (integer) exponents are supported."
-    n == 0 && return one(Poly2D)
-    n == 1 ? u : u ^ (n-1) * u
-end
-
-zero(::Type{Poly2D}) = Poly2D(1, zeros(Float64, 1, 1))
-
-one(::Type{Poly2D}) = Poly2D(1, ones(Float64, 1, 1))
-
-regularpoly(n) = [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(0.0, length=n+1, stop=2pi)][1:n]
-
-function line(p, q)
-    m = zeros(Float64, 2, 2)
-    d = q - p
-    if abs(d[2]) > abs(d[1])
-        x = d[1] / d[2]
-        m[2,1] = 1
-        m[1,2] = -x
-        m[1,1] = -p[1] + x * p[2]
-    else
-        x = d[2] / d[1]
-        m[2,1] = -x
-        m[1,2] = 1
-        m[1,1] = x * p[1] - p[2]
-    end
-    if m[2,1] + m[1,2] + 2 * m[1,1] < 0
-        m *= -1
-    end
-    Poly2D(2, m)
-end
-
-lines(poly) = [line(p, q) for (p, q) in zip([[poly[end]]; poly[1:end-1]], poly)]
-
-function polyeval(poly, uv)
-    result = 0
-    for i in 1:poly.n, j in 1:poly.n
-        result += poly.coeff[i,j] * uv[1] ^ (i - 1) * uv[2] ^ (j - 1)
-    end
-    result
-end
-
-function normalized_lines(poly)
-    n = length(poly)
-    result = []
-    for i in 1:n
-        l = line(poly[mod1(i-1,n)], poly[i])
-        l *= 1.0 / polyeval(l, poly[mod1(i+1,n)])
-        push!(result, l)
-    end
-    result
-end
-
-affine_combine(p, x, q) = p * (1 - x) + q * x
-
-function vertices(poly, resolution)
-    n = length(poly)
-    lines = [(poly[mod1(i-1,n)], poly[i]) for i in 1:n]
-    center = [0.5, 0.5]
-    result = [center]
-    for j in 1:resolution
-        coeff = j / resolution
-        for k in 1:n, i in 0:j-1
-            lp = affine_combine(lines[k][1], i / j, lines[k][2])
-            push!(result, affine_combine(center, coeff, lp))
-        end
-    end
-    result
-end
-
-function triangles(n, resolution)
-    result = []
-    inner_start = 1
-    outer_vert = 2
-    for layer in 1:resolution
-        inner_vert = inner_start
-        outer_start = outer_vert
-        for side in 1:n
-            vert = 1
-            while true
-                next_vert = side == n && vert == layer ? outer_start : outer_vert + 1
-                push!(result, [inner_vert, outer_vert, next_vert])
-                outer_vert += 1
-                vert += 1
-                vert == layer + 1 && break
-                inner_next = side == n && vert == layer ? inner_start : inner_vert + 1
-                push!(result, [inner_vert, next_vert, inner_next])
-                inner_vert = inner_next
-            end
-        end
-        inner_start = outer_start
-    end
-    result
-end
 
 function generate_curves()
     n = sides
