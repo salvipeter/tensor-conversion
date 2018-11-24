@@ -6,7 +6,7 @@ using LinearAlgebra
 exponent = 2
 delta = 0.5
 
-const Real = BigFloat # Float64
+const Real = Float64 # BigFloat
 
 struct Poly2D
     n::Int
