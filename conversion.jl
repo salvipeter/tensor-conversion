@@ -278,7 +278,16 @@ function frombezier(d)
     result
 end
 
-tobezier(d) = frombezier(d) ^ -1
+function tobezier(d)            # = frombezier(d) ^ -1
+    result = zeros(Real, d + 1, d + 1)
+    for i in 0:d
+        for j in i:d
+            result[i+1,j+1] = binom(j, i)
+        end
+        result[i+1,:] /= binom(d, i)
+    end
+    result
+end
 
 function tobezier(coeff, d)
     C = tobezier(d)
