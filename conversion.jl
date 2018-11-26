@@ -1,3 +1,4 @@
+
 module TensorKato
 
 import Base: +, -, *, ^, zero, one, getindex, setindex!
@@ -320,12 +321,32 @@ end
 
 function evaltensor(surf, uv)
     d = size(surf, 1) - 1
-    bezier(k, x) = binom(d, k) * x ^ k * (1 - x) ^ (d - k)
+    bernstein(k, x) = binom(d, k) * x ^ k * (1 - x) ^ (d - k)
     result = [0, 0, 0, 0]
     for i in 0:d, j in 0:d
-        result += surf[i+1,j+1,:] * bezier(i, uv[1]) * bezier(j, uv[2])
+        result += surf[i+1,j+1,:] * bernstein(i, uv[1]) * bernstein(j, uv[2])
     end
     result[1:3] / result[4]
+end
+
+function bezier(ribbons)
+    d = ribbons.d
+    result = Array{Float64}(undef, d + 1, d + 1, 4)
+    center = d / 2
+    for i in 0:d, j in 0:d
+        if i < center
+            result[i+1,j+1,:] = [ribbons.cpts[3,d-j,i]; 1]
+        elseif i > center
+            result[i+1,j+1,:] = [ribbons.cpts[1,j,d-i]; 1]
+        elseif j < center
+            result[i+1,j+1,:] = [ribbons.cpts[0,i,j]; 1]
+        elseif j > center
+            result[i+1,j+1,:] = [ribbons.cpts[2,d-i,d-j]; 1]
+        else # i == j == center
+            result[i+1,j+1,:] = [ribbons.center; 1]
+        end
+    end
+    result
 end
 
 
@@ -379,6 +400,7 @@ const GBIndex = NTuple{3, Int}
 struct BezierPatch
     n :: Int
     d :: Int
+    center :: Point
     cpts :: Dict{GBIndex,Point}
 end
 
@@ -392,12 +414,12 @@ function read_ribbons(filename)
     local result
     open(filename) do f
         n, d = read_numbers(f, Int)
-        result = BezierPatch(n, d, Dict())
         l = Int(floor((d + 1) / 2))
         cp = 1 + Int(floor(d / 2))
         cp = n * cp * l + 1
         side, col, row = 0, 0, 0
-        readline(f)
+        center = read_numbers(f, Float64)
+        result = BezierPatch(n, d, center, Dict())
         for i in 1:cp-1
             if col >= d - row
                 side += 1
@@ -490,14 +512,14 @@ function write_surface(fn, surf, n, resolution, filename)
 end
 
 function write_ribbon(ribbons, filename, index, resolution)
-    bezier(n, k, x) = binomial(n, k) * x ^ k * (1 - x) ^ (n - k)
+    bernstein(n, k, x) = binomial(n, k) * x ^ k * (1 - x) ^ (n - k)
     samples = [[u, v] for u in range(0.0, stop=1.0, length=resolution)
                       for v in range(0.0, stop=1.0, length=resolution)]
     d = ribbons.d
     verts = map(samples) do p
         result = [0, 0, 0]
         for i in 0:d, j in 0:1
-            result += ribbons[index,i,j] * bezier(d, i, p[1]) * bezier(1, j, p[2])
+            result += ribbons[index,i,j] * bernstein(d, i, p[1]) * bernstein(1, j, p[2])
         end
         result
     end
@@ -516,6 +538,12 @@ end
 function test(filename, resolution = 15, surftype = :gregory)
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
+    if n == 4
+        surf = bezier(ribbons)
+        write_cnet(surf, "$filename-cnet.obj")
+        write_surface(evaltensor, surf, 0, resolution, "$filename.obj")
+        return
+    end
     surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
     tsurf = tensor(surf)
     write_frames(ribbons, "$filename-frames.obj")
