@@ -161,7 +161,7 @@ blend2(L, i) = prod(j -> L[j] ^ 2, setdiff(1:length(L), [mod1(i-1,length(L)), i]
 
 function gregory(ribbons)
     n, ds = ribbons.n, ribbons.d
-    n == 3 && return gregory3(ribbons)
+    n == 3 && return dgregory(ribbons)
     poly = regularpoly(n)
     L = normalized_lines(poly)
     function multiplier(on_0, on_d1)
@@ -210,8 +210,8 @@ function gregory(ribbons)
     (numerator, denominator)
 end
 
-function gregory3(ribbons)
-    n, ds = 3, ribbons.d
+function dgregory(ribbons)
+    n, ds = ribbons.n, ribbons.d
     poly = regularpoly(n)
     L = normalized_lines(poly)
     denominator = sum(i -> blend2(L, i), 1:n)
