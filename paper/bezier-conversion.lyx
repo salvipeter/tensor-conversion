@@ -96,9 +96,9 @@ into trimmed Bézier surfaces
 \end_layout
 
 \begin_layout Author
-submission #??
+ID: paper1011
 \begin_inset Note Note
-status collapsed
+status open
 
 \begin_layout Author
 \begin_inset Argument 1
@@ -201,35 +201,36 @@ Budapest University of Technology and Economics, Hungary
 \end_layout
 
 \begin_layout Abstract
-General topology free-form surfaces can be represented by a collection of
- multi-sided patches that interpolate a network of boundary curves with
- corresponding cross-derivatives.
- The genuine multi-sided representation is beneficial for shape definition
- and editing, but problems arise when these surfaces need to be exported
- into CAD/CAM systems that handle only standard, tensor product parametric
- surfaces.
- These patches can be approximated by trimmed tensor product surfaces, but
- then the trim curves are also approximate and -- in general -- these surfaces
- join each other only within prescribed tolerances.
+General topology free-form objects can be represented by a collection of
+ multi-sided patches interpolating a network of boundary curves with correspondi
+ng cross-derivatives.
+ Genuine multi-sided representations, such as transfinite interpolation
+ surfaces, are beneficial for shape definition and editing, but problems
+ arise when these patches need to be exported into CAD/CAM systems that
+ handle only standard, tensor product parametric surfaces.
+ The usual solution is to fit trimmed quadrilaterals over the multi-sided
+ patches, using approximated trim curves, which – in general – result in
+ surfaces joined only within some prescribed tolerance.
 \end_layout
 
 \begin_layout Abstract
-In this paper we propose an exact conversion method for multi-sided Gregory
- patches that are defined by Bézier ribbons.
- A collection of high-degree rational Bézier surfaces is computed, having
+In this paper we propose an exact conversion method for a variant of the
+ Gregory patch with polynomial boundaries into a CAD-compatible trimmed
+ surface.
+ Each patch becomes a trimmed, high-degree rational Bézier surface, having
  smooth (
 \begin_inset Formula $G^{1}$
 \end_inset
 
-), watertight connections along their trim curves, ready for standard downstream
+), watertight connections along its trim curves, ready for standard downstream
  applications.
 \end_layout
 
 \begin_layout Abstract
-We propose a scheme using implicit parameterization that simplifies conversion.
- We determine the rational degree of the tensor product Bézier patch obtained
- for various number of sides, and describe the special case for triangular
- patches.
+The exact conversion is facilitated by an implicit parameterization scheme.
+ We determine the rational degree of the tensor product Bézier patch as
+ a function of the degree and the number of sides, and describe the special
+ case of triangular patches.
  We also analyze how this type of conversion method works when the blending
  functions contain singular terms, such as in the multi-sided patch proposed
  by Katō.
@@ -466,7 +467,12 @@ Acknowledgements
 \end_layout
 
 \begin_layout Plain Layout
-OTKA, Boulder Graphics
+This work was supported by the Hungarian Scientific Research Fund (OTKA,
+ No.
+\begin_inset space \space{}
+\end_inset
+
+124727) and Boulder Graphics LLC.
 \end_layout
 
 \end_inset
