@@ -6,7 +6,7 @@
 %%
 %% elsarticle.dtx  (with options: `class')
 %% 
-%% Copyright 2007, 2008, 2009 Elsevier Ltd
+%% Copyright 2007-2018 Elsevier Ltd
 %% 
 %% This file is part of the 'Elsarticle Bundle'.
 %% -------------------------------------------
@@ -22,20 +22,24 @@
 %% given in the file `manifest.txt'.
 %% 
 %%
-%% $Id: elsarticle.dtx 19 2009-12-17 07:07:52Z rishi $
+%%
 %%
  \def\RCSfile{elsarticle}%
- \def\RCSversion{1.20b}%
- \def\RCSdate{2009/09/17}%
+ \def\RCSversion{3.0}%
+ \def\RCSdate{2018/06/08}%
  \def\@shortjnl{\relax}
- \def\@journal{Elsevier Ltd} \def\@company{Elsevier Ltd}
+ \def\@journal{Elsevier Ltd}
+ \def\@company{Elsevier Ltd}
  \def\@issn{000-0000}
  \def\@shortjid{elsarticle}
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{\@shortjid}[\RCSdate, \RCSversion: \@journal]
 \def\ABD{\AtBeginDocument}
 \newif\ifpreprint \preprintfalse
+\newif\ifnonatbib \nonatbibfalse
 \newif\iflongmktitle \longmktitlefalse
+\newif\ifnopreprintline \nopreprintlinefalse
+\newif\ifdoubleblind \doubleblindfalse
 
 \def\@blstr{1}
 \newdimen\@bls
@@ -54,11 +58,13 @@
 \DeclareOption{preprint}{\global\preprinttrue
   \gdef\@blstr{1}\xdef\jtype{0}%
    \AtBeginDocument{\@twosidefalse\@mparswitchfalse}}
+\DeclareOption{nopreprintline}{\global\nopreprintlinetrue}
 \DeclareOption{final}{\gdef\@blstr{1}\global\preprintfalse}
 \DeclareOption{review}{\global\preprinttrue\gdef\@blstr{1.5}}
 \DeclareOption{authoryear}{\xdef\@biboptions{round,authoryear}}
 \DeclareOption{number}{\xdef\@biboptions{numbers}}
 \DeclareOption{numbers}{\xdef\@biboptions{numbers}}
+\DeclareOption{nonatbib}{\global\nonatbibtrue}
 \DeclareOption{longtitle}{\global\longmktitletrue}
 \DeclareOption{5p}{\xdef\jtype{5}\global\preprintfalse
   \ExecuteOptions{twocolumn}}
@@ -73,36 +79,62 @@
   \let\iiint\relax
   \let\iiiint\relax
   \let\idotsint\relax
-  \let\openbox\relax}}{\RequirePackage{times}}}
-\ExecuteOptions{a4paper,10pt,oneside,onecolumn,number,preprint}
+  \let\openbox\relax}}{\AtEndOfClass{\RequirePackage{times}}}}
+
+\DeclareOption{endfloat}{\IfFileExists{endfloat.sty}
+   {\AtEndOfClass{\RequirePackage[markers]{endfloat}}}{}}
+\DeclareOption{endfloats}{\IfFileExists{endfloat.sty}
+   {\AtEndOfClass{\RequirePackage[markers]{endfloat}}}{}}
+\DeclareOption{numafflabel}
+   {\AtBeginDocument{\def\theaffn{\arabic{affn}}}} %*%
+\DeclareOption{lefttitle}
+   {\AtBeginDocument{\def\elsarticletitlealign{flushleft}}} %*%
+\DeclareOption{centertitle}
+   {\AtBeginDocument{\def\elsarticletitlealign{center}}} %*%
+\DeclareOption{reversenotenum}
+   {\AtBeginDocument{\def\theaffn{\arabic{affn}}
+    \def\thefnote{\alph{fnote}}}}
+\DeclareOption{doubleblind}{\doubleblindtrue}
+
+\ExecuteOptions{a4paper,10pt,oneside,onecolumn,number,preprint,centertitle}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions
 \LoadClass{article}
 \RequirePackage{graphicx}
 \let\comma\@empty
 \let\tnotesep\@empty
-\def\title#1{\gdef\@title{#1}}
 \let\@title\@empty
+
+\def\useelstitle{}
+
+\def\title#1{\g@addto@macro\@title{#1%
+       \global\let\tnoteref\@gobble}%
+       \g@addto@macro\useelstitle{#1}}
 
 \def\elsLabel#1{\@bsphack\protected@write\@auxout{}%
          {\string\Newlabel{#1}{\@currentlabel}}\@esphack}
 \def\Newlabel#1#2{\expandafter\xdef\csname X@#1\endcsname{#2}}
 
-\def\elsRef#1{\@ifundefined{X@#1}{0}{\csname X@#1\endcsname}%
-}
+\def\elsRef#1{\@ifundefined{X@#1}{0}{\csname X@#1\endcsname}}
 
-\def\tnotemark[#1]{\textsuperscript{\@for\@@tmark:=#1\do{%
-      \edef\tnotenum{\@ifundefined{X@\@@tmark}{1}{\elsRef{\@@tmark}}}%
-      \ifcase\tnotenum\or\ding{73}\or,\ding{73}\ding{73}\fi}}%
-}
 \let\@tnotemark\@empty
 
+\ifdoubleblind
+  \def\tnotemark[#1]{}
+\else
+  \def\tnotemark[#1]{\@for\mytmark:=#1\do{%
+       \expandafter\ifcase\csname X@\mytmark\endcsname\or$^{\star}$\or
+       $^{,\star\star}$\fi
+    }%
+}
+\fi
+
+\def\tnoteref#1{\tnotemark[{#1}]}
 \let\@tnotes\@empty
-\RequirePackage{pifont}
 \newcounter{tnote}
 \def\tnotetext[#1]#2{\g@addto@macro\@tnotes{%
-  \refstepcounter{tnote}\elsLabel{#1}%
-   \def\thefootnote{\ifcase\c@tnote\or\ding{73}\or\ding{73}\ding{73}\fi}%
+  \stepcounter{tnote}\elsLabel{#1}%
+    \def\thefootnote{\ifcase\c@tnote\or$\star$\or$\star\star$\fi}%
     \footnotetext{#2}}}
 
 \let\@nonumnotes\@empty
@@ -110,17 +142,20 @@
      \let\thefootnote\relax\footnotetext{#1}}}
 
 \newcounter{fnote}
+\def\thefnote{\arabic{fnote}}
 \def\fnmark[#1]{\let\comma\@empty
     \def\@fnmark{\@for\@@fnmark:=#1\do{%
     \edef\fnotenum{\@ifundefined{X@\@@fnmark}{1}{\elsRef{\@@fnmark}}}%
   \unskip\comma\fnotenum\let\comma,}}%
 }
 
+\def\fnref#1{\fnmark[#1]}
+
 \let\@fnotes\@empty\let\@fnmark\@empty
 \def\fntext[#1]#2{\g@addto@macro\@fnotes{%
-     \refstepcounter{fnote}\elsLabel{#1}%
-   \def\thefootnote{\thefnote}%
-   \global\setcounter{footnote}{\thefnote}%
+   \refstepcounter{fnote}\elsLabel{#1}%
+   \def\thefootnote{\c@fnote}%
+   \global\setcounter{footnote}{\c@fnote}%
    \footnotetext{#2}}}
 
 \def\cormark[#1]{\edef\cnotenum{\elsRef{#1}}%
@@ -141,14 +176,11 @@
     \edef\@corref{\ifcase\cnotenum\or
          $\ast$\or$\ast\ast$\fi\hskip-1pt}}
 
-\def\fnref#1{\fnmark[#1]}
-\def\tnoteref#1{\tnotemark[#1]}
-
 \def\resetTitleCounters{\c@cnote=0
    \c@fnote=0 \c@tnote=0 \c@footnote=0}
 
 \let\eadsep\@empty
-\let\@elseads\@empty
+\def\@elseads{}
 \let\@elsuads\@empty
 \let\@cormark\@empty
 \def\hashchar{\expandafter\@gobble\string\~}
@@ -156,36 +188,43 @@
 \def\lbracechar{\expandafter\@gobble\string\{}
 \def\rbracechar{\expandafter\@gobble\string\}}
 
-\def\ead{\@ifnextchar[{\@uad}{\@ead}}
-\gdef\@ead#1{\bgroup\def\_{\string\underscorechar\space}%
-  \def\{{\string\lbracechar\space}%
-   \def~{\hashchar\space}%
-   \def\}{\string\rbracechar\space}%
-   \edef\tmp{\the\@eadauthor}
+\gdef\ead{\@ifnextchar[{\@uad}{\@ead}}
+\gdef\@ead#1{\bgroup
+   \def\_{\underscorechar}%
+   \def\{{\lbracechar}%
+   \def~{\hashchar}%
+   \def\}{\rbracechar}%
+   \edef\tmp{\the\@eadauthor}%
    \immediate\write\@auxout{\string\emailauthor
      {#1}{\expandafter\strip@prefix\meaning\tmp}}%
-  \egroup
+   \egroup
 }
 \newcounter{ead}
 \gdef\emailauthor#1#2{\stepcounter{ead}%
      \g@addto@macro\@elseads{\raggedright%
-      \let\corref\@gobble
-      \eadsep\texttt{#1} (#2)\def\eadsep{\unskip,\space}}%
+      \let\corref\@gobble\def\@@tmp{#1}%
+      \eadsep{\ttfamily\expandafter\strip@prefix\meaning\@@tmp}
+      (#2)\def\eadsep{\unskip,\space}}%
 }
 \gdef\@uad[#1]#2{\bgroup
-  \def~{\string\hashchar\space}%
-  \def\_{\string\underscorechar\space}%
+   \def~{\hashchar}%
+   \def\_{\underscorechar}%
+   \def~{\hashchar}%
+   \def\}{\rbracechar}%
    \edef\tmp{\the\@eadauthor}
    \immediate\write\@auxout{\string\urlauthor
      {#2}{\expandafter\strip@prefix\meaning\tmp}}%
   \egroup
 }
-\def\urlauthor#1#2{\g@addto@macro\@elsuads{\let\corref\@gobble%
-     \raggedright\eadsep\texttt{#1}\space(#2)%
+\gdef\urlauthor#1#2{\g@addto@macro\@elsuads{\let\corref\@gobble%
+     \def\@@tmp{#1}\raggedright\eadsep
+     {\ttfamily\expandafter\strip@prefix\meaning\@@tmp}\space(#2)%
      \def\eadsep{\unskip,\space}}%
 }
 
 \def\elsauthors{}
+\def\useauthors{}
+
 \def\pprinttitle{}
 \let\authorsep\@empty
 \let\sep\@empty
@@ -205,7 +244,8 @@
     \def\authorsep{\unskip,\space}%
     \global\let\sep\@empty\global\let\@corref\@empty
     \global\let\@fnmark\@empty}%
-    \@eadauthor={#2}
+    \@eadauthor={#2}%
+    \g@addto@macro\useauthors{#2; }%
 }
 
 \def\@author#1{\g@addto@macro\elsauthors{\normalsize%
@@ -216,9 +256,16 @@
       }%
     \def\authorsep{\unskip,\space}%
     \global\let\@fnmark\@empty
-    \global\let\@corref\@empty
-    \global\let\sep\@empty}%
-    \@eadauthor={#1}
+    \global\let\@corref\@empty    \global\let\sep\@empty}%
+    \@eadauthor={#1}%
+    \g@addto@macro\useauthors{#1; }%
+}
+
+\AtBeginDocument{%
+  \@ifpackageloaded{hyperref}{%
+    \expandafter\gdef\csname Hy@title\endcsname{\useelstitle}%
+    \expandafter\gdef\csname Hy@author\endcsname{\useauthors}%
+   }{}
 }
 
 \def\elsaddress{}
@@ -268,13 +315,21 @@
     \def\authorsep{\par\vskip8pt}}}
 
 \newbox\absbox
+\let\@elsarticleabstitle\@empty %*%
+\def\abstracttitle#1{\gdef\@elsarticleabstitle{#1}} %*%
+\abstracttitle{Abstract} %*%
 \renewenvironment{abstract}{\global\setbox\absbox=\vbox\bgroup
   \hsize=\textwidth\def\baselinestretch{1}%
-  \noindent\unskip\textbf{Abstract}
+  \noindent\unskip\textbf{\@elsarticleabstitle} %*%
  \par\medskip\noindent\unskip\ignorespaces}
  {\egroup}
 
 \newbox\keybox
+\let\@elsarticlekwdtitle\@empty %*%
+\def\keywordtitle#1{\gdef\@elsarticlekwdtitle{#1}} %*%
+\def\keywordtitlesep#1{\gdef\@elsarticlekeywordtitlesep{#1}} %*%
+\keywordtitle{Keywords} %*%
+\keywordtitlesep{:\ }
 \def\keyword{%
   \def\sep{\unskip, }%
  \def\MSC{\@ifnextchar[{\@MSC}{\@MSC[2000]}}
@@ -284,7 +339,7 @@
   \global\setbox\keybox=\vbox\bgroup\hsize=\textwidth
   \normalsize\normalfont\def\baselinestretch{1}
   \parskip\z@
-  \noindent\textit{Keywords: }
+  \noindent\textit{\@elsarticlekwdtitle\@elsarticlekeywordtitlesep}
   \raggedright                         % Keywords are not justified.
   \ignorespaces}
 \def\endkeyword{\par \egroup}
@@ -294,7 +349,10 @@
 
 \def\printFirstPageNotes{%
   \iflongmktitle
-   \let\columnwidth=\textwidth\fi
+    \let\columnwidth=\textwidth
+  \fi
+\ifdoubleblind
+\else
   \ifx\@tnotes\@empty\else\@tnotes\fi
   \ifx\@nonumnotes\@empty\else\@nonumnotes\fi
   \ifx\@cornotes\@empty\else\@cornotes\fi
@@ -308,28 +366,49 @@
    \let\thefootnote\relax
    \footnotetext{\textit{URL:\space}%
      \@elsuads}\fi
+\fi
   \ifx\@fnotes\@empty\else\@fnotes\fi
   \iflongmktitle\if@twocolumn
    \let\columnwidth=\Columnwidth\fi\fi
 }
+
+%% Pushing text to begin on newpage %*%
+\def\newpage@after@title{title}
+\def\newpage@after@author{author}
+\def\newpage@after@abstract{abstract}
+\def\newpageafter#1%
+    {\gdef\@elsarticlenewpageafter{#1}}
 
 \long\def\pprintMaketitle{\clearpage
   \iflongmktitle\if@twocolumn\let\columnwidth=\textwidth\fi\fi
   \resetTitleCounters
   \def\baselinestretch{1}%
   \printFirstPageNotes
-  \begin{center}%
+  \begin{\elsarticletitlealign}%
  \thispagestyle{pprintTitle}%
    \def\baselinestretch{1}%
-    \Large\@title\par\vskip18pt
-    \normalsize\elsauthors\par\vskip10pt
-    \footnotesize\itshape\elsaddress\par\vskip36pt
+    \Large\@title\par\vskip18pt%
+    \ifx\@elsarticlenewpageafter\newpage@after@title% %*%
+      \newpage
+    \fi%
+    \ifdoubleblind
+      \vspace*{2pc}
+    \else
+      \normalsize\elsauthors\par\vskip10pt
+      \footnotesize\itshape\elsaddress\par\vskip36pt
+    \fi
+    \ifx\@elsarticlenewpageafter\newpage@after@author% %*%
+      \newpage
+    \fi%
     \hrule\vskip12pt
     \ifvoid\absbox\else\unvbox\absbox\par\vskip10pt\fi
     \ifvoid\keybox\else\unvbox\keybox\par\vskip10pt\fi
     \hrule\vskip12pt
-    \end{center}%
-  \gdef\thefootnote{\arabic{footnote}}%
+    \ifx\@elsarticlenewpageafter\newpage@after@abstract% %*%
+      \newpage
+    \fi%
+    \end{\elsarticletitlealign}%
+    \gdef\thefootnote{\arabic{footnote}}%
   }
 
 \def\printWarning{%
@@ -352,17 +431,21 @@
 \long\def\MaketitleBox{%
   \resetTitleCounters
   \def\baselinestretch{1}%
-  \begin{center}%
+  \begin{\elsarticletitlealign}%
    \def\baselinestretch{1}%
     \Large\@title\par\vskip18pt
+  \ifdoubleblind
+    \vspace*{2pc}
+  \else
     \normalsize\elsauthors\par\vskip10pt
     \footnotesize\itshape\elsaddress\par\vskip36pt
+  \fi
     \hrule\vskip12pt
     \ifvoid\absbox\else\unvbox\absbox\par\vskip10pt\fi
     \ifvoid\keybox\else\unvbox\keybox\par\vskip10pt\fi
     \hrule\vskip12pt
-    \end{center}%
-  }
+    \end{\elsarticletitlealign}%
+}
 
 \def\FNtext#1{\par\bgroup\footnotesize#1\egroup}
 \newdimen\space@left
@@ -370,6 +453,39 @@
              \typeout{#1}%
              \typeout{******************************}%
 }
+
+\def\titlespancalculator#1#2#3#4{%
+  % break count
+  \@tempcnta=#4\relax%
+  % pagebreakcount increment
+  \advance\@tempcnta by 1\relax%
+  % title page height
+  \@tempdima=#1\relax%
+  % Page height - title page notes height (only for first break)
+  % Page height - textheight (for remaining breaks)
+  % Page height - title page notes height
+  \@tempdimb=#2\relax%
+  % Remaining title page height
+  \advance\@tempdima -\the\@tempdimb%
+  % Checks if remaining title page
+  % height less than textheight
+  \ifdim\the\@tempdima>#3\relax%
+     \titlespancalculator%
+      {\the\@tempdima}{#3}{#3}{\the\@tempcnta}%Break again
+  \else%
+  % Save break count and exit.
+     \xdef\savetitlepagespan{\the\@tempcnta}%
+  \fi%
+}%
+
+\long\def\myfor#1#2#3{%
+  \@tempcnta=#1\relax%
+  \ifnum#1<#2\relax%
+    \advance\@tempcnta by 1\relax%
+    #3%
+    \myfor{\the\@tempcnta}{#2}{#3}%
+  \fi}
+
 \long\def\getSpaceLeft{%\global\@twocolumnfalse%
    \global\setbox0=\vbox{\hsize=\textwidth\MaketitleBox}%
    \global\setbox1=\vbox{\hsize=\textwidth
@@ -380,6 +496,9 @@
     \@tempdima=\vsize
     \advance\@tempdima-\noteheight
     \advance\@tempdima-1\baselineskip
+    \xdef\savefpageheight{\the\@tempdima}%
+    \setbox2=\vbox{\titlespancalculator{\titleheight}%
+       {\savefpageheight}{\textheight}{0}}%
 }
 
   \skip\footins=24pt
@@ -393,10 +512,19 @@
    \ifnum\jtype=1
     \def\maketitle{%
       \iflongmktitle\getSpaceLeft
+        \ifdim\noteheight>0pt%
+    \advance\@tempdima-1.35\baselineskip
+        \fi%
        \global\setbox\els@boxa=\vsplit0 to \@tempdima
        \box\els@boxa\par\resetTitleCounters
        \thispagestyle{pprintTitle}%
        \printFirstPageNotes
+       \ifnum\savetitlepagespan>1\relax%
+       \myfor{2}{\savetitlepagespan}{%
+       \global\setbox\els@boxb=\vsplit0 to \textheight%\@tempdima
+       \box\els@boxb}
+       \else%
+       \fi%
        \box0%
       \else
        \finalMaketitle\printFirstPageNotes
@@ -406,10 +534,19 @@
  \ifnum\jtype=5
     \def\maketitle{%
       \iflongmktitle\getSpaceLeft
+        \ifdim\noteheight>0pt%
+    \advance\@tempdima-1.35\baselineskip
+        \fi%
        \global\setbox\els@boxa=\vsplit0 to \@tempdima
        \box\els@boxa\par\resetTitleCounters
        \thispagestyle{pprintTitle}%
        \printFirstPageNotes
+       \ifnum\savetitlepagespan>1\relax%
+       \myfor{2}{\savetitlepagespan}{%
+       \global\setbox\els@boxb=\vsplit0 to \textheight%\@tempdima
+       \twocolumn[\box\els@boxb]}
+       \else%
+       \fi%
        \twocolumn[\box0]%\printFirstPageNotes
       \else
        \twocolumn[\finalMaketitle]\printFirstPageNotes
@@ -418,11 +555,20 @@
   \else
   \if@twocolumn
     \def\maketitle{%
-      \iflongmktitle\getSpaceLeft
+        \iflongmktitle\getSpaceLeft
+          \ifdim\noteheight>0pt%
+    \advance\@tempdima-1.35\baselineskip
+        \fi%
        \global\setbox\els@boxa=\vsplit0 to \@tempdima
        \box\els@boxa\par\resetTitleCounters
        \thispagestyle{pprintTitle}%
        \printFirstPageNotes
+       \ifnum\savetitlepagespan>1\relax%
+       \myfor{2}{\savetitlepagespan}{%
+       \global\setbox\els@boxb=\vsplit0 to \textheight%\@tempdima
+       \twocolumn[\box\els@boxb]}
+       \else%
+       \fi%
        \twocolumn[\box0]%
       \else
        \twocolumn[\finalMaketitle]\printFirstPageNotes
@@ -431,10 +577,19 @@
    \else
     \def\maketitle{%
       \iflongmktitle\getSpaceLeft
+        \ifdim\noteheight>0pt%
+    \advance\@tempdima-1.35\baselineskip
+        \fi%
        \global\setbox\els@boxa=\vsplit0 to \@tempdima
        \box\els@boxa\par\resetTitleCounters
        \thispagestyle{pprintTitle}%
        \printFirstPageNotes
+       \ifnum\savetitlepagespan>1\relax%
+       \myfor{2}{\savetitlepagespan}{%
+       \global\setbox\els@boxb=\vsplit0 to \textheight%\@tempdima
+       \box\els@boxb}
+       \else%
+       \fi%
        \box0%
      \else
        \finalMaketitle\printFirstPageNotes
@@ -444,12 +599,43 @@
   \fi
  \fi
 \fi
+
+\let\@elsarticlemyfooter\@empty
+\let\@elsarticlemyfooteralign\@empty
+\def\@elsarticlemyfooteralignleft{L}
+\def\@elsarticlemyfooteralignright{R}
+\def\@elsarticlemyfooteraligncenter{C}
+
+\def\myfooter[#1]#2 %*%
+      {\gdef\@elsarticlemyfooteralign{#1}
+       \gdef\@elsarticlemyfooter{#2}}
+
+\def\myfooterfont#1{\gdef\@myfooterfont{#1}}
+\myfooterfont{\footnotesize\itshape}
 \def\ps@pprintTitle{%
      \let\@oddhead\@empty
      \let\@evenhead\@empty
-     \def\@oddfoot{\footnotesize\itshape
-       Preprint submitted to \ifx\@journal\@empty Elsevier
-       \else\@journal\fi\hfill\today}%
+     \def\@oddfoot
+       {\hbox to \textwidth%
+        {\ifnopreprintline\relax\else
+        \@myfooterfont%
+         \ifx\@elsarticlemyfooteralign\@elsarticlemyfooteraligncenter%
+           \hfil\@elsarticlemyfooter\hfil%
+         \else%
+         \ifx\@elsarticlemyfooteralign\@elsarticlemyfooteralignleft%
+           \@elsarticlemyfooter\hfill{}%
+         \else%
+         \ifx\@elsarticlemyfooteralign\@elsarticlemyfooteralignright%
+           {}\hfill\@elsarticlemyfooter%
+         \else%
+               Preprint submitted to \ifx\@journal\@empty%
+                 Elsevier%
+            \else\@journal\fi\hfill\@date\fi%
+         \fi%
+         \fi%
+         \fi%
+         }
+       }%
      \let\@evenfoot\@oddfoot}
 \def\@seccntDot{.}
 \def\@seccntformat#1{\csname the#1\endcsname\@seccntDot\hskip 0.5em}
@@ -640,8 +826,9 @@
 
 \@ifundefined{@biboptions}{\xdef\@biboptions{numbers}}{}
 \InputIfFileExists{\jobname.spl}{}{}
-\RequirePackage[\@biboptions]{natbib}
-
+\ifnonatbib\relax\else
+  \RequirePackage[\@biboptions]{natbib}
+\fi
 \newwrite\splwrite
 \immediate\openout\splwrite=\jobname.spl
 \def\biboptions#1{\def\next{#1}\immediate\write\splwrite{%
@@ -649,7 +836,6 @@
     ,\expandafter\strip@prefix\meaning\next}}}
 
 \let\baselinestretch=\@blstr
-
 \ifnum\jtype=1
  \RequirePackage{geometry}
  \geometry{twoside,
@@ -781,29 +967,30 @@
 }}}
 %%
 %% Added for avoiding clash with cleveref.sty
-
 \@ifpackageloaded{cleveref}%
  {}
  {\def\tnotetext[#1]#2{\g@addto@macro\@tnotes{%
     \refstepcounter{tnote}%
     \immediate\write\@auxout{\string\Newlabel{#1}{\thetnote}}
-    \def\thefootnote{\ifcase\c@tnote\or\ding{73}\or\ding{73}\ding{73}\fi}%
+    \def\thefootnote{\ifcase\c@tnote\or$\star$\or$\star\star$\fi}%
     \footnotetext{#2}}}
 %%%
   \def\fntext[#1]#2{\g@addto@macro\@fnotes{%
     \refstepcounter{fnote}%
     \immediate\write\@auxout{\string\Newlabel{#1}{\thefnote}}
     \def\thefootnote{\thefnote}%
-    \global\setcounter{footnote}{\thefnote}%
+    \global\setcounter{footnote}{\c@fnote}%
     \footnotetext{#2}}}
 %%%
   \def\cortext[#1]#2{\g@addto@macro\@cornotes{%
     \refstepcounter{cnote}%
     \immediate\write\@auxout{\string\Newlabel{#1}{\thecnote}}
-    \def\thefootnote{\ifcase\thecnote\or$\ast$\or
+    \def\thefootnote{\ifcase\c@cnote\or$\ast$\or
     $\ast\ast$\fi}%
     \footnotetext{#2}}}
 }
+
+\def\textmarker#1#2{\textcolor{#1}{#2}}%*%
 \endinput
 %%
 %% End of file `elsarticle.cls'.

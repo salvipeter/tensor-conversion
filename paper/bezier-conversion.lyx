@@ -5,7 +5,16 @@
 \save_transient_properties true
 \origin unavailable
 \textclass elsarticle
-\options 3p,times
+\begin_preamble
+\usepackage{lineno}
+\modulolinenumbers[1]
+
+\usepackage[colorlinks=true,breaklinks=true,pdftex]{hyperref}
+\biboptions{authoryear}
+
+\journal{GMP 2019}
+\end_preamble
+\options 3p,final
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -79,23 +88,42 @@
 \begin_body
 
 \begin_layout Title
-Exact conversion of Gregory patches into trimmed Bézier surfaces
+Exact conversion of multi-sided transfinite patches
+\begin_inset Newline newline
+\end_inset
+
+into trimmed Bézier surfaces
 \end_layout
 
 \begin_layout Author
+submission #??
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Author
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Boulder
+\end_layout
+
+\end_inset
+
 Alyn Rockwood
-\begin_inset Formula $^{\dagger}$
-\end_inset
-
-
 \end_layout
 
 \begin_layout Author
-Péter Salvi
-\begin_inset Formula $^{\ddagger,}$
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+BME
+\end_layout
+
 \end_inset
 
-
+Péter Salvi
 \begin_inset ERT
 status open
 
@@ -111,12 +139,21 @@ corref{cor}
 
 \end_layout
 
+\begin_layout Email
+salvi@iit.bme.hu
+\end_layout
+
 \begin_layout Author
-Tamás Várady
-\begin_inset Formula $^{\ddagger}$
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+BME
+\end_layout
+
 \end_inset
 
-
+Tamás Várady
 \end_layout
 
 \begin_layout Corresponding author
@@ -129,30 +166,146 @@ cor
 
 \end_inset
 
-Corresponding author (salvi@iit.bme.hu)
+Corresponding author
 \end_layout
 
 \begin_layout Address
-\begin_inset Formula $^{\dagger}$
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Boulder
+\end_layout
+
 \end_inset
 
 Boulder Graphics LLC, USA
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Address
+\begin_inset Argument 1
+status open
 
-\begin_inset Formula $^{\ddagger}$
+\begin_layout Plain Layout
+BME
+\end_layout
+
 \end_inset
 
 Budapest University of Technology and Economics, Hungary
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Abstract
-Blabla
+General topology free-form surfaces can be represented by a collection of
+ multi-sided patches that interpolate a network of boundary curves with
+ corresponding cross-derivatives.
+ The genuine multi-sided representation is beneficial for shape definition
+ and editing, but problems arise when these surfaces need to be exported
+ into CAD/CAM systems that handle only standard, tensor product parametric
+ surfaces.
+ These patches can be approximated by trimmed tensor product surfaces, but
+ then the trim curves are also approximate and -- in general -- these surfaces
+ join each other only within prescribed tolerances.
+\end_layout
+
+\begin_layout Abstract
+In this paper we propose an exact conversion method for multi-sided Gregory
+ patches that are defined by Bézier ribbons.
+ A collection of high-degree rational Bézier surfaces is computed, having
+ smooth (
+\begin_inset Formula $G^{1}$
+\end_inset
+
+), watertight connections along their trim curves, ready for standard downstream
+ applications.
+\end_layout
+
+\begin_layout Abstract
+We propose a scheme using implicit parameterization that simplifies conversion.
+ We determine the rational degree of the tensor product Bézier patch obtained
+ for various number of sides, and describe the special case for triangular
+ patches.
+ We also analyze how this type of conversion method works when the blending
+ functions contain singular terms, such as in the multi-sided patch proposed
+ by Katō.
+ A few interesting examples conclude the paper.
 \end_layout
 
 \begin_layout Keywords
-Gregory patch, Bézier surface, trimmed surface, exact
+transfinite surfaces
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sep
+\end_layout
+
+\end_inset
+
+ Gregory patch
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sep
+\end_layout
+
+\end_inset
+
+ Bézier surfaces
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sep
+\end_layout
+
+\end_inset
+
+ trimmed surfaces
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sep
+\end_layout
+
+\end_inset
+
+ conversion
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+linenumbers
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -160,7 +313,7 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Blabla
+Blabla in 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Salvi:2014"
@@ -168,7 +321,12 @@ literal "false"
 
 \end_inset
 
-
+ We propose ...
+ 
+\emph on
+Rational Polynomial (RP) Gregory patches
+\emph default
+ that ...
 \end_layout
 
 \begin_layout Section
@@ -176,27 +334,23 @@ Previous work
 \end_layout
 
 \begin_layout Standard
-Blabla
+A list of important transfinite and control-point-based schemes….
+ 
+\end_layout
+
+\begin_layout Standard
+No publications are known that investigate the exact conversion problem,
+ approximate - vast literature on surface approximation - recent papers
+ Vaitkus-Varady (CAD, CADJ) 
+\end_layout
+
+\begin_layout Standard
+S-patch - alaposan átnézendő….
+ Warren patch - n=3,5,6 - Bézier háromszög alapú
 \end_layout
 
 \begin_layout Section
-Preliminaries
-\end_layout
-
-\begin_layout Standard
-Blabla
-\end_layout
-
-\begin_layout Subsection
-Gregory-patches
-\end_layout
-
-\begin_layout Standard
-Blabla
-\end_layout
-
-\begin_layout Subsection
-Basis conversion
+Gregory patches
 \end_layout
 
 \begin_layout Standard
@@ -204,14 +358,14 @@ Blabla
 \end_layout
 
 \begin_layout Section
-Exact trimmed surfaces
+RP-Gregory patches
 \end_layout
 
 \begin_layout Standard
 Blabla
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Triangular patches
 \end_layout
 
@@ -219,8 +373,76 @@ Triangular patches
 Blabla
 \end_layout
 
+\begin_layout Standard
+See also Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Low-degree-conversion"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Examples
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Subsection
+RP-Katō patch
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Subsection
+Evaluation & implementation
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Low-degree-conversion"
+
+\end_inset
+
+Low-degree conversion for 
+\begin_inset Formula $n>3$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Subsection
+Domain embedding
 \end_layout
 
 \begin_layout Standard
@@ -236,11 +458,20 @@ Blabla
 \end_layout
 
 \begin_layout Section*
+\begin_inset Note Note
+status open
+
+\begin_layout Section*
 Acknowledgements
 \end_layout
 
-\begin_layout Standard
-Blabla
+\begin_layout Plain Layout
+OTKA, Boulder Graphics
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -248,7 +479,7 @@ Blabla
 LatexCommand bibtex
 btprint "btPrintCited"
 bibfiles "sajat,cikkek"
-options "plain"
+options "model2-names"
 
 \end_inset
 

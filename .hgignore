@@ -5,3 +5,6 @@ syntax: glob
 *\#
 *.obj
 *.pdf
+*.orig
+*.gbp
+*.zip
