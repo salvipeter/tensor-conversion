@@ -67,7 +67,19 @@ zero(::Type{Poly2D}) = Poly2D(1, zeros(Real, 1, 1))
 
 one(::Type{Poly2D}) = Poly2D(1, ones(Real, 1, 1))
 
-regularpoly(n) = [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(0.0, length=n+1, stop=2pi)][1:n]
+"""
+    regularpoly(n)
+
+A regular `n`-gon on the inscribed circle of [0,1]x[0,1], consisting of an array of points.
+For `n = 4` it returns the whole [0,1]x[0,1] square.
+"""
+function regularpoly(n)
+    if n == 4
+        [[0., 0], [1, 0], [1, 1], [0, 1]]
+    else
+        [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(0.0, length=n+1, stop=2pi)][1:n]
+    end
+end
 
 function line(p, q)
     m = zeros(Real, 2, 2)
@@ -555,6 +567,88 @@ function test(filename, resolution = 15, surftype = :gregory)
     for i in 1:n
         write_ribbon(ribbons, "$filename-$i.obj", i - 1, resolution)
     end
+end
+
+
+# S-patch
+
+const Index = Vector{Int}
+
+struct SPatch
+    n :: Int
+    d :: Int
+    cpts :: Dict{Index,Point}
+end
+
+getindex(s::SPatch, si::Index) = s.cpts[si]
+setindex!(s::SPatch, p::Point, si::Index) = s.cpts[si] = p
+get!(s::SPatch, si::Index, p::Point) = get!(s.cpts, si, p)
+
+indices(n, d) = n == 1 ? [d] : [[i; si] for i in 0:d for si in indices(n - 1, d - i)]
+
+multinomial(si) = factorial(sum(si)) ÷ prod(map(factorial, si))
+
+multibernstein(si, bc) = prod(map(^, bc, si)) * Real(multinomial(si))
+
+function read_spatch(filename)
+    read_numbers(lst, numtype) = map(s -> parse(numtype, s), lst)
+    open(filename) do f
+        n, d = read_numbers(split(readline(f)), Int)
+        size = binom(n + d - 1, d)
+        result = SPatch(n, d, Dict())
+        for _ in 1:size
+            line = split(readline(f))
+            index = read_numbers(line[1:end-3], Int)
+            point = read_numbers(line[end-2:end], Float64)
+            result.cpts[index] = point
+        end
+        result
+    end
+end
+
+function spatch(surf)
+    n, d = surf.n, surf.d
+    poly = regularpoly(n)
+    L = normalized_lines(poly)
+    bc = [prod(j -> j == i || j == mod1(i - 1, n) ? one(Poly2D) : L[j], 1:n) for i in 1:n]
+    denominator = n <= 4 ? one(Poly2D) : sum(bc) ^ d
+    numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
+    for (i, q) in surf.cpts, c in 1:3
+        numerator[c] += multibernstein(i, bc) * q[c]
+    end
+    (numerator, denominator)
+end
+
+function domain_image(n, d, filename, scaling, resolution = 400)
+    poly = regularpoly(n)
+    L = normalized_lines(poly)
+    bc = [prod(j -> j == i || j == mod1(i - 1, n) ? one(Poly2D) : L[j], 1:n) for i in 1:n]
+    denominator = n <= 4 ? one(Poly2D) : sum(bc) ^ d
+    open(filename, "w") do f
+        println(f, "P3")
+        println(f, "$resolution $resolution")
+        println(f, "255")
+        for u in range(-1.0, stop = 2.0, length = resolution)
+            for v in range(-1.0, stop = 2.0, length = resolution)
+                x = polyeval(denominator, [u, v]) / scaling ^ d
+                c = if x < 0.0000001
+                    [0.,0,1]
+                else
+                    affine_combine([0.,1,0], x, [1.,0,0])
+                end
+                c = [max(min(Int(round(z * 255)), 255), 0) for z in c]
+                println(f, "$(c[1]) $(c[2]) $(c[3])")
+            end
+        end
+    end
+end
+
+function spatch_test(filename, resolution = 15)
+    surf = read_spatch("$filename.sp")
+    tsurf = tensor(spatch(surf))
+    write_cnet(tsurf, "$filename-spatch-tensor-cnet.obj")
+    write_surface(evaltensor, tsurf, surf.n, resolution, "$filename-spatch-tensor.obj")
+    write_surface(evaltensor, tsurf, 0, resolution, "$filename-spatch-tensor-full.obj")
 end
 
 end # module

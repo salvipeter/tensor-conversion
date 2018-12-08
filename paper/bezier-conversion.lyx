@@ -350,6 +350,45 @@ S-patch - alaposan átnézendő….
  Warren patch - n=3,5,6 - Bézier háromszög alapú
 \end_layout
 
+\begin_layout Standard
+S-patch:
+\end_layout
+
+\begin_layout Standard
+- elvileg megoldja a konverzios problemat, de a cikkben leirt modszer n
+ > 4 eseten meg kis fokszam mellett is tul magas komplexitasu (kicsit reszletezv
+e - szimplex-kompozicio segitsegevel atteres 4-oldalu S-patchre, onnan kozvetlen
+ keplet a tensor productra)
+\end_layout
+
+\begin_layout Standard
+- ld.
+ meg discussion
+\end_layout
+
+\begin_layout Standard
+Warren:
+\end_layout
+
+\begin_layout Standard
+- racionalis Bezier haromszog alapu, ami atalakithato azonos fokszamuva
+ (ld.
+ meg S-patch discussion)
+\end_layout
+
+\begin_layout Standard
+- csak n <= 6 -ra mukodik
+\end_layout
+
+\begin_layout Standard
+- kevesbe intuitiv kontroll, nehezebb a szomszedokhoz csatlakoztatni
+\end_layout
+
+\begin_layout Standard
+- a szingularitast hasznalja ki, amitol rosszabb lesz a kontrollhalo (ld.
+ meg Kato discussion)
+\end_layout
+
 \begin_layout Section
 Gregory patches
 \end_layout
@@ -414,6 +453,38 @@ RP-Katō patch
 
 \begin_layout Standard
 Blabla
+\end_layout
+
+\begin_layout Subsection
+S-patch
+\end_layout
+
+\begin_layout Standard
+Blabla
+\end_layout
+
+\begin_layout Standard
+- a modszerunk mukodik S-patchre is
+\end_layout
+
+\begin_layout Standard
+- 3- es 4-oldalura a melyseggel azonos fokszamu sima (nem racionalis) Bezier
+ patchet kapunk - a 4 nem tul izgalmas, de a 3-oldalura ez egy jo alternativa
+ lehet, foleg, hogy a Bezier haromszog eleg bevett
+\end_layout
+
+\begin_layout Standard
+- magasabb fokszamra d = melyseg * (n - 2), ami jobb, mint a Gregory, de
+ a patch hasznalata a sok kontrollpont miatt kevesbe kenyelmes
+\end_layout
+
+\begin_layout Standard
+- lehet transzfinitkent hasznalni (melyseg no 3-al) - ld KEPAF cikk
+\end_layout
+
+\begin_layout Standard
+- az S-patchbol eredo kontrollhalo kevesbe szep, mert a Wachspressnek vannak
+ szingularis pontjai a domainen kivul
 \end_layout
 
 \begin_layout Subsection
