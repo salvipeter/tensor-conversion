@@ -330,63 +330,176 @@ Rational Polynomial (RP) Gregory patches
  that ...
 \end_layout
 
+\begin_layout Standard
+Approximate fitting of trimmed tensor product surfaces raises several problems,
+ see e.g.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Vaitkus:2018"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Previous-work"
+
+\end_inset
+
 Previous work
 \end_layout
 
 \begin_layout Standard
-A list of important transfinite and control-point-based schemes….
+While multisided surfaces have a vast literature, only a few papers deal
+ with the problem of exact conversion.
+\end_layout
+
+\begin_layout Standard
+S-patches by
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Loop:1989"
+literal "false"
+
+\end_inset
+
+ give an 
+\begin_inset Formula $n$
+\end_inset
+
+-sided generalization of Bézier patches.
+ These are actually 
+\begin_inset Formula $(n-1)$
+\end_inset
+
+-dimensional Bézier simplexes composed with generalized barycentric coordinates
+ in Bézier simplex form.
+ It is shown in the paper that any regular S-patch of 
+\emph on
+depth
+\emph default
  
+\begin_inset Formula $d$
+\end_inset
+
+ can be converted into a 4-sided S-patch of depth 
+\begin_inset Formula $(n-2)d$
+\end_inset
+
+, which, in turn, can be converted into an 
+\begin_inset Formula $(n-2)d$
+\end_inset
+
+-degree tensor product rational Bézier patch.
+ For three-sided S-patches (Bézier triangles) and four-sided ones the barycentri
+c coordinates are polynomial and thus the resulting tensor product patch
+ is also a simple (non-rational) surface.
 \end_layout
 
 \begin_layout Standard
-No publications are known that investigate the exact conversion problem,
- approximate - vast literature on surface approximation - recent papers
- Vaitkus-Varady (CAD, CADJ) 
+The conversion between S-patches with different number of sides requires
+ the composition of two Bézier simplexes.
+ The blossoming algorithm for this, found in
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "DeRose:1988"
+literal "false"
+
+\end_inset
+
+, has a prohibitively high computational complexity even for relatively
+ low degrees.
+ A more efficient, but somewhat convoluted solution is presented in
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "DeRose:1993"
+literal "false"
+
+\end_inset
+
+.
+ Our approach can be applied to S-patches, as well, see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:S-patch"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-S-patch - alaposan átnézendő….
- Warren patch - n=3,5,6 - Bézier háromszög alapú
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Warren:1992"
+literal "false"
 
-\begin_layout Standard
-S-patch:
-\end_layout
+\end_inset
 
-\begin_layout Standard
-- elvileg megoldja a konverzios problemat, de a cikkben leirt modszer n
- > 4 eseten meg kis fokszam mellett is tul magas komplexitasu (kicsit reszletezv
-e - szimplex-kompozicio segitsegevel atteres 4-oldalu S-patchre, onnan kozvetlen
- keplet a tensor productra)
-\end_layout
+ defined five- and six-sided surfaces by ``cutting off'' corners of a rational
+ Bézier triangle.
+ It is a very interesting representation, which was later generalized by
+ the 
+\emph on
+toric patches
+\emph default
+ of
+\begin_inset space ~
+\end_inset
 
-\begin_layout Standard
-- ld.
- meg discussion
-\end_layout
 
-\begin_layout Standard
-Warren:
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Krasauskas:2002"
+literal "false"
 
-\begin_layout Standard
-- racionalis Bezier haromszog alapu, ami atalakithato azonos fokszamuva
- (ld.
- meg S-patch discussion)
-\end_layout
+\end_inset
 
-\begin_layout Standard
-- csak n <= 6 -ra mukodik
-\end_layout
+.
+ These are, however, asymmetric constructions, with less than intuitive
+ control, and continuity with adjacent patches is not straightforward.
+ Warren also gives an exact conversion method for his patches, see Section
+\begin_inset space ~
+\end_inset
 
-\begin_layout Standard
-- kevesbe intuitiv kontroll, nehezebb a szomszedokhoz csatlakoztatni
-\end_layout
 
-\begin_layout Standard
-- a szingularitast hasznalja ki, amitol rosszabb lesz a kontrollhalo (ld.
- meg Kato discussion)
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:S-patch"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -448,6 +561,12 @@ Blabla
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:RP-Katō-patch"
+
+\end_inset
+
 RP-Katō patch
 \end_layout
 
@@ -455,36 +574,198 @@ RP-Katō patch
 Blabla
 \end_layout
 
+\begin_layout Standard
+Note that while the original patch of
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Gregory:1986"
+literal "false"
+
+\end_inset
+
+ (jo hivatkozas???) has a singular term to account for twist incompatibilities,
+ our ribbon structure ensures compatible twists.
+\end_layout
+
 \begin_layout Subsection
-S-patch
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:S-patch"
+
+\end_inset
+
+S-patch & Warren's patch
 \end_layout
 
 \begin_layout Standard
-Blabla
+As mentioned in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Previous-work"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, our approach can be applied to S-patches, as well.
+ The Wachspress coordinates for regular domains can be expressed as
+\begin_inset Formula 
+\begin{equation}
+\lambda_{i}=\frac{D_{i-1,i}^{1}}{\sum_{k=1}^{n}D_{k-1,k}^{1}}=\frac{\prod_{j\neq i-1,i}L_{j}}{\sum_{k=1}^{n}\prod_{j\neq k-1,k}L_{j}}.\label{eq:Wachspress}
+\end{equation}
+
+\end_inset
+
+Note the similarity to the blending function of the RP Gregory patch.
+ Since the 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ functions are not squared, the resulting surface will be of a lower degree:
+ a depth 
+\begin_inset Formula $d$
+\end_inset
+
+ S-patch has the formula
+\begin_inset Formula 
+\begin{equation}
+S_{\mathrm{SPatch}}(\mathbf{\lambda})=\sum_{\mathbf{i}}P_{\mathbf{i}}B_{\mathbf{i}}^{d}(\mathbf{\lambda})=\sum_{\mathbf{i}}P_{\mathbf{i}}\binom{d}{\mathbf{i}}\prod_{j=1}^{n}\lambda_{j}^{i_{j}},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{i}$
+\end_inset
+
+ is a multi-index whose sum is 
+\begin_inset Formula $|\mathbf{i}|=d$
+\end_inset
+
+, and thus the patch itself is of degree 
+\begin_inset Formula $(n-2)d$
+\end_inset
+
+.
+ While this means that it has a lower degree, the authors still prefer the
+ RP Gregory patch, due to the following reasons.
 \end_layout
 
 \begin_layout Standard
-- a modszerunk mukodik S-patchre is
+
+\emph on
+Usability
+\emph default
+.
+ S-patches have a very large number of control points, e.g.
+\begin_inset space ~
+\end_inset
+
+a 6-sided quintic patch has 252, while a tensor product quintic Bézier surface
+ has only 36.
+ A practical solution may be to use the same kind of ribbon structure as
+ for RP Gregory patches, but this raises the depth by 3, see
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Salvi:2019:KEPAF"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-- 3- es 4-oldalura a melyseggel azonos fokszamu sima (nem racionalis) Bezier
- patchet kapunk - a 4 nem tul izgalmas, de a 3-oldalura ez egy jo alternativa
- lehet, foleg, hogy a Bezier haromszog eleg bevett
+
+\emph on
+Control net quality
+\emph default
+.
+ Since the 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ functions are not squared in Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Wachspress"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), the denominator can vanish.
+ Wachspress coordinates have singularities outside the domain, so the effect
+ seen in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:RP-Katō-patch"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ is less pronounced, but still perceivable, see Figure
+\begin_inset space ~
+\end_inset
+
+???.
 \end_layout
 
 \begin_layout Standard
-- magasabb fokszamra d = melyseg * (n - 2), ami jobb, mint a Gregory, de
- a patch hasznalata a sok kontrollpont miatt kevesbe kenyelmes
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Warren:1992"
+literal "false"
 
-\begin_layout Standard
-- lehet transzfinitkent hasznalni (melyseg no 3-al) - ld KEPAF cikk
-\end_layout
+\end_inset
 
-\begin_layout Standard
-- az S-patchbol eredo kontrollhalo kevesbe szep, mert a Wachspressnek vannak
- szingularis pontjai a domainen kivul
+ proposes an alternative conversion of Bézier triangles into tensor product
+ form: instead of embedding the triangular domain into the quadrilateral
+ one, he uses a singular deformation that results in a degenerate control
+ network:
+\begin_inset Formula 
+\begin{align}
+\hat{u} & =(1-u)v, & \hat{v} & =uv, & \hat{w} & =1-v.
+\end{align}
+
+\end_inset
+
+See also Figure
+\begin_inset space ~
+\end_inset
+
+???.
+ This control network may be preferable to those generated by the RP Gregory
+ patch or the S-patch.
+ Note, however, that this will 
+\emph on
+not 
+\emph default
+be a trimmed surface.
 \end_layout
 
 \begin_layout Subsection
