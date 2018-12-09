@@ -598,8 +598,8 @@ function read_spatch(filename)
         result = SPatch(n, d, Dict())
         for _ in 1:size
             line = split(readline(f))
-            index = read_numbers(line[1:end-3], Int)
-            point = read_numbers(line[end-2:end], Float64)
+            index = read_numbers(line[1:n], Int)
+            point = read_numbers(line[n+1:end], Float64)
             result.cpts[index] = point
         end
         result
@@ -612,35 +612,14 @@ function spatch(surf)
     L = normalized_lines(poly)
     bc = [prod(j -> j == i || j == mod1(i - 1, n) ? one(Poly2D) : L[j], 1:n) for i in 1:n]
     denominator = n <= 4 ? one(Poly2D) : sum(bc) ^ d
+    if length(iterate(surf.cpts)[1][2]) == 4
+        denominator *= sum(p -> multibernstein(p[1], bc) * p[2][4], collect(surf.cpts))
+    end
     numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
     for (i, q) in surf.cpts, c in 1:3
         numerator[c] += multibernstein(i, bc) * q[c]
     end
     (numerator, denominator)
-end
-
-function domain_image(n, d, filename, scaling, resolution = 400)
-    poly = regularpoly(n)
-    L = normalized_lines(poly)
-    bc = [prod(j -> j == i || j == mod1(i - 1, n) ? one(Poly2D) : L[j], 1:n) for i in 1:n]
-    denominator = n <= 4 ? one(Poly2D) : sum(bc) ^ d
-    open(filename, "w") do f
-        println(f, "P3")
-        println(f, "$resolution $resolution")
-        println(f, "255")
-        for u in range(-1.0, stop = 2.0, length = resolution)
-            for v in range(-1.0, stop = 2.0, length = resolution)
-                x = polyeval(denominator, [u, v]) / scaling ^ d
-                c = if x < 0.0000001
-                    [0.,0,1]
-                else
-                    affine_combine([0.,1,0], x, [1.,0,0])
-                end
-                c = [max(min(Int(round(z * 255)), 255), 0) for z in c]
-                println(f, "$(c[1]) $(c[2]) $(c[3])")
-            end
-        end
-    end
 end
 
 function spatch_test(filename, resolution = 15)
@@ -649,6 +628,34 @@ function spatch_test(filename, resolution = 15)
     write_cnet(tsurf, "$filename-spatch-tensor-cnet.obj")
     write_surface(evaltensor, tsurf, surf.n, resolution, "$filename-spatch-tensor.obj")
     write_surface(evaltensor, tsurf, 0, resolution, "$filename-spatch-tensor-full.obj")
+end
+
+
+# Warren's patch
+
+function warren(surf)
+    n, d = surf.n, surf.d
+    @assert n == 3 "Warren's patch works only on Bezier triangles"
+    u = Poly2D(2, [0. 1; 0 -1])
+    v = Poly2D(2, [0. 0; 0 1])
+    w = Poly2D(2, [1. -1; 0 0])
+    bc = [u, v, w]
+    denominator = one(Poly2D)
+    if length(iterate(surf.cpts)[1][2]) == 4
+        denominator *= sum(p -> multibernstein(p[1], bc) * p[2][4], collect(surf.cpts))
+    end
+    numerator = [zero(Poly2D), zero(Poly2D), zero(Poly2D)]
+    for (i, q) in surf.cpts, c in 1:3
+        numerator[c] += multibernstein(i, bc) * q[c]
+    end
+    (numerator, denominator)
+end
+
+function warren_test(filename, resolution = 15)
+    surf = read_spatch("$filename.sp")
+    tsurf = tensor(warren(surf))
+    write_cnet(tsurf, "$filename-warren-tensor-cnet.obj")
+    write_surface(evaltensor, tsurf, 0, resolution, "$filename-warren-tensor.obj")
 end
 
 end # module
