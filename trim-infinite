@@ -6,7 +6,7 @@ if [ $# != 1 ]; then
 fi
 
 LINES=$(grep -n 'NaN\|Inf' $1 | cut -d ':' -f 1)
-REGEXP="^l.* \($"
+REGEXP="^\(f\|l\).* \($"
 for i in $LINES; do
     REGEXP="$REGEXP\|$i"
 done
