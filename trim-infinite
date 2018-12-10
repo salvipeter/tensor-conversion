@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# != 1 ]; then
+    echo "Usage: $0 <mesh.obj>"
+    exit 1
+fi
+
+LINES=$(grep -n 'NaN\|Inf' $1 | cut -d ':' -f 1)
+REGEXP="^l.* \($"
+for i in $LINES; do
+    REGEXP="$REGEXP\|$i"
+done
+REGEXP="$REGEXP\)\($\| \)"
+
+sed -i.old "/$REGEXP/d" $1
+sed -i "/NaN\|Inf/c\v 0 0 0" $1
