@@ -1,0 +1,128 @@
+-*- mode: org -*-
+
+IGES document (pages 47, 52, 155, 196, 578)
+
+Start Section
+
+RP Gregory to tensor product rational Bezier patch conversion utility   S      1
+1H,,1H;,1H.,1H.,1H.,1H.,32,38,6,308,15,1H.,1.,2,1HMM,1,1.,              G      1
+15H20151128.162200,.1,5.,1H.,1H.,10,0,15H20151128.162200,1H.;           G      2
+
+Global Section
+|-------+---------+-----------------------------+--------------------|
+| Index | Value   | Description                 | Now                |
+|-------+---------+-----------------------------+--------------------|
+|     1 | String  | Parameter delimiter         | 1H,                |
+|     2 | String  | Record delimiter            | 1H;                |
+|     3 | String  | Product identification      | 1H.                |
+|     4 | String  | Filename                    | 1H.                |
+|     5 | String  | Native system ID            | 1H.                |
+|     6 | String  | Preprocessor version        | 1H.                |
+|     7 | Integer | # of integer binary bits    | 32/64              |
+|     8 | Integer | Float max. power            | 38                 |
+|     9 | Integer | Float significant digits    | 6                  |
+|    10 | Integer | Double max. power           | 308                |
+|    11 | Integer | Double significant digits   | 15                 |
+|    12 | String  | Product identification      | 1H.                |
+|    13 | Real    | Model space scale           | 1.                 |
+|    14 | Integer | Units flag                  | 2                  |
+|    15 | String  | Units name                  | 1HMM               |
+|    16 | Integer | Max. line weight gradations | 1                  |
+|    17 | Real    | Width of max. line weight   | 1.                 |
+|    18 | String  | Date & time                 | 15H20151128.162200 |
+|    19 | Real    | Minimum granularity         | .1                 |
+|    20 | Real    | Max. coordinate value       | 5.                 |
+|    21 | String  | Author name                 | 1H.                |
+|    22 | String  | Organization                | 1H.                |
+|    23 | Integer | Specification version flag  | 10                 |
+|    24 | Integer | Drafting standard flag      | 0                  |
+|    25 | String  | Date & time                 | 15H20151128.162200 |
+|    26 | String  | Application protocol        | 1H.                |
+|-------+---------+-----------------------------+--------------------|
+
+Directory Entry
+- each field is 8 characters, values right-justified
+- newline after 10 fields
+- blank fields can be used
+|-------+-----------+----------------------+------------------------|
+| Index | Value     | Description          |                    Now |
+|-------+-----------+----------------------+------------------------|
+|     1 | #         | Entity type number   |   128 [126 for curves] |
+|     2 | [link]    | Parameter Data       |               [line #] |
+|     3 | N/A       | Structure            |                      0 |
+|     4 | #, [link] | Line font pattern    |                      0 |
+|     5 | #, [link] | Level                |                      0 |
+|     6 | 0, [link] | View                 |                      0 |
+|     7 | 0, [link] | Xformation matrix    |                      0 |
+|     8 | 0, [link] | Label display        |                      0 |
+|     9 | ??????**  | Status number        |               00000000 |
+|    10 | D #       | Sequence number      |    D[dir.entry line #] |
+|    11 | #         | Entity type number   |   128 [126 for curves] |
+|    12 | #         | Line weight          |                      0 |
+|    13 | #, [link] | Color number         |                      0 |
+|    14 | #         | Parameter line count | [par.data line length] |
+|    15 | 0-9       | Form number          |                      0 |
+|    16 |           | Reserved             |                [blank] |
+|    17 |           | Reserved             |                [blank] |
+|    18 |           | Entity label         |                [blank] |
+|    19 | #         | Entity subscript     |                      0 |
+|    20 | D # + 1   | Sequence number      |    D[dir.entry line #] |
+|-------+-----------+----------------------+------------------------|
+
+Parameter Data
+
+Composite curve entity (102):
+
+NURBS surface (128):
+|----------------------+-------+--------------------------------------|
+|                Index | Value | Description                          |
+|----------------------+-------+--------------------------------------|
+|                    1 | K1    | # of U-controls - 1                  |
+|                    2 | K2    | # of V-controls - 1                  |
+|                    3 | M1    | U-degree                             |
+|                    4 | M2    | V-degree                             |
+|                    5 | PROP1 | 1 = U-closed                         |
+|                    6 | PROP2 | 1 = V-closed                         |
+|                    7 | PROP3 | 0 = Rational                         |
+|                    8 | PROP4 | 1 = U-periodic                       |
+|                    9 | PROP5 | 1 = V-periodic                       |
+|             10..10+A | S     | U-knots                              |
+|         11+A..11+A+B | T     | V-knots                              |
+|     12+A+B..11+A+B+C | W     | Weights [U in the inner loop]        |
+| 12+A+B+C..11+A+B+4*C | XYZ   | Control points [U in the inner loop] |
+|           12+A+B+4*C | U0    | U parameter interval start           |
+|           13+A+B+4*C | U1    | U parameter interval end             |
+|           14+A+B+4*C | V0    | V parameter interval start           |
+|           15+A+B+4*C | V1    | V parameter interval end             |
+|----------------------+-------+--------------------------------------|
+N1 = 1 + K1 - M1
+N2 = 1 + K2 - M2
+A = N1 + 2 * M1
+B = N2 + 2 * M2
+C = (1 + K1) * (1 + K2)
+
+NURBS curve (126):
+|--------------------+---------+---------------------------------|
+| Index              | Value   | Description                     |
+|--------------------+---------+---------------------------------|
+| 1                  | K       | # of controls - 1               |
+| 2                  | M       | degree                          |
+| 3                  | PROP1   | 1 = planar                      |
+| 4                  | PROP2   | 1 = closed                      |
+| 5                  | PROP3   | 0 = Rational                    |
+| 6                  | PROP4   | 1 = periodic                    |
+| 7..7+A             | T       | knots                           |
+| 8+A..8+A+K         | W       | Weights                         |
+| 9+A+K..11+A+4*K    | XYZ     | Control points                  |
+| 12+A+4*K           | V0      | parameter interval start        |
+| 13+A+4*K           | V1      | parameter interval end          |
+| 14+A+4*K..16+A+4*K | XYZNORM | unit normal (for planar curves) |
+|--------------------+---------+---------------------------------|
+
+Curve on a parametric surface entity (142)
+
+Trimmed surface (144)
+
+
+Terminate Section
+S   [line#]G   [line#]D    [line#]P    [line#]              T      1

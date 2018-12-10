@@ -544,6 +544,20 @@ function write_ribbon(ribbons, filename, index, resolution)
     writeOBJ(verts, tris, filename)
 end
 
+function write_bezier(surf, n, filename)
+    d = size(surf, 1) - 1
+    open(filename, "w") do f
+        println(f, "$n $d")
+        normalizer = maximum(surf[:,:,4])
+        for i in 0:d, j in 0:d
+            println(f, join(surf[i+1,j+1,:] / normalizer, " "))
+        end
+        for p in regularpoly(n)
+            println(f, join(p, " "))
+        end
+    end
+end
+
 
 # Test
 
@@ -562,6 +576,7 @@ function test(filename, resolution = 15, surftype = :gregory)
     write_surface(eval, surf, n, resolution, "$filename.obj")
     write_surface(eval, surf, 0, resolution, "$filename-full.obj")
     write_cnet(tsurf, "$filename-cnet.obj")
+    write_bezier(tsurf, n, "$filename.bzr")
     write_surface(evaltensor, tsurf, n, resolution, "$filename-tensor.obj")
     write_surface(evaltensor, tsurf, 0, resolution, "$filename-tensor-full.obj")
     for i in 1:n
