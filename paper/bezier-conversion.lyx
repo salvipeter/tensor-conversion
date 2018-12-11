@@ -201,24 +201,23 @@ Budapest University of Technology and Economics, Hungary
 \end_layout
 
 \begin_layout Abstract
-General topology free-form objects can be represented by a collection of
- multi-sided patches interpolating a network of boundary curves with correspondi
-ng cross-derivatives.
+General topological, free-form objects can be represented by a collection
+ of multi-sided patches interpolating a network of boundary curves with
+ corresponding cross-derivatives.
  Genuine multi-sided representations, such as ribbon-based surfaces, are
  beneficial for shape definition and editing, but problems arise when these
  patches need to be exported into CAD/CAM systems that handle only standard,
  tensor product parametric surfaces.
  The usual solution is to fit trimmed quadrilaterals over the multi-sided
- patches, using approximate trim curves, which – in general – result in
- surfaces connected only within some prescribed tolerance.
+ patches, using approximate trim curves, which, in general, result in surfaces
+ connected only within some prescribed tolerance.
 \end_layout
 
 \begin_layout Abstract
-In this paper we propose a simple conversion method for a variant of Gregory
- patches with polynomial boundary ribbons into an equivalent CAD-compatible
- trimmed surface.
- Each patch becomes a trimmed, high-degree rational Bézier surface, ensuring
- smooth (
+We propose a simple conversion method for a variant of Gregory patches with
+ polynomial boundary ribbons into an equivalent CAD-compatible trimmed surface.
+ Each patch becomes a trimmed, moderate-degree rational Bézier surface,
+ ensuring smooth (
 \begin_inset Formula $G^{1}$
 \end_inset
 
@@ -229,9 +228,9 @@ In this paper we propose a simple conversion method for a variant of Gregory
 \begin_layout Abstract
 The exact conversion is facilitated by an implicit parameterization scheme.
  We determine the rational degree of the tensor product Bézier patch as
- a function of the degree and the number of sides, and describe the special
- case of triangular patches.
- We also analyze how this type of conversion method works for other multi-sided
+ a function of the degree and the number of sides.
+ The special case of triangular patches is also described.
+ We analyze how this type of conversion method works for other multi-sided
  representations.
  A few interesting examples conclude the paper.
 \end_layout

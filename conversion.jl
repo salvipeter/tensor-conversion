@@ -145,10 +145,10 @@ function kato(ribbons)
             R = zero(Poly2D)
             for j in 0:ds
                 for k in 0:dh
-                    p = ribbons.cpts[i-1,j,k][c]
+                    p = ribbons[i-1,j,k][c]
                     if k == 1
                         # Scale ribbons
-                        p0 = ribbons.cpts[i-1,j,0][c]
+                        p0 = ribbons[i-1,j,0][c]
                         p = p0 + (p - p0) * ds
                     end
                     term = one(Poly2D) * p
@@ -197,8 +197,8 @@ function gregory(ribbons)
             function ribbon(i, i1, s, s1, h, h1)
                 R = zero(Poly2D)
                 for j in 0:ds
-                    p1 = ribbons.cpts[i-1,j,0][c]
-                    p2 = ribbons.cpts[i-1,j,1][c]
+                    p1 = ribbons[i-1,j,0][c]
+                    p2 = ribbons[i-1,j,1][c]
                     term = (h + h1) * p1 + h * (p2 - p1) * float(ds)
                     term *= s ^ j * s1 ^ (ds - j) * binom(ds, j)
                     R += term
@@ -207,10 +207,10 @@ function gregory(ribbons)
             end
             r1 = ribbon(im, i, L[imm], L[i], L[im], L[ip])
             r2 = ribbon(i, im, L[im], L[ip], L[i], L[imm])
-            corner = ribbons.cpts[i-1,0,0][c]
-            twist  = ribbons.cpts[i-1,1,1][c]
-            left   = ribbons.cpts[i-1,1,0][c]
-            right  = ribbons.cpts[i-1,0,1][c]
+            corner = ribbons[i-1,0,0][c]
+            twist  = ribbons[i-1,1,1][c]
+            left   = ribbons[i-1,1,0][c]
+            right  = ribbons[i-1,0,1][c]
             q = multiplier([], []) * corner +
                 L[im] * multiplier([], [i]) * float(ds) * (left - corner) +
                 L[i] * multiplier([], [im]) * float(ds) * (right - corner) +
@@ -234,8 +234,8 @@ function dgregory(ribbons)
             function ribbon(i, s, h)
                 R = zero(Poly2D)
                 for j in 0:ds
-                    p1 = ribbons.cpts[i-1,j,0][c]
-                    p2 = ribbons.cpts[i-1,j,1][c]
+                    p1 = ribbons[i-1,j,0][c]
+                    p2 = ribbons[i-1,j,1][c]
                     term = one(Poly2D) * p1 + h * (p2 - p1) * float(ds)
                     term *= s ^ j * (one(Poly2D) - s) ^ (ds - j) * binom(ds, j)
                     R += term
@@ -244,10 +244,10 @@ function dgregory(ribbons)
             end
             r1 = ribbon(im, one(Poly2D) - L[i], L[im])
             r2 = ribbon(i, L[im], L[i])
-            corner = ribbons.cpts[i-1,0,0][c]
-            twist  = ribbons.cpts[i-1,1,1][c]
-            left   = ribbons.cpts[i-1,1,0][c]
-            right  = ribbons.cpts[i-1,0,1][c]
+            corner = ribbons[i-1,0,0][c]
+            twist  = ribbons[i-1,1,1][c]
+            left   = ribbons[i-1,1,0][c]
+            right  = ribbons[i-1,0,1][c]
             q = one(Poly2D) * corner +
                 L[im] * float(ds) * (left - corner) +
                 L[i] * float(ds) * (right - corner) +
@@ -347,13 +347,13 @@ function bezier(ribbons)
     center = d / 2
     for i in 0:d, j in 0:d
         if i < center
-            result[i+1,j+1,:] = [ribbons.cpts[3,d-j,i]; 1]
+            result[i+1,j+1,:] = [ribbons[3,d-j,i]; 1]
         elseif i > center
-            result[i+1,j+1,:] = [ribbons.cpts[1,j,d-i]; 1]
+            result[i+1,j+1,:] = [ribbons[1,j,d-i]; 1]
         elseif j < center
-            result[i+1,j+1,:] = [ribbons.cpts[0,i,j]; 1]
+            result[i+1,j+1,:] = [ribbons[0,i,j]; 1]
         elseif j > center
-            result[i+1,j+1,:] = [ribbons.cpts[2,d-i,d-j]; 1]
+            result[i+1,j+1,:] = [ribbons[2,d-i,d-j]; 1]
         else # i == j == center
             result[i+1,j+1,:] = [ribbons.center; 1]
         end
@@ -544,16 +544,19 @@ function write_ribbon(ribbons, filename, index, resolution)
     writeOBJ(verts, tris, filename)
 end
 
-function write_bezier(surf, n, filename)
-    d = size(surf, 1) - 1
+function write_bezier(ribbons, surf, filename)
+    n, d, t = ribbons.n, ribbons.d, size(surf, 1) - 1
     open(filename, "w") do f
-        println(f, "$n $d")
+        println(f, "$n $d $t")
         normalizer = maximum(surf[:,:,4])
-        for i in 0:d, j in 0:d
+        for i in 0:t, j in 0:t
             println(f, join(surf[i+1,j+1,:] / normalizer, " "))
         end
         for p in regularpoly(n)
             println(f, join(p, " "))
+        end
+        for i in 0:n-1, j in 0:d
+            println(f, join(ribbons[i,j,0], " "))
         end
     end
 end
@@ -576,12 +579,19 @@ function test(filename, resolution = 15, surftype = :gregory)
     write_surface(eval, surf, n, resolution, "$filename.obj")
     write_surface(eval, surf, 0, resolution, "$filename-full.obj")
     write_cnet(tsurf, "$filename-cnet.obj")
-    write_bezier(tsurf, n, "$filename.bzr")
     write_surface(evaltensor, tsurf, n, resolution, "$filename-tensor.obj")
     write_surface(evaltensor, tsurf, 0, resolution, "$filename-tensor-full.obj")
     for i in 1:n
         write_ribbon(ribbons, "$filename-$i.obj", i - 1, resolution)
     end
+end
+
+function test_CAD(filename, surftype = :gregory)
+    ribbons = read_ribbons("$filename.gbp")
+    n = ribbons.n
+    surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
+    tsurf = tensor(surf)
+    write_bezier(ribbons, tsurf, "$filename.bzr")
 end
 
 
@@ -615,7 +625,7 @@ function read_spatch(filename)
             line = split(readline(f))
             index = read_numbers(line[1:n], Int)
             point = read_numbers(line[n+1:end], Float64)
-            result.cpts[index] = point
+            result[index] = point
         end
         result
     end
