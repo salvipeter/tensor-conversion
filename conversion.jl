@@ -683,4 +683,55 @@ function warren_test(filename, resolution = 15)
     write_surface(evaltensor, tsurf, 0, resolution, "$filename-warren-tensor.obj")
 end
 
+
+# Best rotation
+
+function rotatedpoly(n, x = 0.0)
+    [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(x, length=n+1, stop=2pi+x)][1:n]
+end
+
+function golden(f, xl, xh, iterations = 100, ɛ = 1.0e-7)
+    local x
+    ϕ = (1 + sqrt(5)) / 2
+    d = (ϕ - 1) * (xh - xl)
+    x1, x2 = xl + d, xh - d
+    f1, f2 = f(x1), f(x2)
+    for i = 1:iterations
+        if f1 < f2
+            x = x1
+            xl, x1, x2 = x2, x2 + (ϕ - 1) * (xh - x2), x1
+            f1, f2 = f(x1), f1
+        else
+            x = x2
+            xh, x1, x2 = x1, x2, x1 - (ϕ - 1) * (x1 - xl)
+            f1, f2 = f2, f(x2)
+        end
+        if x != 0 && (2 - ϕ) * abs((xh - xl) / x) < ɛ
+            break
+        end
+    end
+    x
+end
+
+function segment_point_distance(s1, s2, p)
+    d = p - s1
+    t = normalize(s2 - s1)
+    len = norm(s2 - s1)
+    x = dot(d, t)
+    x > len && return norm(s2 - p)
+    x < 0 && return norm(s1 - p)
+    norm(d - t * x)
+end
+
+function best_rotation(n)
+    square = regularpoly(4)
+    function f(x)
+        poly = rotatedpoly(n, x)
+        sum(1:n) do i
+            minimum([segment_point_distance(poly[i], poly[mod1(i+1,n)], p) for p in square]) ^ 2
+        end
+    end
+    golden(f, 0.0, pi / n)
+end
+
 end # module
