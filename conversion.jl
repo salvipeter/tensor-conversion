@@ -485,6 +485,30 @@ function write_frames(ribbons, filename)
     end
 end
 
+function write_contour(ribbons, filename, resolution = 100)
+    d = ribbons.d
+    bernstein(k, x) = binom(d, k) * x ^ k * (1 - x) ^ (d - k)
+    open(filename, "w") do f
+        for i in 1:ribbons.n
+            cpts = [ribbons[i-1,j,0] for j in 0:d]
+            for j in 1:resolution
+                u = (j - 1) / (resolution - 1)
+                p = [0., 0, 0]
+                for k in 0:d
+                    p += cpts[k+1] * bernstein(k, u)
+                end
+                println(f, "v " * join(p, " "))
+            end
+        end
+        for i in 1:ribbons.n
+            for j in 1:resolution-1
+                k = (i - 1) * resolution + j
+                println(f, "l $k $(k + 1)")
+            end
+        end
+    end
+end
+
 function write_cnet(surf, filename)
     d = size(surf, 1) - 1
     open(filename, "w") do f
