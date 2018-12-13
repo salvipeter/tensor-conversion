@@ -373,7 +373,8 @@ Previous work
 
 \begin_layout Standard
 While multisided surfaces have a vast literature, only a few papers deal
- with the problem of exact conversion.S-patches by
+ with the problem of exact conversion to tensor product form.
+ S-patches by
 \begin_inset space ~
 \end_inset
 
@@ -448,7 +449,7 @@ literal "false"
 
  is more efficient, but still computationally complex.
  The approach presented here is much simpler, and can be applied to S-patches,
- as well, see Section
+ as well, see further notes in Section
 \begin_inset space ~
 \end_inset
 
@@ -530,6 +531,44 @@ RP-Gregory patches
 \end_layout
 
 \begin_layout Standard
+In this section we describe the RP-Gregory surface representation.
+ It is based on the original idea of
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Charrot:1984"
+literal "false"
+
+\end_inset
+
+, and follows the ribbon-based construction in
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Salvi:2014"
+literal "false"
+
+\end_inset
+
+.
+ Our main contribution is the use of special parameter mappings and polynomial
+ boundary constraints, that makes it possible to formulate the patch as
+ a rational, tensor product Bézier surface.
+ In the rest of this section we will look at each constituent of a transfinite
+ interpolation patch, then we will explain the conversion process.
+\end_layout
+
+\begin_layout Subsection
+Domain & parameterization
+\end_layout
+
+\begin_layout Standard
 The 
 \begin_inset Formula $n$
 \end_inset
@@ -586,7 +625,7 @@ We also define two local parameterizations for each side: (i) the
 side parameter
 \emph default
  
-\begin_inset Formula $s_{i}$
+\begin_inset Formula $s_{i}(u,v)$
 \end_inset
 
  that changes linearly from 
@@ -614,7 +653,7 @@ side parameter
 distance parameter
 \emph default
  
-\begin_inset Formula $d_{i}$
+\begin_inset Formula $h_{i}(u,v)$
 \end_inset
 
  that vanishes on the 
@@ -628,11 +667,11 @@ distance parameter
 
 ???).
  We also require that 
-\begin_inset Formula $s_{i-1}=1$
+\begin_inset Formula $s_{i-1}(u,v)=1$
 \end_inset
 
  and 
-\begin_inset Formula $s_{i+1}=0$
+\begin_inset Formula $s_{i+1}(u,v)=0$
 \end_inset
 
  for points on the 
@@ -641,11 +680,11 @@ distance parameter
 
 -th side.
  In conventional Gregory patches 
-\begin_inset Formula $s_{i}$
+\begin_inset Formula $s_{i}(u,v)$
 \end_inset
 
  is the radial parameterization, and 
-\begin_inset Formula $d_{i}$
+\begin_inset Formula $h_{i}(u,v)$
 \end_inset
 
  is the Euclidean distance from the associated side.
@@ -655,7 +694,7 @@ distance parameter
 Since our aim is to create a rational polynomial representation, we need
  to express these parameter mappings in rational polynomial form.
  Let 
-\begin_inset Formula $L_{i}$
+\begin_inset Formula $L_{i}(u,v)$
 \end_inset
 
  denote the implicit line equation for the 
@@ -674,21 +713,31 @@ Since our aim is to create a rational polynomial representation, we need
 \begin_inset Formula $V_{i+1}$
 \end_inset
 
-.
- Note that this is a linear polynomial in 
-\begin_inset Formula $(u,v)$
+, i.e., the solution for the equation system
+\begin_inset Formula 
+\begin{align}
+L_{i}(u,v) & =Au+Bv+C, & L_{i}(V_{i-1}) & =L_{i}(V_{i})=0, & L_{i}(V_{i-2}) & =L_{i}(V_{i+1})=1.
+\end{align}
+
 \end_inset
 
-.
- We propose the local parameters
+We propose the local parameters
 \begin_inset Formula 
 \begin{equation}
-s_{i}=\frac{L_{i-1}}{L_{i-1}+L_{i+1}}\qquad\text{and}\qquad d_{i}=L_{i}.
+s_{i}(u,v)=\frac{L_{i-1}(u,v)}{L_{i-1}(u,v)+L_{i+1}(u,v)}\qquad\text{and}\qquad h_{i}(u,v)=L_{i}(u,v).\label{eq:parameters}
 \end{equation}
 
 \end_inset
 
+For ease of notation we will sometimes omit the 
+\begin_inset Formula $(u,v)$
+\end_inset
 
+ arguments below.
+\end_layout
+
+\begin_layout Subsection
+Boundary constraints
 \end_layout
 
 \begin_layout Standard
@@ -736,7 +785,7 @@ literal "false"
 ???):
 \begin_inset Formula 
 \begin{align}
-R_{i}(s,h) & =P_{i}(s)+h\cdot T_{i}(s), & P_{i}(s) & =\sum_{j=0}^{d}C_{j0}^{i}B_{j}^{d}(s), & T_{i}(s) & =\sum_{j=0}^{d}d(C_{j1}^{i}-C_{j0}^{i})B_{j}^{d}(s).
+R_{i}(t_{1},t_{2}) & =P_{i}(t_{1})+t_{2}\cdot D_{i}(t_{1}), & P_{i}(t_{1}) & =\sum_{j=0}^{d}C_{j0}^{i}B_{j}^{d}(t_{1}), & D_{i}(t_{1}) & =\sum_{j=0}^{d}d(C_{j1}^{i}-C_{j0}^{i})B_{j}^{d}(t_{1}).\label{eq:ribbons}
 \end{align}
 
 \end_inset
@@ -746,7 +795,7 @@ R_{i}(s,h) & =P_{i}(s)+h\cdot T_{i}(s), & P_{i}(s) & =\sum_{j=0}^{d}C_{j0}^{i}B_
 \end_inset
 
  is the boundary curve, and 
-\begin_inset Formula $T_{i}$
+\begin_inset Formula $D_{i}$
 \end_inset
 
  is the cross derivative function for the 
@@ -762,6 +811,10 @@ R_{i}(s,h) & =P_{i}(s)+h\cdot T_{i}(s), & P_{i}(s) & =\sum_{j=0}^{d}C_{j0}^{i}B_
  This construction trivially ensures compatible twist vectors.
 \end_layout
 
+\begin_layout Subsection
+Surface equation
+\end_layout
+
 \begin_layout Standard
 The patch itself is a blended sum of 
 \emph on
@@ -774,17 +827,12 @@ corner interpolants
 :
 \begin_inset Formula 
 \begin{equation}
-S(u,v)=\sum_{i=1}^{n}I_{i-1,i}(s_{i-1}(u,v),s_{i}(u,v))\Gamma_{i-1,i}(u,v).
+S(u,v)=\sum_{i=1}^{n}I_{i-1,i}(s_{i-1}(u,v),s_{i}(u,v))\Gamma_{i-1,i}(u,v).\label{eq:patch}
 \end{equation}
 
 \end_inset
 
-(For ease of notation we will omit the 
-\begin_inset Formula $(u,v)$
-\end_inset
-
- arguments below.) The individual interpolants are constructed from the ribbons
- and 
+The individual interpolants are constructed from the ribbons and 
 \emph on
 correction patches
 \emph default
@@ -792,7 +840,7 @@ correction patches
 \begin_inset Formula $Q_{i-1,i}$
 \end_inset
 
-:
+ as follows:
 \begin_inset Formula 
 \begin{align}
 I_{i-1,i}(s_{i-1},s_{i}) & =R_{i-1}(s_{i-1},s_{i})+R_{i}(s_{i},1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_{i}),\label{eq:s-corner}\\
@@ -802,6 +850,22 @@ Q_{i-1,i}(s_{i-1},s_{i}) & =C_{00}^{i}+s_{i}d(C_{10}^{i}-C_{00}^{i})+(1-s_{i-1})
 
 \end_inset
 
+Note that the same linear ribbon 
+\begin_inset Formula $R_{i}$
+\end_inset
+
+ is used with two different parameterizations: 
+\begin_inset Formula $R_{i}(s_{i+1},s_{i})$
+\end_inset
+
+ and 
+\begin_inset Formula $R_{i}(s_{i},1-s_{i-1})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 The blending function 
 \begin_inset Formula $\Gamma_{i-1,i}$
 \end_inset
@@ -811,14 +875,155 @@ The blending function
 \end_inset
 
  at the associated corner, and vanishes on all non-adjacent sides:
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
-\[
-\Gamma_{i-1,i}(u,v)=\frac{\prod_{j\neq i-1,i}d_{j}^{2}}{\sum_{k}\prod_{j\neq k-1,k}d_{j}^{2}}=:\frac{D_{i-1,i}^{2}}{\sum_{k}D_{k-1,k}^{2}}.
-\]
+\begin{equation}
+\Gamma_{i-1,i}(u,v)=\frac{H_{i-1,i}^{2}}{\sum_{k}H_{k-1,k}^{2}},\qquad\text{with}\ H_{I}^{k}=\prod_{j\notin I}h_{j}^{k}.
+\end{equation}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Surface equation as a rational polynomial in 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let us first look at the corner interpolant of Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:s-corner"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ It has three parts: two ribbons and a corner correction patch.
+ Since the 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+ functions are linear in 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+, we only need to express these as rational polynomials of 
+\begin_inset Formula $L_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The first ribbon is parameterized as 
+\begin_inset Formula $R_{i-1}(s_{i-1},s_{i})$
+\end_inset
+
+, which, using Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:ribbons"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), can be written as
+\begin_inset Formula 
+\begin{align}
+R_{i-1}(s_{i-1},s_{i}) & =\sum_{j=0}^{d}C_{j0}^{i-1}B_{j}^{d}(s_{i-1})+s_{i}\cdot\sum_{j=0}^{d}d(C_{j1}^{i-1}-C_{j0}^{i-1})B_{j}^{d}(s_{i-1})\nonumber \\
+ & =\sum_{j=0}^{d}\left[C_{j0}^{i-1}+s_{i}\cdot d(C_{j1}^{i-1}-C_{j0}^{i-1})\right]B_{j}^{d}(s_{i-1})\nonumber \\
+ & =\sum_{j=0}^{d}\left[C_{j0}^{i-1}+\frac{L_{i-1}}{L_{i-1}+L_{i+1}}\cdot d(C_{j1}^{i-1}-C_{j0}^{i-1})\right]\cdot\binom{d}{j}\left(\frac{L_{i-2}}{L_{i-2}+L_{i}}\right)^{j}\left(\frac{L_{i}}{L_{i-2}+L_{i}}\right)^{d-j}\nonumber \\
+ & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\sum_{j=0}^{d}\left[C_{j0}^{i-1}\mathscr{L}_{i}+L_{i-1}d(C_{j1}^{i-1}-C_{j0}^{i-1})\right]\cdot\binom{d}{j}L_{i-2}^{j}L_{i}^{d-j}\mathscr{L}_{i}^{d-1}\prod_{k\neq i-1}\mathscr{L}_{k}^{d},
+\end{align}
+
+\end_inset
+
+with the notation 
+\begin_inset Formula $\mathscr{L}_{i}=L_{i-1}+L_{i+1}$
+\end_inset
+
+.
+ Similarly the second ribbon is
+\begin_inset Formula 
+\begin{align}
+R_{i}(s_{i},1-s_{i-1}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\sum_{j=0}^{d}\left[C_{j0}^{i}\mathscr{L}_{i-1}+L_{i}d(C_{j1}^{i}-C_{j0}^{i})\right]\cdot\binom{d}{j}L_{i-1}^{j}L_{i+1}^{d-j}\mathscr{L}_{i-1}^{d-1}\prod_{k\neq i}\mathscr{L}_{k}^{d}.
+\end{align}
+
+\end_inset
+
+For the correction patch we get
+\begin_inset Formula 
+\begin{align}
+Q_{i-1,i}(s_{i-1},s_{i}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\left[C_{00}^{i}\mathscr{L}_{i-1}^{d}\mathscr{L}_{i}^{d}+L_{i-1}d(C_{10}^{i}-C_{00}^{i})\mathscr{L}_{i-1}^{d}\mathscr{L}_{i}^{d-1}+L_{i}d(C_{01}^{i}-C_{00}^{i})\mathscr{L}_{i-1}^{d-1}\mathscr{L}_{i}^{d}\right.\nonumber \\
+ & \qquad\qquad\quad\ \left.+L_{i-1}L_{i}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\mathscr{L}_{i-1}^{d-1}\mathscr{L}_{i}^{d-1}\right]\cdot\prod_{k\neq i-1,i}\mathscr{L}_{k}^{d}.
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since all of these equations have the same denominator, the expression
+\begin_inset Formula 
+\begin{equation}
+J_{i-1,i}=\prod_{j}\mathscr{L}_{j}^{d}\cdot I_{i-1,i}(s_{i-1},s_{i})=\prod_{j}\mathscr{L}_{j}^{d}\cdot\left[R_{i-1}(s_{i-1},s_{i})+R_{i}(s_{i},1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_{i})\right]
+\end{equation}
+
+\end_inset
+
+is polynomial.
+ Now Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:patch"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) can be written as
+\begin_inset Formula 
+\begin{equation}
+S(u,v)=\frac{1}{\sum_{i}H_{i-1,i}^{2}}\cdot\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\sum_{i=1}^{n}J_{i-1,i}\cdot H_{i-1,i}^{2},\label{eq:ronda-polinom}
+\end{equation}
+
+\end_inset
+
+which is a rational polynomial of degree 
+\begin_inset Formula $nd+2(n-2)$
+\end_inset
+
+ in 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -829,40 +1034,6 @@ name "subsec:Conversion-to-tensor"
 \end_inset
 
 Conversion to tensor product form
-\end_layout
-
-\begin_layout Standard
-Using simple algebraic transformations, the above equation for 
-\begin_inset Formula $S$
-\end_inset
-
- can be written as
-\size small
-
-\begin_inset Formula 
-\begin{align}
-S(u,v)= & \frac{1}{\sum_{i}D_{i-1,i}}\cdot\frac{1}{\prod_{i}(L_{i-1}+L_{i+1})^{d}}\cdot\nonumber \\
- & \sum_{i=1}^{n}\left(\left[\sum_{j=0}^{d}(C_{j0}^{i-1}+L_{i-1}(L_{i-1}+L_{i+1})^{d-1}d(C_{j1}^{i-1}-C_{j0}^{i-1}))\cdot\binom{d}{j}L_{i-2}^{j}L_{i}^{d-j}\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d}\right]\right.\nonumber \\
- & \ \,\quad+\left[\sum_{j=0}^{d}(C_{j0}^{i}+L_{i}(L_{i-2}+L_{i})^{d-1}d(C_{j1}^{i}-C_{j0}^{i}))\cdot\binom{d}{j}L_{i-1}^{j}L_{i+1}^{d-j}\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d}\right]\nonumber \\
- & \ \,\quad-\left[\prod_{k}(L_{k-1}+L_{k+1})^{d}C_{00}^{i}+L_{i-1}(L_{i-1}+L_{i+1})^{d-1}\prod_{k\neq i}(L_{k-1}+L_{k+1})^{d}d(C_{10}^{i}-C_{00}^{i})\right.\nonumber \\
- & \qquad\quad\ +L_{i}(L_{i-2}+L_{i})^{d-1}\prod_{k\neq i-1}(L_{k-1}+L_{k+1})^{d}d(C_{01}^{i}-C_{00}^{i})\nonumber \\
- & \qquad\quad\ +\left.\left.L_{i-1}(L_{i-1}+L_{i+1})^{d-1}L_{i}(L_{i-2}+L_{i})^{d-1}\cdot\prod_{k\neq i-1,i}(L_{k-1}+L_{k+1})^{d}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\right]\right)\nonumber \\
- & \qquad\cdot D_{i-1,i},\label{eq:ronda-polinom}
-\end{align}
-
-\end_inset
-
-
-\size default
-which is a rational polynomial of degree 
-\begin_inset Formula $nd+2(n-2)$
-\end_inset
-
- in 
-\begin_inset Formula $(u,v)$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -1012,15 +1183,21 @@ There are two constraints on the
 \end_inset
 
 -th side.
- The 
-\begin_inset Formula 
-\begin{equation}
-h_{i}=L_{i}\left(=d_{i}\right)
-\end{equation}
+ The definition in Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:parameters"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
- parameter satisfies these.
+) satisfies these.
  The patch equation becomes
 \begin_inset Formula 
 \begin{equation}
@@ -1032,11 +1209,11 @@ h_{i}=L_{i}\left(=d_{i}\right)
 which can be similarly transformed to the following form:
 \begin_inset Formula 
 \begin{align}
-\hat{S}(u,v)= & \frac{1}{\sum_{i}D_{i-1,i}(u,v)}\cdot\nonumber \\
+\hat{S}(u,v)= & \frac{1}{\sum_{i}H_{i-1,i}^{2}(u,v)}\cdot\nonumber \\
  & \sum_{i=1}^{n}\left(\left[\sum_{j=0}^{d}(C_{j0}^{i-1}+L_{i-1}d(C_{j1}^{i-1}-C_{j0}^{i-1}))\binom{d}{j}(1-L_{i})^{j}L_{i}^{d-j}\right]\right.\nonumber \\
  & \quad\ \,+\left[\sum_{j=0}^{d}(C_{j0}^{i}+L_{i}d(C_{j1}^{i}-C_{j0}^{i}))\binom{d}{j}L_{i-1}^{j}(1-L_{i-1})^{d-j}\right]\nonumber \\
  & \quad\ \ -\Biggl[C_{00}^{i}+L_{i-1}d(C_{10}^{i}-C_{00}^{i})+L_{i}d(C_{01}^{i}-C_{00}^{i})\nonumber \\
- & \qquad\quad\ +L_{i-1}L_{i}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\Biggr]\Biggr)\cdot D_{i-1,i}.
+ & \qquad\quad\ +L_{i-1}L_{i}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\Biggr]\Biggr)\cdot H_{i-1,i}^{2}.
 \end{align}
 
 \end_inset
@@ -1121,7 +1298,7 @@ S_{\mathrm{K}}(u,v)=\sum_{i=1}^{n}R_{i}(s_{i},h_{i})\Gamma_{i}(u,v),
 where
 \begin_inset Formula 
 \begin{equation}
-\Gamma_{i}^{p}(u,v)=\frac{D_{i}^{2}}{\sum_{k}D_{k}^{2}}=\frac{\prod_{j\neq i}d_{j}^{2}}{\sum_{k}\prod_{j\neq k}d_{j}^{2}}.
+\Gamma_{i}(u,v)=\frac{H_{i}^{2}}{\sum_{k}H_{k}^{2}}.
 \end{equation}
 
 \end_inset
@@ -1189,7 +1366,7 @@ noprefix "false"
  The Wachspress coordinates for regular domains can be expressed as
 \begin_inset Formula 
 \begin{equation}
-\lambda_{i}=\frac{D_{i-1,i}^{1}}{\sum_{k=1}^{n}D_{k-1,k}^{1}}=\frac{\prod_{j\neq i-1,i}L_{j}}{\sum_{k=1}^{n}\prod_{j\neq k-1,k}L_{j}}.\label{eq:Wachspress}
+\lambda_{i}=\frac{H_{i-1,i}^{1}}{\sum_{k=1}^{n}H_{k-1,k}^{1}}.\label{eq:Wachspress}
 \end{equation}
 
 \end_inset
