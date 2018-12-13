@@ -569,6 +569,217 @@ Domain & parameterization
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/domain.pdf
+	display false
+	width 33text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Domain-notations"
+
+\end_inset
+
+Notations in the domain
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "28text%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/s-params.pdf
+	display false
+	width 100text%
+
+\end_inset
+
+
+\begin_inset VSpace 9mm
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Constant-si"
+
+\end_inset
+
+Constant 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ parameter lines
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "28text%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/h-params.pdf
+	display false
+	width 100text%
+
+\end_inset
+
+
+\begin_inset VSpace 9mm
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Constant-hi"
+
+\end_inset
+
+Constant 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ parameter lines
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Domain-and-parameterization"
+
+\end_inset
+
+Domain & parameterization.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
 The 
 \begin_inset Formula $n$
 \end_inset
@@ -594,7 +805,21 @@ The
 \begin_inset Formula $[0,1]\times[0,1]$
 \end_inset
 
- square (see also Section
+ square (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Domain-notations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and also Section
 \begin_inset space ~
 \end_inset
 
@@ -661,11 +886,35 @@ distance parameter
 \end_inset
 
 -th side, and increases monotonically as we get farther away from the side
- (see Figure
+ (see Figures
 \begin_inset space ~
 \end_inset
 
-???).
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Constant-si"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Constant-hi"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  We also require that 
 \begin_inset Formula $s_{i-1}(u,v)=1$
 \end_inset
@@ -741,6 +990,48 @@ Boundary constraints
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/ribbons-cp.png
+	display false
+	width 65text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Ribbons"
+
+\end_inset
+
+Boundary constraints given as ribbons.
+ Notations are shown for the control points of the bottom ribbon.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
 Gregory patches are generally specified by positional and cross-derivative
  functions along the boundary of the domain.
  Here we construct these functions by a series of 
@@ -782,7 +1073,17 @@ literal "false"
 \begin_inset space ~
 \end_inset
 
-???):
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Ribbons"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
 \begin_inset Formula 
 \begin{align}
 R_{i}(t_{1},t_{2}) & =P_{i}(t_{1})+t_{2}\cdot D_{i}(t_{1}), & P_{i}(t_{1}) & =\sum_{j=0}^{d}C_{j0}^{i}B_{j}^{d}(t_{1}), & D_{i}(t_{1}) & =\sum_{j=0}^{d}d(C_{j1}^{i}-C_{j0}^{i})B_{j}^{d}(t_{1}).\label{eq:ribbons}
