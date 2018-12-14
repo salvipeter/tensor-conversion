@@ -1007,7 +1007,11 @@ noprefix "false"
 \end_inset
 
 ).
- We also require that 
+ For points on the 
+\begin_inset Formula $i$
+\end_inset
+
+-th side, we also require that 
 \begin_inset Formula $s_{i-1}(u,v)=1$
 \end_inset
 
@@ -1015,11 +1019,7 @@ noprefix "false"
 \begin_inset Formula $s_{i+1}(u,v)=0$
 \end_inset
 
- for points on the 
-\begin_inset Formula $i$
-\end_inset
-
--th side.
+.
  
 \begin_inset Note Note
 status collapsed
@@ -1219,7 +1219,7 @@ R_{i}(t_{1},t_{2}) & =P_{i}(t_{1})+t_{2}\cdot D_{i}(t_{1}), & P_{i}(t_{1}) & =\s
 \end_inset
 
 ).
- This construction trivially ensures compatible twist vectors.
+ In this construction the twist vectors are always compatible.
 \end_layout
 
 \begin_layout Subsection
@@ -1227,7 +1227,7 @@ Surface equation
 \end_layout
 
 \begin_layout Standard
-The patch itself is a blended sum of 
+The patch is composed of a blended sum of 
 \emph on
 corner interpolants
 \emph default
@@ -1269,8 +1269,16 @@ Note that the same linear ribbon
 \begin_inset Formula $R_{i}(s_{i+1},s_{i})$
 \end_inset
 
+ in 
+\begin_inset Formula $I_{i,i+1}$
+\end_inset
+
  and 
 \begin_inset Formula $R_{i}(s_{i},1-s_{i-1})$
+\end_inset
+
+ in 
+\begin_inset Formula $I_{i-1,i}$
 \end_inset
 
 .
@@ -1375,7 +1383,7 @@ R_{i-1}(s_{i-1},s_{i}) & =\sum_{j=0}^{d}C_{j0}^{i-1}B_{j}^{d}(s_{i-1})+s_{i}\cdo
 
 \end_inset
 
-with the notation 
+using the notation 
 \begin_inset Formula $\mathscr{L}_{i}=L_{i-1}+L_{i+1}$
 \end_inset
 
