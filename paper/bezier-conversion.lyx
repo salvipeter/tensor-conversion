@@ -3027,12 +3027,8 @@ noprefix "false"
 
  shows the control net of the same patch with different rotations of the
  domain.
- For 3-sided patches it may be better to use a domain triangle that extends
- outside the unit square, see Figure
-\begin_inset space ~
-\end_inset
-
-???.
+ For 3-sided patches another option is to use a domain triangle that extends
+ outside the unit square.
 \begin_inset Note Note
 status collapsed
 
@@ -3215,7 +3211,43 @@ Conclusion & future work
 \end_layout
 
 \begin_layout Standard
-Blabla
+We have proposed a multi-sided patch formulation, the RP-Gregory patch.
+ It is defined as a combination of boundary ribbons in Bézier form, and
+ it also has a tensor product, rational Bézier representation.
+ In this way, one can take advantage of the native representation, when
+ the boundaries and the cross derivatives need to be explicitly defined,
+ and also the advantages of the standard representation for computing differenti
+al quantities and exporting multi-sided surface models accurately to CAD/CAM
+ systems for downstream applications.
+ This concept makes it possible to stitch together multi-sided trimmed patches
+ in a watertight manner having exact, smooth (
+\begin_inset Formula $G^{1}$
+\end_inset
+
+) connections.
+ The tensor product patches are supposed to be evaluated within the domain
+ of the multi-sided patch and in its vicinity; the patch far beyond the
+ domain may wiggle due to its pure algebraic definition.
+\end_layout
+
+\begin_layout Standard
+There are several questions for future research.
+ Finding an optimal orientation of the domain and analyzing the geometry
+ of the tensor product patches would be useful contributions.
+ The current construction allows ribbons with only 
+\begin_inset Formula $G^{1}$
+\end_inset
+
+ connections; in order to generalize the scheme for 
+\begin_inset Formula $G^{2}$
+\end_inset
+
+, we would need a more complex implicit parametrization and different patch
+ equations.
+ It is also an interesting question whether patches that have control points
+ in the interior as well could be converted to standard format in a similar
+ manner.
+ 
 \end_layout
 
 \begin_layout Section*
