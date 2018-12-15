@@ -5,7 +5,7 @@ import Base: +, -, *, ^, zero, one, getindex, setindex!
 using LinearAlgebra
 
 exponent = 2
-delta = 0.5
+ribbon_multiplier = 1.0
 
 const Real = Float64 # BigFloat
 
@@ -199,7 +199,8 @@ function gregory(ribbons)
                 for j in 0:ds
                     p1 = ribbons[i-1,j,0][c]
                     p2 = ribbons[i-1,j,1][c]
-                    term = (h + h1) * p1 + h * (p2 - p1) * float(ds)
+                    rmulti = j > 1 && j < ds - 1 ? ribbon_multiplier : 1.0
+                    term = (h + h1) * p1 + h * rmulti * (p2 - p1) * float(ds)
                     term *= s ^ j * s1 ^ (ds - j) * binom(ds, j)
                     R += term
                 end
@@ -236,7 +237,8 @@ function dgregory(ribbons)
                 for j in 0:ds
                     p1 = ribbons[i-1,j,0][c]
                     p2 = ribbons[i-1,j,1][c]
-                    term = one(Poly2D) * p1 + h * (p2 - p1) * float(ds)
+                    rmulti = j > 1 && j < ds - 1 ? ribbon_multiplier : 1.0
+                    term = one(Poly2D) * p1 + h * rmulti * (p2 - p1) * float(ds)
                     term *= s ^ j * (one(Poly2D) - s) ^ (ds - j) * binom(ds, j)
                     R += term
                 end
@@ -331,12 +333,27 @@ function tensor(kato)
     result
 end
 
+function bernstein_all(n, u)
+    coeff = [1.0]
+    for j in 1:n
+        saved = 0.0
+        for k in 1:j
+            tmp = coeff[k]
+            coeff[k] = saved + tmp * (1.0 - u)
+            saved = tmp * u
+        end
+        push!(coeff, saved)
+    end
+    coeff
+end
+
 function evaltensor(surf, uv)
     d = size(surf, 1) - 1
-    bernstein(k, x) = binom(d, k) * x ^ k * (1 - x) ^ (d - k)
+    coeff_u = bernstein_all(d, uv[1])
+    coeff_v = bernstein_all(d, uv[2])
     result = [0, 0, 0, 0]
     for i in 0:d, j in 0:d
-        result += surf[i+1,j+1,:] * bernstein(i, uv[1]) * bernstein(j, uv[2])
+        result += surf[i+1,j+1,:] * coeff_u[i+1] * coeff_v[j+1]
     end
     result[1:3] / result[4]
 end
@@ -487,15 +504,15 @@ end
 
 function write_contour(ribbons, filename, resolution = 100)
     d = ribbons.d
-    bernstein(k, x) = binom(d, k) * x ^ k * (1 - x) ^ (d - k)
     open(filename, "w") do f
         for i in 1:ribbons.n
             cpts = [ribbons[i-1,j,0] for j in 0:d]
             for j in 1:resolution
                 u = (j - 1) / (resolution - 1)
+                coeff = bernstein_all(d, u)
                 p = [0., 0, 0]
                 for k in 0:d
-                    p += cpts[k+1] * bernstein(k, u)
+                    p += cpts[k+1] * coeff[k+1]
                 end
                 println(f, "v " * join(p, " "))
             end
@@ -548,14 +565,15 @@ function write_surface(fn, surf, n, resolution, filename)
 end
 
 function write_ribbon(ribbons, filename, index, resolution)
-    bernstein(n, k, x) = binomial(n, k) * x ^ k * (1 - x) ^ (n - k)
+    d = ribbons.d
     samples = [[u, v] for u in range(0.0, stop=1.0, length=resolution)
                       for v in range(0.0, stop=1.0, length=resolution)]
-    d = ribbons.d
     verts = map(samples) do p
+        coeff_u = bernstein_all(d, p[1])
+        coeff_v = bernstein_all(d, p[2])
         result = [0, 0, 0]
         for i in 0:d, j in 0:1
-            result += ribbons[index,i,j] * bernstein(d, i, p[1]) * bernstein(1, j, p[2])
+            result += ribbons[index,i,j] * coeff_u[i+1] * coeff_v[j+1]
         end
         result
     end
@@ -588,7 +606,8 @@ end
 
 # Test
 
-function test(filename, resolution = 15, surftype = :gregory)
+function test(filename, resolution = 15, surftype = :gregory; multiplier = 1.0)
+    @assert multiplier == 1.0 || surftype == :gregory "Multipliers are only for Gregory patches"
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
     if n == 4
@@ -597,7 +616,9 @@ function test(filename, resolution = 15, surftype = :gregory)
         write_surface(evaltensor, surf, 0, resolution, "$filename.obj")
         return
     end
+    global ribbon_multiplier = multiplier
     surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
+    ribbon_multiplier = 1.0
     tsurf = tensor(surf)
     write_frames(ribbons, "$filename-frames.obj")
     write_surface(eval, surf, n, resolution, "$filename.obj")
