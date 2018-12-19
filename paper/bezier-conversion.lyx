@@ -101,6 +101,10 @@ ID: paper1011
 status open
 
 \begin_layout Author
+LOOP->KEPAF CIKK HIVATKOZAS
+\end_layout
+
+\begin_layout Author
 \begin_inset Argument 1
 status open
 
@@ -227,8 +231,8 @@ We propose a simple conversion method for a variant of Gregory patches with
 
 \begin_layout Abstract
 The exact conversion is facilitated by an implicit parameterization scheme.
- We determine the rational degree of the tensor product Bézier patch as
- a function of the degree and the number of sides.
+ The rational degree of the tensor product Bézier patch is a function of
+ the degree and the number of sides.
  The special case of triangular patches is also described.
  We analyze how this type of conversion method works for other multi-sided
  representations.
@@ -322,24 +326,25 @@ The representation of arbitrary topology free-form surfaces is still an
 \end_layout
 
 \begin_layout Standard
-The majority of genuine multi-sided patch schemes facilitates design by
- explicitly defined boundaries and cross-derivatives determining smooth
- blends for the interior of the patches.
+Most genuine multi-sided patch schemes are based on explicitly defined boundarie
+s and cross-derivatives determining smooth blends for the interior of the
+ patches.
  These are described by fairly complex mathematical equations often containing
  square roots and trigonometric formulae, thus they are generally not readily
- convertible to standard tensor-product form.
+ convertible to standard tensor product form.
  This may lead to difficulties when accurate computations are needed, such
  as exact directional derivatives, normal vectors or surface curvatures.
  It is also a crucial problem to export these models into external CAD/CAM
- systems that typically can only handle surfaces in standard tensor-product
+ systems that typically can only handle surfaces in standard tensor product
  form.
 \end_layout
 
 \begin_layout Standard
-General topology surface models can be approximated for export.
- One option is to stitch trimmed tensor-product surfaces together, but then
- the patches will be connected only in a numerical sense along their common
- boundaries.
+The most widespread solution for exporting arbitrary topology surface models
+ is approximation.
+ One option is to produce trimmed tensor product surfaces, but then the
+ patches will be stitched together only in a numerical sense along their
+ common boundaries.
 \begin_inset Note Note
 status collapsed
 
@@ -394,10 +399,9 @@ Rational Polynomial (RP) Gregory patch
 \begin_inset Formula $n$
 \end_inset
 
--sided patches, and has an exact CAD-compatible, tensor-product representation,
+-sided patches, and has an exact CAD-compatible, tensor product representation,
  as well.
- This patch formulation is an enhanced version of the classical surface
- of
+ This patch formulation has been developed from the classical surface of
 \begin_inset space ~
 \end_inset
 
@@ -425,7 +429,7 @@ s of the domain parameters
 \begin_layout Standard
 As a result, we obtain an editable, general topology patchwork of watertight
  trimmed surfaces.
- The patch boundaries are straight lines in the domain of the tensor-product
+ The patch boundaries are straight lines in the domain of the tensor product
  surfaces; but in 3D they represent Bézier curves, exactly shared by the
  two adjacent patches.
  The patchwork can be directly edited in the multi-sided format, preserving
@@ -438,16 +442,16 @@ As a result, we obtain an editable, general topology patchwork of watertight
 The tensor product patch is unambigously defined.
  It reproduces the multi-sided surface within the boundary loop, while its
  behavior outside the original domain is determined solely by algebraic
- constraints coming from the interior.
+ constraints which may lead to oscillations.
 \end_layout
 
 \begin_layout Standard
 In this paper we describe the underlying patch formulation and the algebra
  of the conversion method.
- The rational polynomial degree of the tensor-product patches for various
+ The rational polynomial degree of the tensor product patches for various
  ribbon configurations is also determined.
- We present the efficiency of the computations and show a few examples.
- We compare our work with alternative multi-sided patches, and discuss the
+ We discuss the efficiency of the computations and show a few examples.
+ We compare our work with alternative multi-sided patches, and analyze the
  pros and cons of the suggested solution.
 \end_layout
 
@@ -462,7 +466,7 @@ Previous work
 \end_layout
 
 \begin_layout Standard
-While multisided surfaces have a vast literature, only a few papers deal
+While multi-sided surfaces have a vast literature, only a few papers deal
  with the problem of exact conversion to tensor product form.
  S-patches by
 \begin_inset space ~
@@ -487,7 +491,7 @@ literal "false"
 
 -dimensional Bézier simplexes composed with generalized barycentric coordinates
  in Bézier simplex form.
- It is shown in the paper that any regular S-patch of 
+ In the above paper it is shown that any regular S-patch of 
 \emph on
 depth
 \emph default
@@ -601,7 +605,7 @@ base points
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:S-patch"
+reference "subsec:Warren's-multi-sided-patches"
 plural "false"
 caps "false"
 noprefix "false"
@@ -612,8 +616,10 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-We consider our proposed solution simple and practical in view of both the
- input and the related computations.
+The papers cited above did not comment on the computational problems of
+ exact conversion, and showed no actual tensor product control grids.
+ We consider our proposed solution simple and practical in view of both
+ the input and the related computations.
 \end_layout
 
 \begin_layout Section
@@ -640,7 +646,7 @@ literal "false"
 
 \end_inset
 
-, and follows the ribbon-based construction in
+, and follows the ribbon-based construction of
 \begin_inset space ~
 \end_inset
 
@@ -767,10 +773,14 @@ name "fig:Constant-si"
 \end_inset
 
 Constant 
+\begin_inset Formula $s_{i-1}$
+\end_inset
+
+, 
 \begin_inset Formula $s_{i}$
 \end_inset
 
- parameter lines
+ isolines
 \end_layout
 
 \end_inset
@@ -840,10 +850,14 @@ name "fig:Constant-hi"
 \end_inset
 
 Constant 
+\begin_inset Formula $h_{i-1}$
+\end_inset
+
+, 
 \begin_inset Formula $h_{i}$
 \end_inset
 
- parameter lines
+ isolines
 \end_layout
 
 \end_inset
@@ -928,7 +942,7 @@ noprefix "false"
 ):
 \begin_inset Formula 
 \begin{equation}
-V_{i}=\left(\frac{1}{2}+\frac{1}{2}\cos(2\pi\cdot i/n),\frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right).
+V_{i}=\left(\frac{1}{2}+\frac{1}{2}\cos(2\pi\cdot i/n),\frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right).\label{eq:domain}
 \end{equation}
 
 \end_inset
@@ -1088,11 +1102,11 @@ s_{i}(u,v)=\frac{L_{i-1}(u,v)}{L_{i-1}(u,v)+L_{i+1}(u,v)}\qquad\text{and}\qquad 
 
 \end_inset
 
-For ease of notation we will sometimes omit the 
+For ease of notation we may omit the 
 \begin_inset Formula $(u,v)$
 \end_inset
 
- arguments below.
+ arguments from now on.
 \end_layout
 
 \begin_layout Subsection
@@ -1243,9 +1257,10 @@ S(u,v)=\sum_{i=1}^{n}I_{i-1,i}(s_{i-1}(u,v),s_{i}(u,v))\Gamma_{i-1,i}(u,v).\labe
 
 \end_inset
 
-The individual interpolants are constructed from the ribbons and 
+Each individual interpolant is constructed from two adjacent ribbons and
+ a 
 \emph on
-correction patches
+correction patch
 \emph default
  
 \begin_inset Formula $Q_{i-1,i}$
@@ -1265,8 +1280,8 @@ Note that the same linear ribbon
 \begin_inset Formula $R_{i}$
 \end_inset
 
- is used with two different parameterizations: 
-\begin_inset Formula $R_{i}(s_{i+1},s_{i})$
+ occurs with two different parameterizations: 
+\begin_inset Formula $R_{i}(s_{i},s_{i+1})$
 \end_inset
 
  in 
@@ -1388,7 +1403,7 @@ using the notation
 \end_inset
 
 .
- Similarly the second ribbon is
+ Similarly, the second ribbon is
 \begin_inset Formula 
 \begin{align}
 R_{i}(s_{i},1-s_{i-1}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\sum_{j=0}^{d}\left[C_{j0}^{i}\mathscr{L}_{i-1}+L_{i}d(C_{j1}^{i}-C_{j0}^{i})\right]\cdot\binom{d}{j}L_{i-1}^{j}L_{i+1}^{d-j}\mathscr{L}_{i-1}^{d-1}\prod_{k\neq i-1,i}\mathscr{L}_{k}^{d}.
@@ -1399,8 +1414,8 @@ R_{i}(s_{i},1-s_{i-1}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\sum_{j=0}^
 For the correction patch we get
 \begin_inset Formula 
 \begin{align}
-Q_{i-1,i}(s_{i-1},s_{i}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\left[C_{00}^{i}\mathscr{L}_{i-1}^{d}\mathscr{L}_{i}^{d}+L_{i-1}d(C_{10}^{i}-C_{00}^{i})\mathscr{L}_{i-1}^{d}\mathscr{L}_{i}^{d-1}+L_{i}d(C_{01}^{i}-C_{00}^{i})\mathscr{L}_{i-1}^{d-1}\mathscr{L}_{i}^{d}\right.\nonumber \\
- & \qquad\qquad\quad\ \left.+L_{i-1}L_{i}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\mathscr{L}_{i-1}^{d-1}\mathscr{L}_{i}^{d-1}\right]\cdot\prod_{k\neq i-1,i}\mathscr{L}_{k}^{d}.
+Q_{i-1,i}(s_{i-1},s_{i}) & =\frac{1}{\prod_{j}\mathscr{L}_{j}^{d}}\cdot\left[C_{00}^{i}\mathscr{L}_{i-1}\mathscr{L}_{i}+L_{i-1}d(C_{10}^{i}-C_{00}^{i})\mathscr{L}_{i-1}+L_{i}d(C_{01}^{i}-C_{00}^{i})\mathscr{L}_{i}\right.\nonumber \\
+ & \qquad\qquad\quad\ \left.+L_{i-1}L_{i}d^{2}(C_{11}^{i}-C_{10}^{i}-C_{01}^{i}+C_{00}^{i})\right]\cdot\mathscr{L}_{i-1}^{d-1}\mathscr{L}_{i}^{d-1}\prod_{k\neq i-1,i}\mathscr{L}_{k}^{d}.
 \end{align}
 
 \end_inset
@@ -1609,11 +1624,7 @@ There are two constraints on the
 \begin_inset Formula $h_{i}=0$
 \end_inset
 
- for points on the 
-\begin_inset Formula $i$
-\end_inset
-
--th side.
+.
  The definition in Eq.
 \begin_inset space ~
 \end_inset
@@ -1711,7 +1722,7 @@ Examples
 
 \begin_layout Standard
 In this section we show two simple objects to illustrate the coexistence
- of the multi-sided and the trimmed tensor product representations.
+ of the multi-sided and the trimmed, tensor product representations.
 \end_layout
 
 \begin_layout Standard
@@ -1881,7 +1892,7 @@ name "fig:Trebol-model"
 
 \end_inset
 
-Trebol model (three 3-sided and one 6-sided).
+Trebol model (one 6-sided and three 3-sided).
 \end_layout
 
 \end_inset
@@ -1891,7 +1902,7 @@ Trebol model (three 3-sided and one 6-sided).
 
 \end_inset
 
-The first patchwork is a portion of the well-known Trebol test model, where
+The first patchwork is a part of the well-known Trebol test model, where
  a 6-sided patch is surrounded by three 3-sided patches.
  Figure
 \begin_inset space ~
@@ -2153,7 +2164,7 @@ name "fig:Pocket-model"
 
 \end_inset
 
-``Pocket'' model (two 3-sided, one 5-sided and one 6-sided).
+``Pocket'' model (one 6-sided, one 5-sided and two 3-sided).
 \end_layout
 
 \end_inset
@@ -2223,10 +2234,10 @@ Discussion
 \end_layout
 
 \begin_layout Standard
-The conversion method described above is quite general, it can be used for
- any surface representation based on distances.
- In this section we will look at two such surfaces, then we will discuss
- some interesting questions pertaining to the conversion process.
+The conversion method described above is quite general, and it can be used
+ for any surface representation based on distances.
+ In this section we will look at such surfaces, and discuss further interesting
+ problems.
 \end_layout
 
 \begin_layout Subsection
@@ -2252,9 +2263,16 @@ literal "false"
 
 \end_inset
 
- is very similar to Gregory patches.
- The two main differences are that it (i) uses the natural local parameterizatio
-n of ribbons, and (ii) it has a singular blending function:
+ is somewhat similar to Gregory patches.
+ The two main differences are that
+\begin_inset space ~
+\end_inset
+
+(i) it uses a natural local parameterization of ribbons, and
+\begin_inset space ~
+\end_inset
+
+(ii) it has a singular blending function:
 \begin_inset Formula 
 \begin{equation}
 S_{\mathrm{K}}(u,v)=\sum_{i=1}^{n}R_{i}(s_{i},h_{i})\Gamma_{i}(u,v),
@@ -2270,7 +2288,7 @@ where
 
 \end_inset
 
-The patch equation can be transformed into rational polynomial form of degree
+The patch equation can be transformed into a rational polynomial of degree
  
 \begin_inset Formula $nd+2(n-1)+1$
 \end_inset
@@ -2445,8 +2463,8 @@ Alternative representations.
 
 \end_inset
 
-This formulation is singular at the corners, where the denominator of the
- blending function vanishes.
+It is a fundamental problem of this formulation that the patch is singular
+ at the corners, where the denominator of the blending function vanishes.
  Singularities at or near the domain polygon boundary affect the quality
  of the control network: control points near the corners and generally ``outside
  the 
@@ -2477,7 +2495,7 @@ name "subsec:S-patch"
 
 \end_inset
 
-S-patch & Warren's conversion method
+S-patches
 \end_layout
 
 \begin_layout Standard
@@ -2559,7 +2577,7 @@ a 6-sided quintic patch has 252, while a tensor product quintic Bézier surface
 
 \begin_inset CommandInset citation
 LatexCommand citet
-key "Salvi:2019:KEPAF"
+key "Loop:1990"
 literal "false"
 
 \end_inset
@@ -2624,6 +2642,16 @@ noprefix "false"
 .
 \end_layout
 
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Warren's-multi-sided-patches"
+
+\end_inset
+
+Warren's multi-sided patches
+\end_layout
+
 \begin_layout Standard
 \begin_inset Float figure
 wide false
@@ -2632,10 +2660,128 @@ status collapsed
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/warren.png
+	filename images/warren-cnet.png
 	display false
-	width 30text%
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Triangular-control-net"
+
+\end_inset
+
+Triangular control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/warren-quad.png
+	display false
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Quad-control-net"
+
+\end_inset
+
+Tensor product control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/warren-rpg-with-patch.png
+	display false
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Warren-RPG"
+
+\end_inset
+
+Control net of a RP-Gregory patch
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -2652,7 +2798,7 @@ name "fig:Warrens-patch"
 
 \end_inset
 
-Warren's 4-sided Bézier triangle and the RP-Gregory patch.
+Warren's 5-sided patch.
 \end_layout
 
 \end_inset
@@ -2703,6 +2849,449 @@ noprefix "false"
 not 
 \emph default
 be a trimmed surface.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Domain-embedding"
+
+\end_inset
+
+Domain embedding
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/rotations.png
+	display false
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Result-of-rotating"
+
+\end_inset
+
+Result of rotating the domain by 0, 120 and 240 degrees.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+The exact position and rotation of the domain polygon has a large effect
+ on the control points.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Result-of-rotating"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the control net of the same patch with different rotations of the
+ domain.
+\end_layout
+
+\begin_layout Subsection
+Singularities of the RP-Gregory patch
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/8sided-new-bad.pdf
+	display false
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Default-domain"
+
+\end_inset
+
+Default domain
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/8sided-new-good.pdf
+	display false
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Enlarged-domain"
+
+\end_inset
+
+Enlarged domain
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Singularities-8sided"
+
+\end_inset
+
+Singularities in an 8-sided domain.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+The RP-Gregory patch is also not devoid of singularities.
+ In Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:ronda-polinom"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) both 
+\begin_inset Formula $\sum_{i}H_{i-1,i}^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\prod_{j}\mathscr{L}_{j}^{d}$
+\end_inset
+
+ can vanish.
+ The former is zero only at the intersection of non-adjacent edges of the
+ domain polygon (the red points in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Singularities-8sided"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), and the latter when 
+\begin_inset Formula $L_{i-1}+L_{i+1}=0$
+\end_inset
+
+, which is at the lines perpendicular to the bisector at these points (the
+ red lines in the same Figure).
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $n\geq8$
+\end_inset
+
+ some of these points always enter the quadrilateral domain, which results
+ in very unstable control points at these regions.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Default-domain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the domain defined in Eq.
+\begin_inset space ~
+\end_inset
+
+(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:domain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), note how the corner control points touch the singular lines.
+ One possible workaround is to use a larger multi-sided domain, such as
+ the one in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Enlarged-domain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, where all singularities are far from the unit square.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/8sided-cnet.png
+	display false
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:8sided-cnet"
+
+\end_inset
+
+Ribbons and control net
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/8sided-iso.png
+	display false
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:8sided-iso"
+
+\end_inset
+
+Isophote lines
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:8sided-blend"
+
+\end_inset
+
+An 8-sided vertex blend.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+The surface generate with this method will have a control network 
+\emph on
+smaller
+\emph default
+ than the multi-sided region it represents, but it defines the surface exactly,
+ and with a very nice control structure, see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:8sided-blend"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Note, however, that some CAD software may not support trim curves outside
+ the 
+\begin_inset Formula $[0,1]\times[0,1]$
+\end_inset
+
+ domain.
 \end_layout
 
 \begin_layout Subsection
@@ -2957,255 +3546,6 @@ noprefix "false"
 .
 \end_layout
 
-\begin_layout Subsection
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Domain-embedding"
-
-\end_inset
-
-Domain embedding
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/rotations.png
-	display false
-	width 90text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Result-of-rotating"
-
-\end_inset
-
-Result of rotating the domain by 0, 120 and 240 degrees.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-The exact position and rotation of the domain polygon has a large effect
- on the control points.
- Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Result-of-rotating"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- shows the control net of the same patch with different rotations of the
- domain.
- For 3-sided patches another option is to use a domain triangle that extends
- outside the unit square.
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-One possible heuristic is to rotate the polygon such that the squared sum
- of the distances of the edges to the closest vertex of the unit square
- is minimal, see Figure
-\begin_inset space ~
-\end_inset
-
-???.
- Table
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Optimal-rotation-angles"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- shows approximate optimal angles for 
-\begin_inset Formula $n\leq6$
-\end_inset
-
- (for 
-\begin_inset Formula $n>6$
-\end_inset
-
- the control net quality does not change noticably).
-\begin_inset Float table
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-# of sides
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $3$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $5$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $6$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-rotation angles
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $35.1^{\circ}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $27^{\circ}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $15^{\circ}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:Optimal-rotation-angles"
-
-\end_inset
-
-Optimal rotation angles
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section*
 Conclusion & future work
 \end_layout
@@ -3213,12 +3553,12 @@ Conclusion & future work
 \begin_layout Standard
 We have proposed a multi-sided patch formulation, the RP-Gregory patch.
  It is defined as a combination of boundary ribbons in Bézier form, and
- it also has a tensor product, rational Bézier representation.
+ it has a tensor product, rational Bézier representation, as well.
  In this way, one can take advantage of the native representation, when
  the boundaries and the cross derivatives need to be explicitly defined,
- and also the advantages of the standard representation for computing differenti
-al quantities and exporting multi-sided surface models accurately to CAD/CAM
- systems for downstream applications.
+ and exploit the standard representation for computing differential quantities
+ and exporting multi-sided surface models accurately to CAD/CAM systems
+ for downstream applications.
  This concept makes it possible to stitch together multi-sided trimmed patches
  in a watertight manner having exact, smooth (
 \begin_inset Formula $G^{1}$
@@ -3232,8 +3572,8 @@ al quantities and exporting multi-sided surface models accurately to CAD/CAM
 
 \begin_layout Standard
 There are several questions for future research.
- Finding an optimal orientation of the domain and analyzing the geometry
- of the tensor product patches would be useful contributions.
+ Finding an optimal orientation of the domain through the analysis of the
+ obtained control networks would be a useful contribution.
  The current construction allows ribbons with only 
 \begin_inset Formula $G^{1}$
 \end_inset
@@ -3242,11 +3582,11 @@ There are several questions for future research.
 \begin_inset Formula $G^{2}$
 \end_inset
 
-, we would need a more complex implicit parametrization and different patch
- equations.
+, we need a more complex implicit parametrization and a different patch
+ formulation.
  It is also an interesting question whether patches that have control points
- in the interior as well could be converted to standard format in a similar
- manner.
+ in the interior as well could be converted to standard form using a similar
+ technique.
  
 \end_layout
 

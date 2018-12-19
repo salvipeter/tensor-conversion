@@ -1,4 +1,3 @@
-
 module TensorKato
 
 import Base: +, -, *, ^, zero, one, getindex, setindex!
@@ -7,49 +6,44 @@ using LinearAlgebra
 exponent = 2
 ribbon_multiplier = 1.0
 
-const Real = Float64 # BigFloat
+const Real = Float64 #BigFloat
 
 struct Poly2D
     n::Int
     coeff::Array{Real,2}
 end
 
-function +(u::Poly2D, v::Poly2D)
-    if u.n < v.n
-        m = copy(v.coeff)
-        m[1:u.n,1:u.n] += u.coeff
-        return Poly2D(v.n, m)
-    elseif u.n > v.n
-        m = copy(u.coeff)
-        m[1:v.n,1:v.n] += v.coeff
-        return Poly2D(u.n, m)
+function elevate(u::Poly2D, n)
+    u.n >= n && return u
+    m = zeros(Real, u.n + 2, u.n + 2)
+    for i in 0:u.n, j in 0:u.n
+        m[i+1,j+1] += u.coeff[i+1,j+1] * (u.n - i + 1) * (u.n - j + 1)
+        m[i+2,j+1] += u.coeff[i+1,j+1] * (i + 1) * (u.n - j + 1)
+        m[i+1,j+2] += u.coeff[i+1,j+1] * (u.n - i + 1) * (j + 1)
+        m[i+2,j+2] += u.coeff[i+1,j+1] * (i + 1) * (j + 1)
     end
-    Poly2D(u.n, u.coeff + v.coeff)
+    elevate(Poly2D(u.n + 1, m / (u.n + 1) ^ 2), n)
+end
+
+function +(u::Poly2D, v::Poly2D)
+    n = max(u.n, v.n)
+    u, v = elevate(u, n), elevate(v, n)
+    Poly2D(n, u.coeff + v.coeff)
 end
 
 -(u::Poly2D) = Poly2D(u.n, -copy(u.coeff))
 
 -(u::Poly2D, v::Poly2D) = u + (-v)
 
-function simplify(u::Poly2D)
-    n = u.n
-    for i in 1:n
-        (u.coeff[i,end] != 0 || u.coeff[end,i] != 0) && return u
-    end
-    n == 1 ? u : simplify(Poly2D(n - 1, u.coeff[1:n-1,1:n-1]))
-end
-
 function *(u::Poly2D, v::Poly2D)
-    n = u.n + v.n - 1
-    m = zeros(Real, n, n)
-    len = u.n - 1
-    for i in 1:v.n, j in 1:v.n
-        x = v.coeff[i,j]
-        if x != 0
-            m[i:i+len,j:j+len] += u.coeff * x
-        end
+    n = u.n + v.n
+    m = zeros(Real, n + 1, n + 1)
+    for i in 0:u.n, j in 0:u.n, k in 0:v.n, l in 0:v.n
+        m[i+k+1,j+l+1] += u.coeff[i+1,j+1] * v.coeff[k+1,l+1] *
+            binom(u.n, i) * binom(v.n, k) / binom(u.n + v.n, i + k) *
+            binom(u.n, j) * binom(v.n, l) / binom(u.n + v.n, j + l)
     end
-    simplify(Poly2D(n, m))
+    Poly2D(n, m)
 end
 
 *(u::Poly2D, x::Real) = Poly2D(u.n, copy(u.coeff) * x)
@@ -63,9 +57,9 @@ function ^(u::Poly2D, n::Integer)
     n == 1 ? u : u ^ (n-1) * u
 end
 
-zero(::Type{Poly2D}) = Poly2D(1, zeros(Real, 1, 1))
+zero(::Type{Poly2D}) = Poly2D(0, zeros(Real, 1, 1))
 
-one(::Type{Poly2D}) = Poly2D(1, ones(Real, 1, 1))
+one(::Type{Poly2D}) = Poly2D(0, ones(Real, 1, 1))
 
 """
     regularpoly(n)
@@ -77,7 +71,7 @@ function regularpoly(n)
     if n == 4
         [[0., 0], [1, 0], [1, 1], [0, 1]]
     else
-        [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(2pi/5, length=n+1, stop=2pi+2pi/5)][1:n]
+        [[0.5+cos(a)*0.77, 0.5+sin(a)*0.77] for a in range(pi/8, length=n+1, stop=2pi+pi/8)][1:n]
     end
 end
 
@@ -98,15 +92,25 @@ function line(p, q)
     if m[2,1] + m[1,2] + 2 * m[1,1] < 0
         m *= -1
     end
-    Poly2D(2, m)
+    Poly2D(2, m)                # note: this is a linear power-basis polynomial (!)
 end
 
-lines(poly) = [line(p, q) for (p, q) in zip([[poly[end]]; poly[1:end-1]], poly)]
+lines(poly) = [tobezier(line(p, q).coeff, 1) for (p, q) in zip([[poly[end]]; poly[1:end-1]], poly)]
 
 function polyeval(poly, uv)
     result = 0
     for i in 1:poly.n, j in 1:poly.n
         result += poly.coeff[i,j] * uv[1] ^ (i - 1) * uv[2] ^ (j - 1)
+    end
+    result
+end
+
+function bernstein_eval(poly, uv)
+    result = 0.0
+    coeff_u = bernstein_all(poly.n, uv[1])
+    coeff_v = bernstein_all(poly.n, uv[2])
+    for i in 0:poly.n, j in 0:poly.n
+        result += poly.coeff[i+1,j+1] * coeff_u[i+1] * coeff_v[j+1]
     end
     result
 end
@@ -117,7 +121,7 @@ function normalized_lines(poly)
     for i in 1:n
         l = line(poly[mod1(i-1,n)], poly[i])
         l *= 1.0 / polyeval(l, poly[mod1(i+1,n)])
-        push!(result, l)
+        push!(result, tobezier(l.coeff, 1))
     end
     result
 end
@@ -312,17 +316,17 @@ function tobezier(coeff, d)
         M = zeros(d + 1, d + 1)
         M[1:d1,1:d1] = coeff
     end
-    C' * M * C
+    Poly2D(d, C' * M * C)
 end
 
 function tensor(kato)
     num, den = kato
-    println("Degree: $(num[1].n-1)/$(den.n-1)")
-    d = max(num[1].n, den.n) - 1
-    w = tobezier(den.coeff, d)
-    px = tobezier(num[1].coeff, d)
-    py = tobezier(num[2].coeff, d)
-    pz = tobezier(num[3].coeff, d)
+    println("Degree: $(num[1].n)/$(den.n)")
+    d = max(num[1].n, den.n)
+    w = den.coeff
+    px = num[1].coeff
+    py = num[2].coeff
+    pz = num[3].coeff
     result = Array{Float64}(undef, d + 1, d + 1, 4)
     for i in 0:d, j in 0:d
         result[i+1,j+1,1] = px[i+1,j+1]
@@ -568,6 +572,7 @@ function write_ribbon(ribbons, filename, index, resolution)
     d = ribbons.d
     samples = [[u, v] for u in range(0.0, stop=1.0, length=resolution)
                       for v in range(0.0, stop=1.0, length=resolution)]
+    d = ribbons.d
     verts = map(samples) do p
         coeff_u = bernstein_all(d, p[1])
         coeff_v = bernstein_all(d, p[2])
@@ -631,10 +636,13 @@ function test(filename, resolution = 15, surftype = :gregory; multiplier = 1.0)
     end
 end
 
-function test_CAD(filename, surftype = :gregory)
+function test_CAD(filename, surftype = :gregory; multiplier = 1.0)
+    @assert multiplier == 1.0 || surftype == :gregory "Multipliers are only for Gregory patches"
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
+    global ribbon_multiplier = multiplier
     surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
+    ribbon_multiplier = 1.0
     tsurf = tensor(surf)
     write_bezier(ribbons, tsurf, "$filename.bzr")
 end
@@ -777,6 +785,62 @@ function best_rotation(n)
         end
     end
     golden(f, 0.0, pi / n)
+end
+
+
+
+function write_denominator(n, filename, resolution; d = :h, pmin = 0, pmax = 1, rotation = 0.0)
+    poly = rotatedpoly(n, rotation * pi / 180.0)
+    L = normalized_lines(poly)
+    function multiplier()
+        term = one(Poly2D)
+        for i in 1:n
+            im = mod1(i - 1, n)
+            ip = mod1(i + 1, n)
+            term *= (L[im] + L[ip]) ^ d
+        end
+        term
+    end
+    denominator = d == :h ? sum(i -> blend2(L, i), 1:n) : multiplier()
+    open(filename, "w") do f
+        for i in 0:resolution
+            u = pmin + i * (pmax - pmin) / resolution
+            for j in 0:resolution
+                v = pmin + j * (pmax - pmin) / resolution
+                d = bernstein_eval(denominator, [u, v])
+                println(f, "$u $v $d")
+            end
+            println(f, "")
+        end
+    end
+end
+
+radius_ratio(n) = 1 + tan(2*pi/n) * tan(pi/n)
+
+function scaled_rotatedpoly(n; x = 0.0, scaling = 1.0)
+    [[0.5+cos(a)/2*scaling, 0.5+sin(a)/2*scaling] for a in range(x, length=n+1, stop=2pi+x)][1:n]
+end
+
+function write_double_domain(n, filename; rotation = 0.0)
+    scale(p) = (p + [0.5,0.5]) * 300
+    poly1 = scaled_rotatedpoly(n, x = rotation)
+    poly2 = scaled_rotatedpoly(n, x = rotation, scaling = radius_ratio(n))
+    open(filename, "w") do f
+        println(f, "%!PS")
+        println(f, "newpath")
+        println(f, join(scale(poly1[end]), " ") * " moveto")
+        for p in poly1
+            println(f, join(scale(p), " ") * " lineto")
+        end
+        println(f, "stroke")
+        println(f, "newpath")
+        println(f, join(scale(poly2[end]), " ") * " moveto")
+        for p in poly2
+            println(f, join(scale(p), " ") * " lineto")
+        end
+        println(f, "stroke")
+        println(f, "showpage")
+    end
 end
 
 end # module
