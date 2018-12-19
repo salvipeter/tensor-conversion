@@ -320,22 +320,21 @@ The representation of arbitrary topology free-form surfaces is still an
  important area of CAGD.
  While recursive subdivision surfaces approximate given control polyhedra,
  our current interest is curve network based design, where surface models
- smoothly interpolate a network of feature curves.
+ smoothly interpolate networks of feature curves.
  We assume that our model consists of a collection of multi-sided surface
  patches, connected in a watertight manner.
 \end_layout
 
 \begin_layout Standard
 Most genuine multi-sided patch schemes are based on explicitly defined boundarie
-s and cross-derivatives determining smooth blends for the interior of the
- patches.
+s and cross-derivatives that produce smooth interiors for the patches.
  These are described by fairly complex mathematical equations often containing
  square roots and trigonometric formulae, thus they are generally not readily
  convertible to standard tensor product form.
  This may lead to difficulties when accurate computations are needed, such
  as exact directional derivatives, normal vectors or surface curvatures.
  It is also a crucial problem to export these models into external CAD/CAM
- systems that typically can only handle surfaces in standard tensor product
+ systems that typically can handle surfaces only in standard tensor product
  form.
 \end_layout
 
@@ -343,8 +342,8 @@ s and cross-derivatives determining smooth blends for the interior of the
 The most widespread solution for exporting arbitrary topology surface models
  is approximation.
  One option is to produce trimmed tensor product surfaces, but then the
- patches will be stitched together only in a numerical sense along their
- common boundaries.
+ patches will be stitched together along their common boundaries only in
+ a numerical sense.
 \begin_inset Note Note
 status collapsed
 
@@ -395,13 +394,13 @@ We propose a simple, multi-sided surfacing scheme, called the
 \emph on
 Rational Polynomial (RP) Gregory patch
 \emph default
-, that preserves the benefits of the 
+, that preserves the benefits of 
 \begin_inset Formula $n$
 \end_inset
 
 -sided patches, and has an exact CAD-compatible, tensor product representation,
  as well.
- This patch formulation has been developed from the classical surface of
+ This patch has been developed from the classical scheme of
 \begin_inset space ~
 \end_inset
 
@@ -430,8 +429,8 @@ s of the domain parameters
 As a result, we obtain an editable, general topology patchwork of watertight
  trimmed surfaces.
  The patch boundaries are straight lines in the domain of the tensor product
- surfaces; but in 3D they represent Bézier curves, exactly shared by the
- two adjacent patches.
+ surfaces; but in 3D they represent Bézier curves, exactly shared by two
+ adjacent patches.
  The patchwork can be directly edited in the multi-sided format, preserving
  watertight connections.
  Depending on the setting of the cross-derivatives, exact smooth connections
@@ -439,10 +438,9 @@ As a result, we obtain an editable, general topology patchwork of watertight
 \end_layout
 
 \begin_layout Standard
-The tensor product patch is unambiguously defined.
- It reproduces the multi-sided surface within the boundary loop, while its
- behavior outside the original domain is determined solely by algebraic
- constraints which may lead to oscillations.
+The tensor product patch exactly reproduces the multi-sided surface within
+ the boundary loop, while its behavior outside the original domain is determined
+ solely by algebraic constraints which may lead to oscillations.
 \end_layout
 
 \begin_layout Standard
@@ -616,8 +614,8 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-The papers cited above did not comment on the computational problems of
- exact conversion, and showed no actual tensor product control grids.
+The papers cited above do not comment on the computational problems of exact
+ conversion, and show no actual results with tensor product control grids.
  We consider our proposed solution simple and practical in view of both
  the input and the related computations.
 \end_layout
@@ -959,7 +957,7 @@ side parameter
 \begin_inset Formula $s_{i}(u,v)$
 \end_inset
 
- that changes linearly from 
+ changes linearly from 
 \begin_inset Formula $0$
 \end_inset
 
@@ -987,7 +985,7 @@ distance parameter
 \begin_inset Formula $h_{i}(u,v)$
 \end_inset
 
- that is zero on the 
+ is zero on the 
 \begin_inset Formula $i$
 \end_inset
 
@@ -1070,7 +1068,7 @@ Let
 \begin_inset Formula $L_{i}(u,v)$
 \end_inset
 
- denote the implicit line equation for the 
+ denote the implicit line equation of the 
 \begin_inset Formula $i$
 \end_inset
 
@@ -1124,7 +1122,7 @@ status collapsed
 \begin_inset Graphics
 	filename images/ribbons-cp.png
 	display false
-	width 65text%
+	width 80text%
 
 \end_inset
 
@@ -1266,7 +1264,7 @@ correction patch
 \begin_inset Formula $Q_{i-1,i}$
 \end_inset
 
- as follows:
+, as follows:
 \begin_inset Formula 
 \begin{align}
 I_{i-1,i}(s_{i-1},s_{i}) & =R_{i-1}(s_{i-1},s_{i})+R_{i}(s_{i},1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_{i}),\label{eq:s-corner}\\
@@ -1544,7 +1542,7 @@ The
  parameters defined in the previous section have a singular point at the
  vertex opposite the base edge of the triangular domain.
  This has a negative effect on the quality of the control net generated
- for the tensor product patch (see Section
+ for the tensor product patch (see also Section
 \begin_inset space ~
 \end_inset
 
@@ -2601,7 +2599,7 @@ name "subsec:Warren's-multi-sided-patches"
 
 \end_inset
 
-Warren's multi-sided patches
+Warren's patch
 \end_layout
 
 \begin_layout Standard
@@ -2790,8 +2788,8 @@ noprefix "false"
 
 \begin_layout Standard
 An elegant alternative conversion of Bézier triangles into tensor product
- form was also proposed, using a deformation of the triangular domain into
- a degenerate quadrilateral:
+ form was also proposed in the same paper, using a deformation of the triangular
+ domain into a degenerate quadrilateral:
 \begin_inset Formula 
 \begin{align}
 \hat{u} & =(1-u)v, & \hat{v} & =uv, & \hat{w} & =1-v.
@@ -3063,8 +3061,8 @@ noprefix "false"
 \end_inset
 
  can vanish.
- The former term is zero where the extension of non-adjacent edges of the
- domain polygon intersect.
+ The former term is zero where the extensions of two non-adjacent edges
+ of the domain polygon intersect.
  The red points in Figure
 \begin_inset space ~
 \end_inset
@@ -3299,7 +3297,7 @@ noprefix "false"
  An advantage of this method is that the control network is guaranteed to
  be well-balanced; on the other hand, this solution may not be suitable
  for all CAD/CAM systems, as interrogations beyond the quadrilateral domain
- is not always supported.
+ are not always supported.
 \end_layout
 
 \begin_layout Subsection
@@ -3516,7 +3514,15 @@ noprefix "false"
 \end_inset
 
 .
- The answer lies in the parameter intervals: for 
+ This is because Gregory patches with 
+\begin_inset Formula $h$
+\end_inset
+
+-parameterization do not work well for a larger number of sides.
+\end_layout
+
+\begin_layout Standard
+The reason for this lies in the parameter intervals: for 
 \begin_inset Formula $n=5$
 \end_inset
 
@@ -3593,7 +3599,7 @@ There are several questions for future research.
 , we need a more complex implicit parametrization and a different patch
  formulation.
  It is also an interesting question whether patches that have control points
- in the interior as well could be converted to standard form using a similar
+ in the interior as well could be converted to a standard form using a similar
  technique.
  
 \end_layout
