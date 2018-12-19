@@ -109,19 +109,6 @@ LOOP->KEPAF CIKK HIVATKOZAS
 status open
 
 \begin_layout Plain Layout
-Boulder
-\end_layout
-
-\end_inset
-
-Alyn Rockwood
-\end_layout
-
-\begin_layout Author
-\begin_inset Argument 1
-status open
-
-\begin_layout Plain Layout
 BME
 \end_layout
 
@@ -145,6 +132,19 @@ corref{cor}
 
 \begin_layout Email
 salvi@iit.bme.hu
+\end_layout
+
+\begin_layout Author
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Boulder
+\end_layout
+
+\end_inset
+
+Alyn Rockwood
 \end_layout
 
 \begin_layout Author
@@ -439,7 +439,7 @@ As a result, we obtain an editable, general topology patchwork of watertight
 \end_layout
 
 \begin_layout Standard
-The tensor product patch is unambigously defined.
+The tensor product patch is unambiguously defined.
  It reproduces the multi-sided surface within the boundary loop, while its
  behavior outside the original domain is determined solely by algebraic
  constraints which may lead to oscillations.
@@ -2235,7 +2235,7 @@ Discussion
 
 \begin_layout Standard
 The conversion method described above is quite general, and it can be used
- for any surface representation based on distances.
+ for other surface representations based on distances, as well.
  In this section we will look at such surfaces, and discuss further interesting
  problems.
 \end_layout
@@ -2264,15 +2264,23 @@ literal "false"
 \end_inset
 
  is somewhat similar to Gregory patches.
- The two main differences are that
+ Two main differences are that
 \begin_inset space ~
 \end_inset
 
-(i) it uses a natural local parameterization of ribbons, and
+(i)
 \begin_inset space ~
 \end_inset
 
-(ii) it has a singular blending function:
+it uses a natural local parameterization of ribbons, and
+\begin_inset space ~
+\end_inset
+
+(ii)
+\begin_inset space ~
+\end_inset
+
+it has a singular blending function:
 \begin_inset Formula 
 \begin{equation}
 S_{\mathrm{K}}(u,v)=\sum_{i=1}^{n}R_{i}(s_{i},h_{i})\Gamma_{i}(u,v),
@@ -2323,7 +2331,7 @@ status open
 \begin_inset Graphics
 	filename images/kato-blended.png
 	display false
-	width 65text%
+	width 49text%
 
 \end_inset
 
@@ -2355,14 +2363,19 @@ Kato's patch (degree=34)
 \end_inset
 
 
-\end_layout
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -2398,8 +2411,9 @@ S-patch (degree=24)
 
 \end_layout
 
-\begin_layout Plain Layout
-\align center
+\end_inset
+
+
 \begin_inset Float figure
 wide false
 sideways false
@@ -2409,7 +2423,7 @@ status open
 \begin_inset Graphics
 	filename images/ours.png
 	display false
-	width 65text%
+	width 49text%
 
 \end_inset
 
@@ -2463,7 +2477,7 @@ Alternative representations.
 
 \end_inset
 
-It is a fundamental problem of this formulation that the patch is singular
+A fundamental problem of this formulation is that the patch is singular
  at the corners, where the denominator of the blending function vanishes.
  Singularities at or near the domain polygon boundary affect the quality
  of the control network: control points near the corners and generally ``outside
@@ -2499,7 +2513,7 @@ S-patches
 \end_layout
 
 \begin_layout Standard
-As mentioned in Section
+As discussed in Section
 \begin_inset space ~
 \end_inset
 
@@ -2513,7 +2527,8 @@ noprefix "false"
 
 \end_inset
 
-, our approach can be applied to S-patches, as well.
+, the known methods of S-patch conversion are computationally very intensive.
+ However, our approach can be applied to S-patches, as well.
  The Wachspress coordinates for regular domains can be expressed as
 \begin_inset Formula 
 \begin{equation}
@@ -2552,24 +2567,18 @@ where
 \begin_inset Formula $(n-2)d$
 \end_inset
 
-.
- While this means that it has a lower degree, the authors still prefer the
- RP-Gregory patch, due to the following reasons.
+, which is lower than that of the RP-Gregory patch.
 \end_layout
 
 \begin_layout Standard
-
-\emph on
-Usability
-\emph default
-.
- S-patches have a very large number of control points, e.g.
+S-patches are defined by a very large number of control points, which limits
+ their usefulness for design, e.g.
 \begin_inset space ~
 \end_inset
 
 a 6-sided quintic patch has 252, while a tensor product quintic Bézier surface
  has only 36.
- A practical solution may be to use the same kind of ribbon structure as
+ A practical solution can be to use the same kind of ribbon structure as
  for RP-Gregory patches, but this raises the depth by 3, see
 \begin_inset space ~
 \end_inset
@@ -2579,63 +2588,6 @@ a 6-sided quintic patch has 252, while a tensor product quintic Bézier surface
 LatexCommand citet
 key "Loop:1990"
 literal "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-
-\emph on
-Control net quality
-\emph default
-.
- Since the 
-\begin_inset Formula $L_{i}$
-\end_inset
-
- functions are not squared in Eq.
-\begin_inset space ~
-\end_inset
-
-(
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:Wachspress"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-), the denominator can vanish.
- Wachspress coordinates have singularities outside the domain, so the effect
- seen in Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:RP-Katō-patch"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- is less pronounced, but still perceivable, note the spikes in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:S-patch"
-plural "false"
-caps "false"
-noprefix "false"
 
 \end_inset
 
@@ -2816,10 +2768,30 @@ literal "false"
 
 \end_inset
 
- proposes an elegant alternative conversion of Bézier triangles into tensor
- product form: instead of embedding the triangular domain into the quadrilateral
- one, he uses a singular deformation that results in a degenerate control
- network:
+ creates 5- and 6-sided patches by ``removing'' control points near the
+ corners of a rational Bézier triangle by assigning 0 weights to them.
+ In Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Triangular-control-net"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, a five-sided patch was generated by removing three-three control points
+ at the bottom corners.
+\end_layout
+
+\begin_layout Standard
+An elegant alternative conversion of Bézier triangles into tensor product
+ form was also proposed, using a deformation of the triangular domain into
+ a degenerate quadrilateral:
 \begin_inset Formula 
 \begin{align}
 \hat{u} & =(1-u)v, & \hat{v} & =uv, & \hat{w} & =1-v.
@@ -2827,28 +2799,46 @@ literal "false"
 
 \end_inset
 
-See also Figure
+The resulting tensor product control network will also have 0-weight control
+ points, which generally prevents the use of this representation in most
+ commercial CAD systems.
+ The construction is asymmetric, and the parameterization is also distorted.
+ Figure
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Warrens-patch"
+reference "fig:Quad-control-net"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
-.
- This control network may be preferable to those generated by the RP-Gregory
- patch or the S-patch.
- Note, however, that this will 
-\emph on
-not 
-\emph default
-be a trimmed surface.
+ shows a nice, but incomplete, control structure, and the asymmetric arrangement
+ for the bottom left and right corners.
+\end_layout
+
+\begin_layout Standard
+In Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Warren-RPG"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ we show a similar RP-Gregory patch generated from a quintic ribbon network.
+ The tensor product surface is of much higher degree, but ready for CAD
+ export.
 \end_layout
 
 \begin_layout Subsection
@@ -2899,8 +2889,8 @@ Result of rotating the domain by 0, 120 and 240 degrees.
 
 \end_inset
 
-The exact position and rotation of the domain polygon has a large effect
- on the control points.
+The position and rotation of the domain polygon affects the placement of
+ the control points.
  Figure
 \begin_inset space ~
 \end_inset
@@ -2917,6 +2907,7 @@ noprefix "false"
 
  shows the control net of the same patch with different rotations of the
  domain.
+ The optimal choice of domain is subject of future research.
 \end_layout
 
 \begin_layout Subsection
@@ -3007,7 +2998,7 @@ name "fig:Enlarged-domain"
 
 \end_inset
 
-Enlarged domain
+Enlarged (and rotated) domain
 \end_layout
 
 \end_inset
@@ -3048,7 +3039,7 @@ Singularities in an 8-sided domain.
 
 \end_inset
 
-The RP-Gregory patch is also not devoid of singularities.
+The RP-Gregory patch also has singularities.
  In Eq.
 \begin_inset space ~
 \end_inset
@@ -3072,8 +3063,9 @@ noprefix "false"
 \end_inset
 
  can vanish.
- The former is zero only at the intersection of non-adjacent edges of the
- domain polygon (the red points in Figure
+ The former term is zero where the extension of non-adjacent edges of the
+ domain polygon intersect.
+ The red points in Figure
 \begin_inset space ~
 \end_inset
 
@@ -3087,12 +3079,21 @@ noprefix "false"
 
 \end_inset
 
-), and the latter when 
+ show the intersection of lines 
+\begin_inset Formula $L_{i-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $L_{i+1}$
+\end_inset
+
+; all other intersections are farther away.
+ The second term vanishes when 
 \begin_inset Formula $L_{i-1}+L_{i+1}=0$
 \end_inset
 
-, which is at the lines perpendicular to the bisector at these points (the
- red lines in the same Figure).
+, i.e., along the lines perpendicular to the bisectors at the above intersection
+ points (shown by red lines in the same figure).
 \end_layout
 
 \begin_layout Standard
@@ -3100,8 +3101,8 @@ For
 \begin_inset Formula $n\geq8$
 \end_inset
 
- some of these points always enter the quadrilateral domain, which results
- in very unstable control points at these regions.
+ some of these points always fall inside the quadrilateral domain, which
+ yields very unstable control points in the vicinity.
  Figure
 \begin_inset space ~
 \end_inset
@@ -3130,23 +3131,7 @@ noprefix "false"
 
 \end_inset
 
-), note how the corner control points touch the singular lines.
- One possible workaround is to use a larger multi-sided domain, such as
- the one in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Enlarged-domain"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, where all singularities are far from the unit square.
+), observe that the corner points lie on singular lines.
 \end_layout
 
 \begin_layout Standard
@@ -3266,12 +3251,37 @@ An 8-sided vertex blend.
 
 \end_inset
 
-The surface generate with this method will have a control network 
+One possible workaround is to use a multi-sided domain 
+\emph on
+larger
+\emph default
+ than the unit square, pushing the singularities farther away, see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Enlarged-domain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ In this way, the control network of the surface will be 
 \emph on
 smaller
 \emph default
- than the multi-sided region it represents, but it defines the surface exactly,
- and with a very nice control structure, see Figure
+ than the multi-sided region it represents, and some of the trim curves
+ will lie outside the 
+\begin_inset Formula $[0,1]\times[0,1]$
+\end_inset
+
+ domain.
+ The surface can still be evaluated there, and it reproduces the original
+ multi-sided patch, see Figure
 \begin_inset space ~
 \end_inset
 
@@ -3286,12 +3296,10 @@ noprefix "false"
 \end_inset
 
 .
- Note, however, that some CAD software may not support trim curves outside
- the 
-\begin_inset Formula $[0,1]\times[0,1]$
-\end_inset
-
- domain.
+ An advantage of this method is that the control network is guaranteed to
+ be well-balanced; on the other hand, this solution may not be suitable
+ for all CAD/CAM systems, as interrogations beyond the quadrilateral domain
+ is not always supported.
 \end_layout
 
 \begin_layout Subsection
@@ -3335,7 +3343,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-This is a tradeoff, and in our experience, using the power basis for generating
+This is a trade-off, and in our experience, using the power basis for generating
  high-degree Bézier patches had little to no implications on the output
  precision.
 \end_layout
