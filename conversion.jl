@@ -6,6 +6,8 @@ using LinearAlgebra
 
 exponent = 2
 ribbon_multiplier = 1.0
+large_domain = true
+rotation = 0                    # in degrees
 
 const Real = Float64 # BigFloat
 
@@ -77,7 +79,9 @@ function regularpoly(n)
     if n == 4
         [[0., 0], [1, 0], [1, 1], [0, 1]]
     else
-        [[0.5+cos(a)/2, 0.5+sin(a)/2] for a in range(2pi/5, length=n+1, stop=2pi+2pi/5)][1:n]
+        r = large_domain ? 1 / (sqrt(2) * cos(pi / n)) : 0.5
+        x = rotation * pi / 180
+        [[0.5+cos(a)*r, 0.5+sin(a)*r] for a in range(x, length=n+1, stop=2pi+x)][1:n]
     end
 end
 
