@@ -15,8 +15,9 @@
 \usepackage{layout}
 \usepackage[numbers]{natbib}
 \usepackage{caption}
+\usepackage{subcaption}
 
-\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, filecolor=blue, urlcolor=blue, pdftitle=CAD17abstract, pdfauthor=Orest Mykhaskiv, pdfsubject=, pdfkeywords=}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, filecolor=blue, urlcolor=blue, pdftitle=CAD20abstract, pdfauthor=Orest Mykhaskiv, pdfsubject=, pdfkeywords=}
 \usepackage[pdftex]{graphicx}
 
 \newcommand\textstyleInternetlink[1]{\textcolor{blue}{#1}}
@@ -156,8 +157,88 @@ B\'ezier surface, Trimming, Charrot--Gregory patch, S-patch
 Blabla
 
 \vspace{10pt}
-\noindent\underline{Preliminaries:}\vspace{0.2em}\newline
+\noindent\underline{S-patch:}\vspace{0.2em}\newline
 Blabla
+
+\vspace{10pt}
+\noindent\underline{Warren's patch:}\vspace{0.2em}\newline
+Blabla
+\begin{figure}[h!]
+  \label{fig:warren}
+  \begin{subfigure}{0.45\textwidth}
+    \label{fig:warren-cnet}
+    \centering
+    \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
+    \caption{Creating a 5-sided patch}
+  \end{subfigure}
+  \begin{subfigure}{0.45\textwidth}
+    \label{fig:warren-quad}
+    \centering
+    \includegraphics[width = 0.6\textwidth]{images/warren-quad.png}
+    \caption{Degenerate tensor product patch}
+  \end{subfigure}
+  \caption{Warren's patch.}
+\end{figure}
+
+\vspace{10pt}
+\noindent\underline{Kato's patch:}\vspace{0.2em}\newline
+Blabla
+
+\vspace{10pt}
+\noindent\underline{Charrot--Gregory patch:}\vspace{0.2em}\newline
+Blabla
+\begin{figure}[h!]
+  \label{fig:trebol}
+  \begin{subfigure}{0.23\textwidth}
+    \label{fig:trebol-cnet}
+    \centering
+    \includegraphics[width = 0.93\textwidth]{images/trebol3-cnet.png}
+    \caption{Frame and control net}
+  \end{subfigure}
+  \begin{subfigure}{0.23\textwidth}
+    \label{fig:trebol-contour}
+    \includegraphics[width = \textwidth]{images/trebol3-contour.jpg}
+    \caption{Contouring}
+  \end{subfigure}
+  \begin{subfigure}{0.23\textwidth}
+    \label{fig:trebol-mean}
+    \includegraphics[width = \textwidth]{images/trebol3-mean-iso.jpg}
+    \caption{Mean curvature}
+  \end{subfigure}
+  \begin{subfigure}{0.23\textwidth}
+    \label{fig:trebol-iso}
+    \includegraphics[width = \textwidth]{images/trebol3-zebra.jpg}
+    \caption{Isophote lines}
+  \end{subfigure}
+  \caption{Conversion of Charrot--Gregory patches. \bf kar hogy haromoldaluak vannak benne}
+\end{figure}
+
+\vspace{10pt}
+\noindent\underline{Discussion:}\vspace{0.2em}\newline
+Blabla
+\begin{figure}[h!]
+  \label{fig:rotations}
+  \centering
+  \includegraphics[width = 0.9\textwidth]{images/rotations.png}
+  \caption{Effects of rotating the multi-sided domain.}
+\end{figure}
+\begin{figure}[h!]
+  \label{fig:8sided}
+  \centering
+  \begin{subfigure}{0.3\textwidth}
+    \label{fig:8sided-cnet}
+    \includegraphics[width = \textwidth]{images/8sided-cnet.png}
+    \caption{Frame and control net}
+  \end{subfigure}
+  \hspace{3cm}
+  \begin{subfigure}{0.3\textwidth}
+    \label{fig:8sided-iso}
+    \includegraphics[width = \textwidth]{images/8sided-iso.png}
+    \caption{Isophote lines}
+  \end{subfigure}
+
+  \caption{Using a larger multi-sided domain.}
+\end{figure}
 
 \vspace{1em}
 \noindent\underline{Conclusions:}\vspace{0.2em}\newline

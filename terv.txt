@@ -25,9 +25,7 @@ Salvi, Várady, Rockwood
 - Wachspress reguláris domainnél ez megoldható a domain-élek egyeneseinek egyenletét alkalmazva
 - képletek, levezetés, fokszám-képlet
 *** Szingularitás
-- az élek metszéspontjait tartalmazó körön szingularitások
-- ezek közelében a kontrollpontok elszállnak, a kiértékelés pontosságán ront(hat)
-- megoldás: nagyobb n-oldalú domain (kicsit kevésbé standard)
+- mindegyiknek problémája, ld. Singularities később
 * Warren's patch
 - ötlet: Bézier-háromszög (háromoldalú S-patch) kontrollpontjait 0/0-ba téve 4,5,6 oldalút kapunk
 - a határgörbék a maradék kontrollpontokból kijövő Bézier-görbék lesznek (szép!)
@@ -49,17 +47,20 @@ Salvi, Várady, Rockwood
 - ismét él-egyenes egyenletes módszer, származtatott s-paraméterrel
 - képletek, fokszám-képlet
 ** Problémák
-- sarkokban szinguláris
-- S-patchhez hasonlóan ügyes domainnel orvosolható
+- sarkokban szinguláris, ld. később
 * Charrot-Gregory patch
 - ugyanezzel az s-paraméterezéssel csinálhatunk Gregory patchet is
 - képletek, fokszám-képlet
 ** Problémák
 - ennek a legmagasabb a fokszáma
-- ez is szinguláris, de csak az él-metszéspontokban,
-  így 5-6 oldalúakra standard domainnel is használható
-- nagyobb oldalszámnál itt is trükközni kell a domainnel
+- ez is szinguláris, de csak az él-metszéspontokban, ld. később
 * Discussion
+- domain elhelyezés, forgatás
+** Singularities
+- az élek metszéspontjait tartalmazó körön szingularitások
+- ezek közelében a kontrollpontok elszállnak, a kiértékelés pontosságán ront(hat)
+- megoldás: nagyobb n-oldalú domain (kicsit kevésbé standard)
+* Conclusion
 - minden módszernek vannak előnyei és hátrányai
 - háromszögre a G1-frame-es S-patch nagyon jó
 - 5+ oldalnál a Gregory lényegesen kisebb komplexitású, míg a fokszám nagyságrendje azonos
@@ -69,7 +70,6 @@ Salvi, Várady, Rockwood
 - összehasonlító táblázat a fokszámokról
 - összehasonlító táblázat a képességekről
   (kényelmes editálás, (kényelmes) G1 illesztés, G2 illesztés, szingularitási problémák)
-* Conclusion
 * Acknowledgements
 
 ---
