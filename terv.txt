@@ -1,0 +1,116 @@
+# -*- mode: org -*-
+
+CAD-compatible conversion of multi-sided surfaces -- a survey
+
+[Tomi-verzió: Survey on converting n-sided patches into (exact) trimmed Bézier surfaces]
+
+Salvi, Várady, Rockwood
+
+* Introduction
+- motiváció:
+  (i) n-oldalú felületek fontossága;
+  (ii) non-standard reprezentációk;
+  (iii) hagyományos megoldások problémái (trim, split)
+- ideális: könnyen kezelhető "native" n-oldalú reprezentáció egzakt trimmelt NURBS konverzióval
+- többen csinálták már - ezeket megvizsgáljuk (és feljavítjuk!), és mutatunk egy újabb módszert
+- cikk felépítése
+* S-patch
+- a Bézier-háromszögek egy természetes általánosítása
+** Problémák
+*** Kezelhetőség
+- túl sok és túl összevissza kontrollpont, folytonosság biztosítása nehézkes
+- de lehet G1 frame alapján generálni, ami ezeket megoldja (ld. Loop'90 & Salvi'19/1)
+*** Hatékonyság
+- átkonvertálható tensor NURBS-be, de az eredeti algoritmus (Loop'89 & Salvi'19/2) használhatatlan
+- Wachspress reguláris domainnél ez megoldható a domain-élek egyeneseinek egyenletét alkalmazva
+- képletek, levezetés, fokszám-képlet
+*** Szingularitás
+- az élek metszéspontjait tartalmazó körön szingularitások
+- ezek közelében a kontrollpontok elszállnak, a kiértékelés pontosságán ront(hat)
+- megoldás: nagyobb n-oldalú domain (kicsit kevésbé standard)
+* Warren's patch
+- ötlet: Bézier-háromszög (háromoldalú S-patch) kontrollpontjait 0/0-ba téve 4,5,6 oldalút kapunk
+- a határgörbék a maradék kontrollpontokból kijövő Bézier-görbék lesznek (szép!)
+- nagyon egyszerű (fokszámtartó) degenerált NURBS konverzió
+  (de persze lehet használni az S-patch módszert is helyette)
+- a fokszám nagyon alacsony
+** Problémák
+- nem lehet minden konfigurációt létrehozni,
+  pl. ha 7-edfokú háromszögből vágunk, és az élek legalább kvadratikusak,
+  akkor csak 2 ötoldalú (23255/22345) és 2 hatoldalú (232323/223223) konfiguráció lehetséges;
+  3d-edfokúval lehet csinálni minden oldalon d-edfokú 6-oldalút,
+  de 5-oldalúnál nem lehet minden oldalnak azonos a fokszáma (aszimmetrikus)
+- a 0/0 nem teljesen standard, nem minden rendszer bírja
+- G1-folytonosság??? (valószínűleg bonyolult)
+- toric patch említés szintjén, ugyanezekkel a problémákkal küzd
+* Kato's patch
+- racionális paraméterezés mellett racionális
+- G2 (vagy magasabb) folytonosság
+- ismét él-egyenes egyenletes módszer, származtatott s-paraméterrel
+- képletek, fokszám-képlet
+** Problémák
+- sarkokban szinguláris
+- S-patchhez hasonlóan ügyes domainnel orvosolható
+* Charrot-Gregory patch
+- ugyanezzel az s-paraméterezéssel csinálhatunk Gregory patchet is
+- képletek, fokszám-képlet
+** Problémák
+- ennek a legmagasabb a fokszáma
+- ez is szinguláris, de csak az él-metszéspontokban,
+  így 5-6 oldalúakra standard domainnel is használható
+- nagyobb oldalszámnál itt is trükközni kell a domainnel
+* Discussion
+- minden módszernek vannak előnyei és hátrányai
+- háromszögre a G1-frame-es S-patch nagyon jó
+- 5+ oldalnál a Gregory lényegesen kisebb komplexitású, míg a fokszám nagyságrendje azonos
+- a Gregory mellett szól az is, hogy 5-6 oldalúaknál nincs szingularitási probléma
+- ha G2 illesztés kell, akkor csak a Kato patch marad, de a fokszám magas, és szinguláris
+- a Warren patch az egyetlen, ami emberi fokszámokkal dolgozik
+- összehasonlító táblázat a fokszámokról
+- összehasonlító táblázat a képességekről
+  (kényelmes editálás, (kényelmes) G1 illesztés, G2 illesztés, szingularitási problémák)
+* Conclusion
+* Acknowledgements
+
+---
+
+Négy felületreprezentáció:
+   1. S-patch (a native control point struktúra horror, de ha ezeket eldugjuk 
+      és szépen preprocesszálunk, akkor egész jó)
+   2. Warren (csak 3,5,6-sided, asszimetrikus reprezentáció)
+   3. RP Gregory - s-vonalakkal, nem egy brilliáns új megoldás, hanem egy 
+      'profik által kipottyantott' Gregory variáns; persze jó lenne legalább hozzátenni
+      egy midpoint-os megoldást, ahogy azt a korábbi Kato-s cikkünkben megtettük.
+      Több belső kontroll egy picit kompenzálná a picit magasabb fokszámot)
+   4. Kato-patch (jujj, de szinguáris...)
+
+Egy közös elméleti alapról indulva mindegyik konstrukciót röviden leírnánk.
+Aztán mindegyiknél elemezzük az előnyöket és hátrányokat; rámutatunk mindenféle
+computational problémára és új zseniális megoldásokat adunk; elemezzük a szingularitásokat;
+megnézzük, hogyan kell a domént elhelyezni; táblázatokat adunk fokszámra, stb. 
+
+---
+
+A Warren csak 3,5,6-sided, ráadásul nem teljesen standard, mert 0/0
+kontrollpontjai vannak, és ezért a háromszögelése sem triviális,
+ugyanakkor messze a legjobb fokszámban, hiszen nem feltétlenül kell
+hozzá fokszámemelés (azért csak nem feltétlenül, mert nem minden
+konfiguráció lehetséges - érdekes téma lehet amúgy a minimális
+fokszámemeléses hole filling Warren-patch-el, lehet hogy már csinálta
+valaki). A G1 illesztés viszont nem tűnik egyszerűnek.
+
+Ami a Kato-patchet illeti, egyrészt ezt sem írta le még senki ilyen
+kontextusban, másrészt hét- vagy többodalúaknál az RP Gregory is
+szinguláris (persze a szingularitások kint vannak, de épp elég közel
+ahhoz, hogy a kontrollpontok teljesen használhatatlanok legyenek). Az
+RP Gregory amúgy pontosan 3-mal kisebb fokszámú, mint a Kato, viszont
+a Katoval lehet G2-t is könnyen (bár a fokszám nyilván megugrik).
+
+A belső kontrollt meg lehet csinálni gondolom, most nem látom
+pontosan, de feltételezem 2-vel nő a fokszám az új ribbon miatt.
+
+A domain elhelyezésről ötletünk sincs pillanatnyilag, nem? Azon kívül,
+hogy érdemes az egységnégyzetnél jóval nagyobbat venni, hogy annak a
+közelébe ne essen szingularitás. De ha már ilyet veszünk, akkor úgyis
+feladtuk, hogy a kontrollpontoknak geometriai értelme legyen, tehát
+akkor meg szinte mindegy, hol vannak.
