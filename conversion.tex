@@ -155,42 +155,42 @@ B\'ezier surface, Trimming, Charrot--Gregory patch, S-patch
 
 \vspace{10pt}
 \noindent\underline{Introduction:}\vspace{0.2em}\newline
-Many everyday objects around us contain free-form parts whose natural modeling involves
-multi-sided (i.e., non-four-sided) surfaces. The mathematical representation of such
-patches is still an active area in CAGD, and although there are many approaches,
-no genuinely $n$-sided formulation has been standardized yet.
+The majority of aesthetic objects around us is represented by free-form shapes, that
+naturally involves modeling multi-sided (i.e., non-four-sided) surfaces, as well.  The
+mathematical representation of such patches is still an active area in CAGD, and although
+a great variety of approaches have been published, none of the genuine $n$-sided
+formulations has been standardized so far.
 
-Commercial CAD/CAM systems and manufacturing applications, on the other hand, only accept data
-in common formats, such as tensor product NURBS surfaces. For this reason, it is currently
-standard practice to convert multi-sided surfaces into  a CAD-compatible representation
-by either (i)~approximating it with a larger quadrilateral, \emph{trimming} away the excess
-at the boundaries, or (ii)~\emph{splitting} it into smaller four-sided patches.
+On the other hand, commercial CAD/CAM systems and related application programs only accept
+data in standard formats, such as tensor product NURBS surfaces. For this reason, it is a
+widely applied practice to convert multi-sided surfaces into a CAD-compatible
+representation either by (i)~approximating them with larger quadrilaterals,
+\emph{trimming} away the exterior part beyond the boundaries, or (ii)~\emph{splitting}
+them into smaller four-sided patches.
 
-Neither of these techniques is perfect. Both are just approximations of the original multi-sided
-patch, and with trimming even $C^0$ continuity to adjacent patches cannot be ensured, while in the
-splitting scheme the dividing curves in the interior weaken the overall continuity of the surface.
+Both techniques have their deficiencies. They only approximate the original multi-sided
+patch, and with trimming even $C^0$ continuity between the adjacent patches cannot be
+ensured (in general). In the splitting scheme the subdividing curves in the interior
+weaken the overall continuity of the surface.
 
 Ideally, we would like to have an $n$-sided patch that
 \begin{enumerate}[i)]
 \item can be used for design (has intuitive controls),
 \item can be attached to adjacent patches with $G^1$ or higher continuity,
-\item and can also be represented \emph{exactly} as a tensor product NURBS surface.
+\item and can also be represented \emph{accurately} as a tensor product NURBS surface.
 \end{enumerate}
 
-There \emph{is} such an alternative:
-if we use a multi-sided surface representation that is a rational polynomial,
-then it can be converted into NURBS form, without either changing the surface or harming continuity.
-The result will be a trimmed surface, but one where the trimming curves are exact.
-There have been a few publications about this approach over the years;
-in this paper we look at the most promising constructions, analyze and compare them,
-and also give solutions to some of the issues we have encountered.
-
-In the following, we are going to talk about
-S-patches~\cite{spatch1},
-Warren's patch~\cite{warren} based on B\'ezier triangles,
-and also propose a variation of Kato's transfinite patch~\cite{kato}
-and the Charrot--Gregory patch~\cite{charrot}.
-Finally, a general discussion about the aforementioned methods closes the paper.
+The above problem can be resolved, if the multi-sided surface can be represented as a
+rational polynomial of two parametric variables. Then it can directly be converted into
+NURBS form, without either changing the surface or harming continuity. The result will be
+a trimmed surface with exact trimming curves.
+ 
+Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
+representation. Our goal in this paper is to review these and discuss the difficulties of
+the conversion process. We are going to provide further insights into specific
+computational and geometric problems, that have not been discussed elsewhere and are
+useful for analyzing the ``pros and cons'' of these representations. Four schemes will be
+described, and a general discussion concludes the paper.
 
 \vspace{10pt}
 \noindent\underline{S-patch:}\vspace{0.2em}\newline
