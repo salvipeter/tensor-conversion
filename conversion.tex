@@ -165,7 +165,6 @@ in common formats, such as tensor product NURBS surfaces. For this reason, it is
 standard practice to convert multi-sided surfaces into  a CAD-compatible representation
 by either (i)~approximating it with a larger quadrilateral, \emph{trimming} away the excess
 at the boundaries, or (ii)~\emph{splitting} it into smaller four-sided patches.
-{\bf trim/split kep?}
 
 Neither of these techniques is perfect. Both are just approximations of the original multi-sided
 patch, and with trimming even $C^0$ continuity to adjacent patches cannot be ensured, while in the
@@ -247,8 +246,11 @@ can be located by straightforward computation, which takes only milliseconds.
 
 \vspace{10pt}
 \noindent\underline{Warren's patch:}\vspace{0.2em}\newline
-Blabla
-\begin{figure}[h!]
+Warren~\cite{warren} created multi-sided patches from B\'ezier triangles by assigning $0/0$
+\emph{base points} to some of the control points, essentially cutting off the corners, and thus
+creating 5- and 6-sided surfaces. A simple conversion to a (degenerate) tensor product form is
+also shown in the paper, see Figure~\ref{fig:warren}.
+\begin{figure}
   \begin{subfigure}{0.45\textwidth}
     \centering
     \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
@@ -264,6 +266,18 @@ Blabla
   \caption{Warren's patch.}
   \label{fig:warren}
 \end{figure}
+
+A nice property of this patch is that the ``remaining'' vertices define the behavior of the
+boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
+its position as a B\'ezier curve, the second its first derivatives etc.
+
+Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
+boundaries can be created from a triangle of degree $3d$, but due to its asymmetric construction,
+a 5-sided patch cannot have boundaries of the same degree. Moreover, using control points with zero
+weight is not a standard practice, and is not supported by many systems. Meshing
+also presents a problem, as a uniform grid on the domain would result in distorted triangles.
+
+% Toric patches ...
 
 \vspace{10pt}
 \noindent\underline{Kato's patch:}\vspace{0.2em}\newline
@@ -343,9 +357,9 @@ and the National Research, Development and Innovation Fund
 \bibitem{charrot} Charrot, P.; Gregory, J.~A.: A pentagonal surface patch for computer aided geometric design, Computer Aided Geometric Design, 1(1), 1984, 87--94.\\\ULurl{https://doi.org/10.1016/0167-8396(84)90006-2}
 \bibitem{simplex1} DeRose, T.~D.: Composing B\'ezier simplexes, ACM Transactions on Graphics, 7(3), 1988, 198--221.\\\ULurl{https://doi.org/10.1145/44479.44482}
 \bibitem{simplex2} DeRose, T.~D.; Goldman, R.~N.; Hagen, H.; Mann, S.: Functional composition algorithms via blossoming, ACM Transactions on Graphics, 12(2), 1993, 113--135.\\\ULurl{https://doi.org/10.1145/151280.151290}
-\bibitem{floater} Floater, M.~S.: Generalized barycentric coordinates and applications, Acta Numerica, 24, 2015, 161--214.
+%\bibitem{floater} Floater, M.~S.: Generalized barycentric coordinates and applications, Acta Numerica, 24, 2015, 161--214.
 \bibitem{kato} Kato, K.: Generation of $n$-sided surface patches with holes, Computer-Aided Design, 23(10), 1991, 676--683. \ULurl{https://doi.org/10.1016/0010-4485(91)90020-W}
-\bibitem{toric} Krasauskas, R.: Toric surface patches, Advances in Computational Mathematics, 17(1), 2002, 89--113. \ULurl{https://doi.org/10.1023/A:1015289823859}
+%\bibitem{toric} Krasauskas, R.: Toric surface patches, Advances in Computational Mathematics, 17(1), 2002, 89--113. \ULurl{https://doi.org/10.1023/A:1015289823859}
 \bibitem{spatch1} Loop, Ch.~T.; DeRose, T.~D.: A multisided generalization of B\'ezier surfaces, ACM Transactions on Graphics, 8(3), 1989, 204--234. \ULurl{https://doi.org/10.1145/77055.77059}
 \bibitem{spatch2} Loop, Ch.~T.; DeRose, T.~D.: Generalized B-spline surfaces of arbitrary topology, ACM, 17th Conference on Computer Graphics and Interactive Techniques, 1990, 347--356.\\\ULurl{https://doi.org/10.1145/97879.97917}
 \bibitem{salvi-kepaf} Salvi, P.: $G^1$ hole filling with S-patches made easy, Proceedings of the 12th Conference of the Hungarian Association for Image Processing and Pattern Recognition, 2019, 1--8.

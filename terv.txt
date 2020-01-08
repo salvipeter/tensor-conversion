@@ -70,7 +70,7 @@ Salvi, Várady, Rockwood
 - a Warren patch az egyetlen, ami emberi fokszámokkal dolgozik
 - összehasonlító táblázat a fokszámokról
 - összehasonlító táblázat a képességekről
-  (kényelmes editálás, (kényelmes) G1 illesztés, G2 illesztés, szingularitási problémák)
+  (kényelmes editálás, (kényelmes) G1 illesztés, G2 illesztés, 7+ oldal, szingularitási problémák)
 * Acknowledgements
 
 ---
