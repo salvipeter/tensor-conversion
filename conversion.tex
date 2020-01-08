@@ -208,22 +208,23 @@ points, while a 4-sided tensor product patch has only 36. A possible workaround 
 $G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
 After increasing the depth by 3, these boundary constraints can be interpolated~\cite{spatch2},
 and the remaining interior control points can be set by some heuristic to generate a smooth
-surface~\cite{salvi-kepaf}, see Figure~\ref{fig:spatch}.
-\begin{figure}
+surface~\cite{salvi-kepaf}, see the figure below.
+\begin{figure}[h!]
   \centering
   \includegraphics[width = 0.3\textwidth]{images/5-5-bezier-ribbon.png}
   \hfill
   \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-ribbon.png}
   \hfill
   \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-full.png}
-  \caption{Creating an S-patch based on a $G^1$ frame.}
-  \label{fig:spatch}
+  %% \caption{Creating an S-patch based on a $G^1$ frame.}
+  %% \label{fig:spatch}
 \end{figure}
 
 The CAD-compatible conversion presented in~\cite{spatch1} is a two-step process:
 first convert the surface to a
 four-sided S-patch, and then to a tensor product patch. The first step is based on the
-composition of B\'ezier simplexes~\cite{simplex1}, which has very high complexity.
+composition of B\'ezier simplexes%~\cite{simplex1}
+, which has very high complexity.
 Even using a more efficient algorithm~\cite{simplex2}, converting a modest-sized S-patch
 still requires minutes of computation on today's machines~\cite{salvi-wait}.
 
@@ -250,27 +251,32 @@ can be located by straightforward computation, which takes only milliseconds.
 Warren~\cite{warren} created multi-sided patches from B\'ezier triangles by assigning $0/0$
 \emph{base points} to some of the control points, essentially cutting off the corners, and thus
 creating 5- and 6-sided surfaces. A simple conversion to a (degenerate) tensor product form is
-also shown in the paper, see Figure~\ref{fig:warren}.
-\begin{figure}
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
-    \caption{Creating a 5-sided patch}
-    \label{fig:warren-cnet}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width = 0.6\textwidth]{images/warren-quad.png}
-    \caption{Degenerate tensor product patch}
-    \label{fig:warren-quad}
-  \end{subfigure}
-  \caption{Warren's patch.}
-  \label{fig:warren}
-\end{figure}
+also shown in the paper.
 
 A nice property of this patch is that the ``remaining'' vertices define the behavior of the
 boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
 its position as a B\'ezier curve, the second its first derivatives etc.
+The figure below shows the creation of a 5-sided patch and its conversion.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width = 0.20\textwidth]{images/warren-cnet.png}
+  \hspace{3cm}
+  \includegraphics[width = 0.20\textwidth]{images/warren-quad.png}
+  %% \begin{subfigure}{0.45\textwidth}
+  %%   \centering
+  %%   \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
+    %% \caption{Creating a 5-sided patch}
+    %% \label{fig:warren-cnet}
+  %% \end{subfigure}
+  %% \begin{subfigure}{0.45\textwidth}
+  %%   \centering
+  %%   \includegraphics[width = 0.6\textwidth]{images/warren-quad.png}
+    %% \caption{Degenerate tensor product patch}
+    %% \label{fig:warren-quad}
+  %% \end{subfigure}
+  %% \caption{Warren's patch.}
+  %% \label{fig:warren}
+\end{figure}
 
 Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
 boundaries can be created from a triangle of degree $3d$, but due to its asymmetric construction,
@@ -330,31 +336,45 @@ degree $nd+(n-1)(d^\perp+1)+d^\perp$.
 
 \vspace{10pt}
 \noindent\underline{Charrot--Gregory patch:}\vspace{0.2em}\newline
-Blabla
+The same idea can be used to convert Charrot--Gregory patches~\cite{charrot} that use
+only side parameters. (Note that on a regular domain the $s_i$ parameters defined above
+will be the same as the radial parameterization in the original paper.)
+The converted patch will be of degree $nd+2(n-2)$.
+
+For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
+side instead, which is not rational, so the overall degree is reduced to $d+3$.
+An example with mean curvature and isophote lines is shown below.
 \begin{figure}[h!]
-  \begin{subfigure}{0.23\textwidth}
-    \centering
-    \includegraphics[width = 0.93\textwidth]{images/trebol3-cnet.png}
-    \caption{Frame and control net}
-    \label{fig:trebol-cnet}
-  \end{subfigure}
-  \begin{subfigure}{0.23\textwidth}
-    \includegraphics[width = \textwidth]{images/trebol3-contour.jpg}
-    \caption{Contouring}
-    \label{fig:trebol-contour}
-  \end{subfigure}
-  \begin{subfigure}{0.23\textwidth}
-    \includegraphics[width = \textwidth]{images/trebol3-mean-iso.jpg}
-    \caption{Mean curvature}
-    \label{fig:trebol-mean}
-  \end{subfigure}
-  \begin{subfigure}{0.23\textwidth}
-    \includegraphics[width = \textwidth]{images/trebol3-zebra.jpg}
-    \caption{Isophote lines}
-    \label{fig:trebol-iso}
-  \end{subfigure}
-  \caption{Conversion of Charrot--Gregory patches. \bf kar hogy haromoldaluak vannak benne}
-  \label{fig:trebol}
+  \includegraphics[width = 0.2139\textwidth]{images/trebol3-cnet.png}
+  \hfill
+  \includegraphics[width = 0.23\textwidth]{images/trebol3-contour.jpg}
+  \hfill
+  \includegraphics[width = 0.23\textwidth]{images/trebol3-mean-iso.jpg}
+  \hfill
+  \includegraphics[width = 0.23\textwidth]{images/trebol3-zebra.jpg}
+  %% \begin{subfigure}{0.23\textwidth}
+  %%   \centering
+  %%   \includegraphics[width = 0.93\textwidth]{images/trebol3-cnet.png}
+  %%   \caption{Frame and control net}
+  %%   \label{fig:trebol-cnet}
+  %% \end{subfigure}
+  %% \begin{subfigure}{0.23\textwidth}
+  %%   \includegraphics[width = \textwidth]{images/trebol3-contour.jpg}
+  %%   \caption{Contouring}
+  %%   \label{fig:trebol-contour}
+  %% \end{subfigure}
+  %% \begin{subfigure}{0.23\textwidth}
+  %%   \includegraphics[width = \textwidth]{images/trebol3-mean-iso.jpg}
+  %%   \caption{Mean curvature}
+  %%   \label{fig:trebol-mean}
+  %% \end{subfigure}
+  %% \begin{subfigure}{0.23\textwidth}
+  %%   \includegraphics[width = \textwidth]{images/trebol3-zebra.jpg}
+  %%   \caption{Isophote lines}
+  %%   \label{fig:trebol-iso}
+  %% \end{subfigure}
+  %% \caption{Conversion of Charrot--Gregory patches.}
+  %% \label{fig:trebol}
 \end{figure}
 
 \vspace{10pt}
@@ -391,7 +411,7 @@ Blabla
 \vspace{1em}
 \noindent\underline{Acknowledgement:}\vspace{0.2em}\newline
 This project has been supported by the Hungarian Scientific Research Fund (OTKA, No.~124727)
-and the National Research, Development and Innovation Fund
+and the National R\&D and Innovation Fund
 (TUDFO/51757/2019-ITM, Thematic Excellence Program).
 
 \vspace{1em}
@@ -400,7 +420,7 @@ and the National Research, Development and Innovation Fund
 \begin{thebibliography}{99}
 
 \bibitem{charrot} Charrot, P.; Gregory, J.~A.: A pentagonal surface patch for computer aided geometric design, Computer Aided Geometric Design, 1(1), 1984, 87--94.\\\ULurl{https://doi.org/10.1016/0167-8396(84)90006-2}
-\bibitem{simplex1} DeRose, T.~D.: Composing B\'ezier simplexes, ACM Transactions on Graphics, 7(3), 1988, 198--221.\\\ULurl{https://doi.org/10.1145/44479.44482}
+%\bibitem{simplex1} DeRose, T.~D.: Composing B\'ezier simplexes, ACM Transactions on Graphics, 7(3), 1988, 198--221.\\\ULurl{https://doi.org/10.1145/44479.44482}
 \bibitem{simplex2} DeRose, T.~D.; Goldman, R.~N.; Hagen, H.; Mann, S.: Functional composition algorithms via blossoming, ACM Transactions on Graphics, 12(2), 1993, 113--135.\\\ULurl{https://doi.org/10.1145/151280.151290}
 %\bibitem{floater} Floater, M.~S.: Generalized barycentric coordinates and applications, Acta Numerica, 24, 2015, 161--214.
 \bibitem{kato} Kato, K.: Generation of $n$-sided surface patches with holes, Computer-Aided Design, 23(10), 1991, 676--683. \ULurl{https://doi.org/10.1016/0010-4485(91)90020-W}
@@ -409,7 +429,7 @@ and the National Research, Development and Innovation Fund
 \bibitem{spatch2} Loop, Ch.~T.; DeRose, T.~D.: Generalized B-spline surfaces of arbitrary topology, ACM, 17th Conference on Computer Graphics and Interactive Techniques, 1990, 347--356.\\\ULurl{https://doi.org/10.1145/97879.97917}
 \bibitem{salvi-kepaf} Salvi, P.: $G^1$ hole filling with S-patches made easy, Proceedings of the 12th Conference of the Hungarian Association for Image Processing and Pattern Recognition, 2019, 1--8.
 \bibitem{salvi-wait} Salvi, P.: On the CAD-compatible conversion of S-patches, Proceedings of the Workshop on the Advances of Information Technology, 2019, 72--76.
-\bibitem{transfinite} V\'arady, T.; Rockwood, A.; Salvi, P.: Transfinite surface interpolation over irregular $n$-sided domains, Computer-Aided Design, 43(11), 2011, 1330--1340. \ULurl{https://doi.org/10.1016/j.cad.2011.08.028}
+%\bibitem{transfinite} V\'arady, T.; Rockwood, A.; Salvi, P.: Transfinite surface interpolation over irregular $n$-sided domains, Computer-Aided Design, 43(11), 2011, 1330--1340. \ULurl{https://doi.org/10.1016/j.cad.2011.08.028}
 \bibitem{warren} Warren, J.: Creating multisided rational B\'ezier surfaces using base points, ACM Transactions on Graphics, 11(2), 1992, 127--139. \ULurl{https://doi.org/10.1145/130826.130828}
 
 \end{thebibliography}
