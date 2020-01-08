@@ -158,8 +158,8 @@ B\'ezier surface, Trimming, Charrot--Gregory patch, S-patch
 
 \vspace{10pt}
 \noindent\underline{Introduction:}\vspace{0.2em}\newline
-The majority of aesthetic objects around us is represented by free-form shapes, that
-naturally involves modeling multi-sided (i.e., non-four-sided) surfaces, as well.  The
+The majority of aesthetic objects around us is represented by free-form shapes that
+naturally involve modeling multi-sided (i.e., non-four-sided) surfaces, as well.  The
 mathematical representation of such patches is still an active area in CAGD, and although
 a great variety of approaches have been published, none of the genuine $n$-sided
 formulations has been standardized so far.
@@ -184,7 +184,7 @@ Ideally, we would like to have an $n$-sided patch that
 \end{enumerate}
 
 The above problem can be resolved, if the multi-sided surface can be represented as a
-rational polynomial of two parametric variables. Then it can directly be converted into
+rational polynomial of two parametric variables. Then it can be directly converted into
 NURBS form, without either changing the surface or harming continuity. The result will be
 a trimmed surface with exact trimming curves.
  
@@ -193,7 +193,7 @@ representation. Our goal in this paper is to review these and discuss the diffic
 the conversion process. We are going to provide further insights into specific
 computational and geometric problems, that have not been discussed elsewhere and are
 useful for analyzing the ``pros and cons'' of these representations. Four schemes will be
-described, and a general discussion concludes the paper.
+described, and a general discussion will conclude the paper.
 
 \vspace{10pt}
 \noindent\underline{S-patch:}\vspace{0.2em}\newline
@@ -225,7 +225,7 @@ The CAD-compatible conversion presented in~\cite{spatch1} is a two-step process:
 first convert the surface to a
 four-sided S-patch, and then to a tensor product patch. The first step is based on the
 composition of B\'ezier simplexes, which has very high complexity.
-Even using a more efficient algorithm~\cite{simplex2}, converting a modest-sized S-patch
+Even using an efficient algorithm~\cite{simplex2}, converting a modest-sized S-patch
 still requires minutes of computation on today's machines~\cite{salvi-wait}.
 
 Here we propose an alternative conversion process. Since a B\'ezier simplex is just a polynomial,
@@ -237,11 +237,12 @@ polygon, the barycentric coordinates $\{\lambda_i\}$ are expressed as
   \lambda_i(u,v) = \prod_{\substack{j=1\\j\notin\{i-1,i\}}}^nh_j(u,v) \quad\bigg/\quad
                    \sum_{k=1}^n\prod_{\substack{j=1\\j\notin\{k-1,k\}}}^nh_j(u,v),
 \end{equation}
-where the indexing is cyclic, and $h_j(u,v)$ is some distance
+where the indexing is cyclic, and $h_j(u,v)$ is a distance function
 from the $j$-th side of the domain polygon. The implicit
-equation of the line containing this side is such a distance function, and is a linear polynomial,
+equation of the line containing a given side is suitable for this purpose,
+and is also a linear polynomial,
 so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$. We
-normalize the distances such that they take on take on the value 1 at vertices adjacent to the side.
+normalize the distances such that they take on the value 1 at vertices adjacent to the side.
 
 Using this method, the B\'ezier control points of the tensor product representation
 can be located by straightforward computation, which takes only milliseconds.
@@ -275,7 +276,7 @@ also presents a problem, as a uniform grid on the domain would result in distort
 
 \vspace{10pt}
 \noindent\underline{Kato's patch:}\vspace{0.2em}\newline
-Kato~\cite{kato} proposed a surface as the transfinite interpolation of boundary curves with
+Kato~\cite{kato} proposed a surface defined as the transfinite interpolation of boundary curves with
 cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
 are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
 this representation uses two parameters, a \emph{side parameter} $s_i$
@@ -289,11 +290,11 @@ Figure~\ref{fig:parameters}.
     \label{fig:domain}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{0.30\textwidth}
+  \begin{subfigure}{0.3\textwidth}
     \begin{minipage}[b][5cm][b]{\textwidth}
       \centering
-      \includegraphics[width = 0.83\textwidth]{images/s-params.pdf}
-      \vspace*{9mm}
+      \includegraphics[width = \textwidth]{images/s-params.pdf}
+      \vspace*{-2mm}
     \end{minipage}
     \caption{$s_i$ isolines for two sides}
     \label{fig:s}
@@ -302,8 +303,8 @@ Figure~\ref{fig:parameters}.
   \begin{subfigure}{0.30\textwidth}
     \begin{minipage}[b][5cm][b]{\textwidth}
       \centering
-      \includegraphics[width = 0.83\textwidth]{images/h-params.pdf}
-      \vspace*{9mm}
+      \includegraphics[width = \textwidth]{images/h-params.pdf}
+      \vspace*{-2mm}
     \end{minipage}
     \caption{$h_i$ isolines for two sides}
     \label{fig:h}
@@ -312,7 +313,7 @@ Figure~\ref{fig:parameters}.
   \label{fig:parameters}
 \end{figure}
 
-The distance parameters can be computed the same way as in the creation of S-patches; for side
+The distance parameters can be computed the same way as in the creation of S-patches, and for side
 parameters we can use $s_i=h_{i-1}/(h_{i-1}+h_{i+1})$, which gives a rational polynomial
 representation.
 
@@ -349,10 +350,10 @@ all the other representations have singularities in or outside their domains.
 When a singular point is close to the domain of the tensor product patch (i.e., the unit square),
 control points in the vicinity show erratic behavior.
 
-Kato's patch is singular at the corner vertices; the S-patch is singular on the circle containing
-the intersections of the lines containing the domain edges; and the Charrot--Gregory patch is
-singular only at these intersections. Practically this means that excluding the triangular S-patch
-(which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
+Kato's patch is singular at the corner vertices; the S-patch is singular on the circle that goes
+through the intersections of the lines containing the domain edges; and the Charrot--Gregory patch
+is singular only at these intersection points. Practically this means that excluding the triangular
+S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
 relatively far away), all of these converted tensor product surfaces are likely to have
 outlier control points (possibly nearly in infinity), which may lead to numerical issues.
 
@@ -384,15 +385,15 @@ lines.
   \centering
   \begin{tabular}{c|c|c|c|c}
     $n$ & S-patch~\cite{spatch1} & Warren~\cite{warren} & Kato~\cite{kato} & Charrot--Gregory~\cite{charrot} \\ \hline
-    3 & \multicolumn{2}{c|}{$d$ ($d+3$)} & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
-    5 & \cellcolor{light-light-gray}$3d$ ($3d+9$) & $\approx 3d$ & \cellcolor{light-gray}$5d+9$ & $5d+6$ \\ \hline
-    6 & \cellcolor{light-light-gray}$4d$ ($4d+12$) & $3d$ & \cellcolor{light-gray}$6d+11$ & $6d+8$ \\ \hline
-    7+ & \cellcolor{light-gray}$nd-2d$ ($(n-2)d+3n-6$) & $\qquad$N/A$\qquad$ & \cellcolor{light-gray}$nd+2n-1$ & \cellcolor{light-gray}$nd+2n-4$ \\ \hline
+    3 & \multicolumn{2}{c|}{$d$ [$d+3$]} & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
+    5 & \cellcolor{light-light-gray}$3d$ [$3d+9$] & $\approx 3d$ & \cellcolor{light-gray}$5d+9$ & $5d+6$ \\ \hline
+    6 & \cellcolor{light-light-gray}$4d$ [$4d+12$] & $3d$ & \cellcolor{light-gray}$6d+11$ & $6d+8$ \\ \hline
+    7+ & \cellcolor{light-gray}$(n-2)d$ [$(n-2)d+3n-6$] & $\qquad$N/A$\qquad$ & \cellcolor{light-gray}$nd+2n-1$ & \cellcolor{light-gray}$nd+2n-4$ \\ \hline
   \end{tabular}
   \caption{Rational polynomial degrees of the converted surfaces for different number of sides,
     assuming boundary curves of degree $d$. Gray cells indicate that the surface is susceptible to
     the singularity issue. Note that triangular S-patches and Warren patches are both B\'ezier
-    triangles. For S-patches, the number in parentheses shows the degree when the surface is
+    triangles. For S-patches, the number in brackets shows the degree when the surface is
     generated by a degree-$d$ $G^1$ frame.}
   \label{tab:degrees}
 \end{table}
