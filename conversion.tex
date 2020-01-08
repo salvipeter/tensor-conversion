@@ -172,7 +172,7 @@ patch, and with trimming even $C^0$ continuity to adjacent patches cannot be ens
 splitting scheme the dividing curves in the interior weaken the overall continuity of the surface.
 
 Ideally, we would like to have an $n$-sided patch that
-\begin{enumerate}[i.]
+\begin{enumerate}[i)]
 \item can be used for design (has intuitive controls),
 \item can be attached to adjacent patches with $G^1$ or higher continuity,
 \item and can also be represented \emph{exactly} as a tensor product NURBS surface.
@@ -195,9 +195,22 @@ Finally, a general discussion about the aforementioned methods closes the paper.
 
 \vspace{10pt}
 \noindent\underline{S-patch:}\vspace{0.2em}\newline
-Blabla
-\begin{figure}[h!]
-  \label{fig:rotations}
+The S-patch of Loop \& DeRose~\cite{spatch1} is a generalization of the B\'ezier triangle, or,
+more precisely, a B\'ezier simplex mapping from $(n-1)$D to 3D, where the $n$ coordinates of the
+domain are supplied by generalized barycentric coordinates. The \emph{depth} ($d$) of an S-patch
+is the number of deCasteljau steps it takes to evaluate a surface point, i.e., something similar
+to the degree of a B\'ezier triangle (but not the degree of the S-patch itself).
+S-patches have many nice properties, and are known to be convertable into tensor product
+rational B\'ezier surfaces of degree $d(n-2)$.
+
+One drawback of this representation is its large number of control points, which renders it
+inconvenient for interactive design. For example, a five-sided patch of depth 5 has 126 control
+points, while a 4-sided tensor product patch has only 36. A possible workaround is to use a
+$G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
+After increasing the depth by 3, these boundary constraints can be interpolated~\cite{spatch2},
+and the remaining interior control points can be set by some heuristic to generate a smooth
+surface~\cite{salvi-kepaf}, see Figure~\ref{fig:spatch}.
+\begin{figure}
   \centering
   \includegraphics[width = 0.3\textwidth]{images/5-5-bezier-ribbon.png}
   \hfill
@@ -205,26 +218,51 @@ Blabla
   \hfill
   \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-full.png}
   \caption{Creating an S-patch based on a $G^1$ frame.}
+  \label{fig:spatch}
 \end{figure}
+
+The CAD-compatible conversion presented in~\cite{spatch1} is a two-step process:
+first convert the surface to a
+four-sided S-patch, and then to a tensor product patch. The first step is based on the
+composition of B\'ezier simplexes~\cite{simplex1}, which has very high complexity.
+Even using a more efficient algorithm~\cite{simplex2}, converting a modest-sized S-patch
+still requires minutes of computation on today's machines~\cite{salvi-wait}.
+
+Here we propose an alternative conversion process. Since a B\'ezier simplex is just a polynomial,
+the only problem is how to express the generalized barycentric coordinates as a rational polynomial
+of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates over a regular $n$-sided
+polygon, the barycentric coordinates $\{\lambda_i\}$ are expressed as
+\begin{equation}
+  \label{eq:wachspress}
+  \lambda_i(u,v) = \prod_{\substack{j=1\\j\notin\{i-1,i\}}}^nh_j(u,v) \quad\bigg/\quad
+                   \sum_{k=1}^n\prod_{\substack{j=1\\j\notin\{k-1,k\}}}^nh_j(u,v),
+\end{equation}
+where the indexing is cyclic, and $h_j(u,v)$ is some distance
+from the $j$-th side of the domain polygon. The implicit
+equation of the line containing this side is such a distance function, and is a linear polynomial,
+so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$.
+
+Using this method, the B\'ezier control points of the tensor product representation
+can be located by straightforward computation, which takes only milliseconds.
 
 \vspace{10pt}
 \noindent\underline{Warren's patch:}\vspace{0.2em}\newline
 Blabla
 \begin{figure}[h!]
-  \label{fig:warren}
   \begin{subfigure}{0.45\textwidth}
-    \label{fig:warren-cnet}
     \centering
     \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
     \caption{Creating a 5-sided patch}
+    \label{fig:warren-cnet}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
-    \label{fig:warren-quad}
     \centering
     \includegraphics[width = 0.6\textwidth]{images/warren-quad.png}
     \caption{Degenerate tensor product patch}
+    \label{fig:warren-quad}
   \end{subfigure}
   \caption{Warren's patch.}
+  \label{fig:warren}
 \end{figure}
 
 \vspace{10pt}
@@ -235,56 +273,56 @@ Blabla
 \noindent\underline{Charrot--Gregory patch:}\vspace{0.2em}\newline
 Blabla
 \begin{figure}[h!]
-  \label{fig:trebol}
   \begin{subfigure}{0.23\textwidth}
-    \label{fig:trebol-cnet}
     \centering
     \includegraphics[width = 0.93\textwidth]{images/trebol3-cnet.png}
     \caption{Frame and control net}
+    \label{fig:trebol-cnet}
   \end{subfigure}
   \begin{subfigure}{0.23\textwidth}
-    \label{fig:trebol-contour}
     \includegraphics[width = \textwidth]{images/trebol3-contour.jpg}
     \caption{Contouring}
+    \label{fig:trebol-contour}
   \end{subfigure}
   \begin{subfigure}{0.23\textwidth}
-    \label{fig:trebol-mean}
     \includegraphics[width = \textwidth]{images/trebol3-mean-iso.jpg}
     \caption{Mean curvature}
+    \label{fig:trebol-mean}
   \end{subfigure}
   \begin{subfigure}{0.23\textwidth}
-    \label{fig:trebol-iso}
     \includegraphics[width = \textwidth]{images/trebol3-zebra.jpg}
     \caption{Isophote lines}
+    \label{fig:trebol-iso}
   \end{subfigure}
   \caption{Conversion of Charrot--Gregory patches. \bf kar hogy haromoldaluak vannak benne}
+  \label{fig:trebol}
 \end{figure}
 
 \vspace{10pt}
 \noindent\underline{Discussion:}\vspace{0.2em}\newline
 Blabla
 \begin{figure}[h!]
-  \label{fig:rotations}
   \centering
   \includegraphics[width = 0.9\textwidth]{images/rotations.png}
   \caption{Effects of rotating the multi-sided domain.}
+  \label{fig:rotations}
 \end{figure}
 \begin{figure}[h!]
-  \label{fig:8sided}
   \centering
   \begin{subfigure}{0.3\textwidth}
-    \label{fig:8sided-cnet}
     \includegraphics[width = \textwidth]{images/8sided-cnet.png}
     \caption{Frame and control net}
+    \label{fig:8sided-cnet}
   \end{subfigure}
   \hspace{3cm}
   \begin{subfigure}{0.3\textwidth}
-    \label{fig:8sided-iso}
     \includegraphics[width = \textwidth]{images/8sided-iso.png}
     \caption{Isophote lines}
+    \label{fig:8sided-iso}
   \end{subfigure}
 
   \caption{Using a larger multi-sided domain.}
+  \label{fig:8sided}
 \end{figure}
 
 \vspace{1em}

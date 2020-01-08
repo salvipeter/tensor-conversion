@@ -28,7 +28,8 @@ Salvi, Várady, Rockwood
 - mindegyiknek problémája, ld. Singularities később
 * Warren's patch
 - ötlet: Bézier-háromszög (háromoldalú S-patch) kontrollpontjait 0/0-ba téve 4,5,6 oldalút kapunk
-- a határgörbék a maradék kontrollpontokból kijövő Bézier-görbék lesznek (szép!)
+- a határgörbék a maradék kontrollpontokból kijövő Bézier-görbék lesznek (szép!),
+  G1 folytonosság is ugyanígy
 - nagyon egyszerű (fokszámtartó) degenerált NURBS konverzió
   (de persze lehet használni az S-patch módszert is helyette)
 - a fokszám nagyon alacsony
@@ -39,7 +40,6 @@ Salvi, Várady, Rockwood
   3d-edfokúval lehet csinálni minden oldalon d-edfokú 6-oldalút,
   de 5-oldalúnál nem lehet minden oldalnak azonos a fokszáma (aszimmetrikus)
 - a 0/0 nem teljesen standard, nem minden rendszer bírja
-- G1-folytonosság??? (valószínűleg bonyolult)
 - toric patch említés szintjén, ugyanezekkel a problémákkal küzd
 * Kato's patch
 - racionális paraméterezés mellett racionális
@@ -55,6 +55,7 @@ Salvi, Várady, Rockwood
 - ennek a legmagasabb a fokszáma
 - ez is szinguláris, de csak az él-metszéspontokban, ld. később
 * Discussion
+- fokszám
 - domain elhelyezés, forgatás
 ** Singularities
 - az élek metszéspontjait tartalmazó körön szingularitások
