@@ -188,8 +188,8 @@ and also give solutions to some of the issues we have encountered.
 In the following, we are going to talk about
 S-patches~\cite{spatch1},
 Warren's patch~\cite{warren} based on B\'ezier triangles,
-Kato's transfinite patch~\cite{kato},
-and also propose a variation of the Charrot--Gregory patch~\cite{charrot}.
+and also propose a variation of Kato's transfinite patch~\cite{kato}
+and the Charrot--Gregory patch~\cite{charrot}.
 Finally, a general discussion about the aforementioned methods closes the paper.
 
 \vspace{10pt}
@@ -239,7 +239,8 @@ polygon, the barycentric coordinates $\{\lambda_i\}$ are expressed as
 where the indexing is cyclic, and $h_j(u,v)$ is some distance
 from the $j$-th side of the domain polygon. The implicit
 equation of the line containing this side is such a distance function, and is a linear polynomial,
-so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$.
+so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$. We
+normalize the distances such that they take on take on the value 1 at vertices adjacent to the side.
 
 Using this method, the B\'ezier control points of the tensor product representation
 can be located by straightforward computation, which takes only milliseconds.
@@ -281,7 +282,51 @@ also presents a problem, as a uniform grid on the domain would result in distort
 
 \vspace{10pt}
 \noindent\underline{Kato's patch:}\vspace{0.2em}\newline
-Blabla
+Kato~\cite{kato} proposed a surface as the transfinite interpolation of boundary curves with
+cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
+are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
+this representation uses two parameters, a \emph{side parameter} $s_i$
+that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
+and a \emph{distance parameter} $h_i$ that vanishes on the base side, see
+Figure~\ref{fig:parameters}.
+\begin{figure}[b!]
+  \begin{subfigure}{0.30\textwidth}
+    \includegraphics[width = \textwidth]{images/domain.pdf}
+    \caption{Domain}
+    \label{fig:domain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.30\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = 0.83\textwidth]{images/s-params.pdf}
+      \vspace*{9mm}
+    \end{minipage}
+    \caption{$s_i$ isolines for two sides}
+    \label{fig:s}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.30\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = 0.83\textwidth]{images/h-params.pdf}
+      \vspace*{9mm}
+    \end{minipage}
+    \caption{$h_i$ isolines for two sides}
+    \label{fig:h}
+  \end{subfigure}
+  \caption{Parameterization.}
+  \label{fig:parameters}
+\end{figure}
+
+The distance parameters can be computed the same way as in the creation of S-patches; for side
+parameters we can use $s_i=h_{i-1}/(h_{i-1}+h_{i+1})$, which gives a rational polynomial
+representation.
+
+Kato's patch is easily extendable to handle $G^2$ continuity, if the side constraints have 3
+control rows (so the cross-degree $d^\perp$ is 2 instead of 1).
+Then the whole surface becomes a rational tensor product B\'ezier patch of
+degree $nd+(n-1)(d^\perp+1)+d^\perp$.
 
 \vspace{10pt}
 \noindent\underline{Charrot--Gregory patch:}\vspace{0.2em}\newline
