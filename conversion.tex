@@ -216,15 +216,12 @@ surface~\cite{salvi-kepaf}, see the figure below.
   \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-ribbon.png}
   \hfill
   \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-full.png}
-  %% \caption{Creating an S-patch based on a $G^1$ frame.}
-  %% \label{fig:spatch}
 \end{figure}
 
 The CAD-compatible conversion presented in~\cite{spatch1} is a two-step process:
 first convert the surface to a
 four-sided S-patch, and then to a tensor product patch. The first step is based on the
-composition of B\'ezier simplexes%~\cite{simplex1}
-, which has very high complexity.
+composition of B\'ezier simplexes, which has very high complexity.
 Even using a more efficient algorithm~\cite{simplex2}, converting a modest-sized S-patch
 still requires minutes of computation on today's machines~\cite{salvi-wait}.
 
@@ -262,27 +259,14 @@ The figure below shows the creation of a 5-sided patch and its conversion.
   \includegraphics[width = 0.20\textwidth]{images/warren-cnet.png}
   \hspace{3cm}
   \includegraphics[width = 0.20\textwidth]{images/warren-quad.png}
-  %% \begin{subfigure}{0.45\textwidth}
-  %%   \centering
-  %%   \includegraphics[width = 0.6\textwidth]{images/warren-cnet.png}
-    %% \caption{Creating a 5-sided patch}
-    %% \label{fig:warren-cnet}
-  %% \end{subfigure}
-  %% \begin{subfigure}{0.45\textwidth}
-  %%   \centering
-  %%   \includegraphics[width = 0.6\textwidth]{images/warren-quad.png}
-    %% \caption{Degenerate tensor product patch}
-    %% \label{fig:warren-quad}
-  %% \end{subfigure}
-  %% \caption{Warren's patch.}
-  %% \label{fig:warren}
 \end{figure}
 
 Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
 boundaries can be created from a triangle of degree $3d$, but due to its asymmetric construction,
 a 5-sided patch cannot have boundaries of the same degree. Moreover, using control points with zero
 weight is not a standard practice, and is not supported by many systems. Meshing
-also presents a problem, as a uniform grid on the domain would result in distorted triangles.
+also presents a problem, as a uniform grid on the domain would result in distorted triangles
+(the ``trimmed'' sides correspond to corners).
 
 % Toric patches ...
 
@@ -352,67 +336,50 @@ An example with mean curvature and isophote lines is shown below.
   \includegraphics[width = 0.23\textwidth]{images/trebol3-mean-iso.jpg}
   \hfill
   \includegraphics[width = 0.23\textwidth]{images/trebol3-zebra.jpg}
-  %% \begin{subfigure}{0.23\textwidth}
-  %%   \centering
-  %%   \includegraphics[width = 0.93\textwidth]{images/trebol3-cnet.png}
-  %%   \caption{Frame and control net}
-  %%   \label{fig:trebol-cnet}
-  %% \end{subfigure}
-  %% \begin{subfigure}{0.23\textwidth}
-  %%   \includegraphics[width = \textwidth]{images/trebol3-contour.jpg}
-  %%   \caption{Contouring}
-  %%   \label{fig:trebol-contour}
-  %% \end{subfigure}
-  %% \begin{subfigure}{0.23\textwidth}
-  %%   \includegraphics[width = \textwidth]{images/trebol3-mean-iso.jpg}
-  %%   \caption{Mean curvature}
-  %%   \label{fig:trebol-mean}
-  %% \end{subfigure}
-  %% \begin{subfigure}{0.23\textwidth}
-  %%   \includegraphics[width = \textwidth]{images/trebol3-zebra.jpg}
-  %%   \caption{Isophote lines}
-  %%   \label{fig:trebol-iso}
-  %% \end{subfigure}
-  %% \caption{Conversion of Charrot--Gregory patches.}
-  %% \label{fig:trebol}
 \end{figure}
 
 \vspace{10pt}
 \noindent\underline{Discussion:}\vspace{0.2em}\newline
-Blabla
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width = 0.9\textwidth]{images/rotations.png}
-  \caption{Effects of rotating the multi-sided domain.}
-  \label{fig:rotations}
-\end{figure}
-\begin{figure}[h!]
-  \centering
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width = \textwidth]{images/8sided-cnet.png}
-    \caption{Frame and control net}
-    \label{fig:8sided-cnet}
-  \end{subfigure}
-  \hspace{3cm}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width = \textwidth]{images/8sided-iso.png}
-    \caption{Isophote lines}
-    \label{fig:8sided-iso}
-  \end{subfigure}
+One aspect of the tensor product conversion we have not touched on before is the quality of the
+control net. Aside from Warren's patch, which has singular control points,
+all the other representations have singularities in or outside their domains.
+When a singular point is close to the domain of the tensor product patch (i.e., the unit square),
+control points in the vicinity show erratic behavior.
 
-  \caption{Using a larger multi-sided domain.}
-  \label{fig:8sided}
+Kato's patch is singular at the corner vertices; the S-patch is singular on the circle containing
+the intersections of the lines containing the domain edges; and the Charrot--Gregory patch is
+singular only at these intersections. Practically this means that excluding the triangular S-patch
+(which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
+relatively far away), all of these converted tensor product surfaces are likely to have
+outlier control points (possibly nearly in infinity), which may lead to numerical issues.
+
+We present a solution to this problem. Normally the multi-sided domain is inside the unit
+square (Figure~\ref{fig:parameters}), so that the trimming curves will be inside the
+surface, but if we lift this constraint, we can create a larger multi-sided domain,
+thereby separating the unit square from the singularities. This means that the ``trimmed''
+region will be outside the standard $[0,1]^2$ domain, which may not be supported by some
+applications, but the control structure will be very well-behaved. The figure below shows
+the control net of an 8-sided Charrot--Gregory patch with normal and enlarged domain, and isophote
+lines.
+\begin{figure}[h!]
+  \includegraphics[width = 0.34\textwidth]{images/8sided-1.png}
+  \hfill
+  \includegraphics[width = 0.34\textwidth]{images/8sided-2.png}
+  \hfill
+  \includegraphics[width = 0.3\textwidth]{images/8sided-3.png}
 \end{figure}
 
-\vspace{1em}
-\noindent\underline{Conclusions:}\vspace{0.2em}\newline
-Blabla
+% Rotation
+%% \begin{figure}[h!]
+%%   \centering
+%%   \includegraphics[width = 0.9\textwidth]{images/rotations.png}
+%%   \caption{Effects of rotating the multi-sided domain.}
+%%   \label{fig:rotations}
+%% \end{figure}
 
 \vspace{1em}
 \noindent\underline{Acknowledgement:}\vspace{0.2em}\newline
-This project has been supported by the Hungarian Scientific Research Fund (OTKA, No.~124727)
-and the National R\&D and Innovation Fund
-(TUDFO/51757/2019-ITM, Thematic Excellence Program).
+This project has been supported by the Hungarian Scientific Research Fund (OTKA, No.~124727).
 
 \vspace{1em}
 \noindent\underline{References:}\vspace{-1.9em}\newline
