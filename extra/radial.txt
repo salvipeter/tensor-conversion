@@ -1,0 +1,11 @@
+(A', A'', B', B''-nél derékszögek vannak, A-nál és B-nél a szögek azonosak)
+
+Be akarjuk látni:
+  AD / AB = A'D' / (A'D' + D'B')
+
+1. AD / AB = AD / (AD + DB), tehát elég azt belátni, hogy AD / DB = A'D' / D'B'
+
+2. A'CD' és A''CD háromszögek hasonlóak, B'CD'-nél szintén (ugyanolyan arányban),
+   tehát A''D / DB'' = A'D' / D'B'
+
+3. AA''D és BB''D háromszögek hasonlóak, ezért A''D / DB'' = AD / DB
