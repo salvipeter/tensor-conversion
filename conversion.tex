@@ -16,7 +16,7 @@
 \usepackage[numbers]{natbib}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{enumerate}
+\usepackage{enumitem}
 \usepackage[table]{xcolor}
 \definecolor{light-gray}{gray}{0.8}
 \definecolor{light-light-gray}{gray}{0.9}
@@ -137,7 +137,7 @@
 \underline{Title:}
 
 \noindent{\bfseries
-On the CAD-compatible conversion of multi-sided surfaces}
+Notes on the CAD-compatible conversion of multi-sided surfaces}
 
 \vspace{1em}
 \noindent \underline{Authors:}
@@ -148,7 +148,7 @@ Alyn Rockwood, alynrock@gmail.com, Boulder Graphics LLC, USA
 
 \vspace{1em}
 \noindent \underline{Keywords:}\newline
-B\'ezier surface, Trimming, Charrot--Gregory patch, S-patch
+Multi-sided surfaces, Trimmed tensor product surfaces, S-patch, Charrot--Gregory patch
 
 
 \bigskip
@@ -177,7 +177,7 @@ adjacent patches. In the splitting scheme the subdividing curves in the interior
 weaken the overall continuity of the surface.
 
 Ideally, we would like to have an $n$-sided patch that:
-\begin{enumerate}[i)]
+\begin{enumerate}[label=\roman*),leftmargin=3\parindent]
 \item can be used for design (has intuitive controls),
 \item can be attached to adjacent patches with $G^1$ or higher continuity,
 \item and can also be represented \emph{accurately} as a tensor product NURBS surface.
@@ -186,7 +186,7 @@ Ideally, we would like to have an $n$-sided patch that:
 The above problem can be resolved, if the multi-sided surfaces can be represented as rational
 polynomials of two parametric variables. Then they can be directly converted into
 NURBS form, without either changing the surfaces or harming continuity. The result will be
-a collection of \emph{watertight trimmed surfaces} with exact trimming curves.
+a collection of \emph{watertight trimmed surfaces}.
  
 Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
 representation. Our goal in this paper is to review these and discuss the difficulties of
@@ -388,7 +388,7 @@ and isophote lines.
   \centering
   \begin{tabular}{c|c|c|c|c}
     $n$ & S-patch~\cite{spatch1} & Warren~\cite{warren} & Kato~\cite{kato} & Charrot--Gregory~\cite{charrot} \\ \hline
-    3 & \multicolumn{2}{c|}{$d[+3]$ (both are B\'ezier triangles)} & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
+    3 & \multicolumn{2}{c|}{$d[+3]$ (both B\'ezier triangles)} & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
     5 & \cellcolor{light-light-gray}$3d[+9]$ & $\approx 3d$ & \cellcolor{light-gray}$5d+9$ & $5d+6$ \\ \hline
     6 & \cellcolor{light-light-gray}$4d[+12]$ & $3d$ & \cellcolor{light-gray}$6d+11$ & $6d+8$ \\ \hline
     7+ & \cellcolor{light-gray}$(n-2)(d[+3])$ & $\qquad$N/A$\qquad$ & \cellcolor{light-gray}$nd+2n-1$ & \cellcolor{light-gray}$nd+2n-4$ \\ \hline
