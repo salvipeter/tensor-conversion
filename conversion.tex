@@ -137,7 +137,7 @@
 \underline{Title:}
 
 \noindent{\bfseries
-CAD-compatible conversion of multi-sided surfaces -- issues and insights }
+On the CAD-compatible conversion of multi-sided surfaces}
 
 \vspace{1em}
 \noindent \underline{Authors:}
@@ -158,8 +158,8 @@ B\'ezier surface, Trimming, Charrot--Gregory patch, S-patch
 
 \vspace{10pt}
 \noindent\underline{Introduction:}\vspace{0.2em}\newline
-The majority of aesthetic objects around us is represented by free-form shapes that
-naturally involve modeling multi-sided (i.e., non-four-sided) surfaces, as well.  The
+The majority of aesthetic objects is represented by free-form shapes, and modelling these
+naturally involves multi-sided (i.e., non-four-sided) surfaces, as well.  The
 mathematical representation of such patches is still an active area in CAGD, and although
 a great variety of approaches have been published, none of the genuine $n$-sided
 formulations has been standardized so far.
@@ -172,28 +172,30 @@ representation either by (i)~approximating them with larger quadrilaterals,
 them into smaller four-sided patches.
 
 Both techniques have their deficiencies. They only approximate the original multi-sided
-patch, and with trimming even $C^0$ continuity between the adjacent patches cannot be
-ensured (in general). In the splitting scheme the subdividing curves in the interior
+patch, and trimming -- in general -- cannot ensure even $C^0$ continuity between the
+adjacent patches. In the splitting scheme the subdividing curves in the interior
 weaken the overall continuity of the surface.
 
-Ideally, we would like to have an $n$-sided patch that
+Ideally, we would like to have an $n$-sided patch that:
 \begin{enumerate}[i)]
 \item can be used for design (has intuitive controls),
 \item can be attached to adjacent patches with $G^1$ or higher continuity,
 \item and can also be represented \emph{accurately} as a tensor product NURBS surface.
 \end{enumerate}
 
-The above problem can be resolved, if the multi-sided surface can be represented as a
-rational polynomial of two parametric variables. Then it can be directly converted into
-NURBS form, without either changing the surface or harming continuity. The result will be
-a trimmed surface with exact trimming curves.
+The above problem can be resolved, if the multi-sided surfaces can be represented as rational
+polynomials of two parametric variables. Then they can be directly converted into
+NURBS form, without either changing the surfaces or harming continuity. The result will be
+a collection of \emph{watertight trimmed surfaces} with exact trimming curves.
  
 Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
 representation. Our goal in this paper is to review these and discuss the difficulties of
 the conversion process. We are going to provide further insights into specific
 computational and geometric problems, that have not been discussed elsewhere and are
-useful for analyzing the ``pros and cons'' of these representations. Four schemes will be
-described, and a general discussion will conclude the paper.
+useful for analyzing the ``pros and cons'' of these representations.
+We will investigate four schemes, and show actual high-degree conversion examples with
+control grids.
+A general discussion will conclude the paper.
 
 \vspace{10pt}
 \noindent\underline{S-patch:}\vspace{0.2em}\newline
@@ -279,9 +281,9 @@ also presents a problem, as a uniform grid on the domain would result in distort
 Kato~\cite{kato} proposed a surface defined as the transfinite interpolation of boundary curves with
 cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
 are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
-this representation uses two parameters, a \emph{side parameter} $s_i$
+this representation uses two local parameters, a \emph{side parameter} $s_i$
 that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
-and a \emph{distance parameter} $h_i$ that vanishes on the base side, see
+and a \emph{distance parameter} $h_i$ that vanishes on the base side $i$, see
 Figure~\ref{fig:parameters}.
 \begin{figure}[b!]
   \begin{subfigure}{0.30\textwidth}
@@ -330,8 +332,8 @@ will be the same as the radial parameterization in the original paper.)
 The converted patch will be of degree $nd+2(n-2)$.
 
 For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
-side instead, which is not rational, so the overall degree is reduced to $d+3$.
-An example with mean curvature and isophote lines is shown below.
+side instead of $s_i$, thereby reducing the overall degree to $d+3$.
+An example of four watertight trimmed patches with mean curvature and isophote lines is shown below.
 \begin{figure}[h!]
   \includegraphics[width = 0.2139\textwidth]{images/trebol3-cnet.png}
   \hfill
@@ -344,27 +346,27 @@ An example with mean curvature and isophote lines is shown below.
 
 \vspace{10pt}
 \noindent\underline{Discussion:}\vspace{0.2em}\newline
-One aspect of the tensor product conversion we have not touched on before is the quality of the
-control net. Aside from Warren's patch, which has singular control points,
-all the other representations have singularities in or outside their domains.
+One aspect of the tensor product conversion we have not touched on before is the \emph{quality}
+of the control net. Aside from Warren's patch, which has singular control points,
+all the other representations have \emph{singularities} in or outside their domains.
 When a singular point is close to the domain of the tensor product patch (i.e., the unit square),
-control points in the vicinity show erratic behavior.
+the control points in the vicinity show erratic behavior.
 
 Kato's patch is singular at the corner vertices; the S-patch is singular on the circle that goes
-through the intersections of the lines containing the domain edges; and the Charrot--Gregory patch
+through the intersections of the lines containing the domain edges; however, the Charrot--Gregory patch
 is singular only at these intersection points. Practically this means that excluding the triangular
 S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
 relatively far away), all of these converted tensor product surfaces are likely to have
-outlier control points (possibly nearly in infinity), which may lead to numerical issues.
+badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
 
 We present a solution to this problem. Normally the multi-sided domain is inside the unit
 square (Figure~\ref{fig:parameters}), so that the trimming curves will be inside the
 surface, but if we lift this constraint, we can create a larger multi-sided domain,
-thereby separating the unit square from the singularities. This means that the ``trimmed''
-region will be outside the standard $[0,1]^2$ domain, which may not be supported by some
-applications, but the control structure will be very well-behaved. The figure below shows
-the control net of an 8-sided Charrot--Gregory patch with normal and enlarged domain, and isophote
-lines.
+thereby separating the unit square from the singularities. This means that the actual ``trimmed''
+region will be outside the standard $[0,1]^2$ domain; this may not be supported by some
+applications, but the control structure will be close to the surface. The figure below shows
+the control net of an 8-sided Charrot--Gregory patch with default and enlarged domain,
+and isophote lines.
 \begin{figure}[h!]
   \includegraphics[width = 0.34\textwidth]{images/8sided-1.png}
   \hfill
@@ -385,33 +387,39 @@ lines.
   \centering
   \begin{tabular}{c|c|c|c|c}
     $n$ & S-patch~\cite{spatch1} & Warren~\cite{warren} & Kato~\cite{kato} & Charrot--Gregory~\cite{charrot} \\ \hline
-    3 & \multicolumn{2}{c|}{$d$ [$d+3$]} & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
-    5 & \cellcolor{light-light-gray}$3d$ [$3d+9$] & $\approx 3d$ & \cellcolor{light-gray}$5d+9$ & $5d+6$ \\ \hline
-    6 & \cellcolor{light-light-gray}$4d$ [$4d+12$] & $3d$ & \cellcolor{light-gray}$6d+11$ & $6d+8$ \\ \hline
-    7+ & \cellcolor{light-gray}$(n-2)d$ [$(n-2)d+3n-6$] & $\qquad$N/A$\qquad$ & \cellcolor{light-gray}$nd+2n-1$ & \cellcolor{light-gray}$nd+2n-4$ \\ \hline
+    3 & $d[+3]$ & $d[+3]$ & \cellcolor{light-gray}$3d+5$ & $d+3$ \\ \hline
+    5 & \cellcolor{light-light-gray}$3d[+9]$ & $\approx 3d$ & \cellcolor{light-gray}$5d+9$ & $5d+6$ \\ \hline
+    6 & \cellcolor{light-light-gray}$4d[+12]$ & $3d$ & \cellcolor{light-gray}$6d+11$ & $6d+8$ \\ \hline
+    7+ & \cellcolor{light-gray}$(n-2)(d[+3])$ & $\qquad$N/A$\qquad$ & \cellcolor{light-gray}$nd+2n-1$ & \cellcolor{light-gray}$nd+2n-4$ \\ \hline
   \end{tabular}
   \caption{Rational polynomial degrees of the converted surfaces for different number of sides,
     assuming boundary curves of degree $d$. Gray cells indicate that the surface is susceptible to
-    the singularity issue. Note that triangular S-patches and Warren patches are both B\'ezier
-    triangles. For S-patches, the number in brackets shows the degree when the surface is
-    generated by a degree-$d$ $G^1$ frame.}
+    the singularity issue.
+    For S-patches, the number in brackets is applied
+    when the surface is generated by a degree-$d$ $G^1$ frame.}
   \label{tab:degrees}
 \end{table}
 
-Table~\ref{tab:degrees} summarizes the degrees of all four representations. While Warren's patch
-is excellent in this respect, the use of base points somewhat limits its usability in CAD systems.
+Table~\ref{tab:degrees} summarizes the degrees of all four representations.
+% Note that triangular S-patches and Warren patches are both B\'ezier triangles.
+It can be seen that these patches
+have relatively high degrees, in particular when the number of sides and the degree of the
+boundaries are raised. While Warren's patch outperforms the others in this respect,
+the use of base points somewhat limits its usability in CAD systems.
 Kato's surface always has singularities, and its degree is fairly high, but it is the only
-construction where $G^2$ continuity is easy to achieve. We found that while the
-Charrot--Gregory patch has a slightly higher degree than the S-patch, it has a much lower
-computational cost in its multi-sided form, and does not have control net quality issues for 5-
+construction where $G^2$ continuity can be easily achieved. We found that while the
+Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
+computational cost in its multi-sided form, and have no control net quality problems for 5-
 and 6-sided configurations.
 
 \vspace{10pt}
 \noindent\underline{Conclusion:}\vspace{0.2em}\newline
-We have reviewed four $n$-sided surface representations, investigated their exact
-conversion into trimmed tensor product form,
-and presented an efficient conversion method using implicit line equations.
-We have also discussed possible issues, and proposed a solution to the singularity problem.
+In the full paper we are going to give representation details, and
+further analyze the difficulties of the conversion process.
+The computational efficiency of the proposed procedures
+and the avoidance of wiggling control structures
+will be the focal part of our discussion,
+together with several comparative examples.
 
 \vspace{1em}
 \noindent\underline{Acknowledgement:}\vspace{0.2em}\newline
