@@ -3,3 +3,6 @@
 *.aux
 *.log
 *.out
+*.bbl
+*.blg
+*.zip
