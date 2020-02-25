@@ -114,6 +114,7 @@
 
 \usepackage{etoolbox}
 \patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\captionsetup[table]{labelformat={default},name={Tab.}}
 \captionsetup[figure]{labelformat={default},name={Fig.}}
 
 \setlength{\bibsep}{2pt plus 0.3ex}
@@ -215,12 +216,16 @@ After increasing the depth by 3, these boundary constraints can be interpolated~
 and the remaining interior control points can be set by some heuristic to generate a smooth
 surface~\cite{salvi-kepaf}, see the figure below.
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width = 0.3\textwidth]{images/5-5-bezier-ribbon.png}
-  \hfill
-  \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-ribbon.png}
-  \hfill
-  \includegraphics[width = 0.3\textwidth]{images/5-5-cnet-full.png}
+  {
+    \hfill
+    \includegraphics[width = 0.25\textwidth]{images/5-5-bezier-ribbon.png}
+    \hfill
+    \includegraphics[width = 0.25\textwidth]{images/5-5-cnet-ribbon.png}
+    \hfill
+    \includegraphics[width = 0.25\textwidth]{images/5-5-cnet-full.png}
+    \hfill
+  }
+  \caption{Creating an S-patch from a $G^1$ frame.}
 \end{figure}
 
 The CAD-compatible conversion presented in~\cite{spatch1} is a two-step process:
@@ -259,12 +264,12 @@ also shown in the paper.
 A nice property of this patch is that the ``remaining'' control points define the behavior of the
 boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
 its position as a B\'ezier curve, the second its first derivatives etc.
-The figure below shows the creation of a 5-sided patch and its conversion.
 \begin{figure}[h!]
   \centering
-  \includegraphics[width = 0.20\textwidth]{images/warren-cnet.png}
+  \includegraphics[width = 0.18\textwidth]{images/warren-cnet.png}
   \hspace{3cm}
-  \includegraphics[width = 0.20\textwidth]{images/warren-quad.png}
+  \includegraphics[width = 0.18\textwidth]{images/warren-quad.png}
+  \caption{Warren's 5-sided patch and its conversion to NURBS.}
 \end{figure}
 
 Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
@@ -333,8 +338,6 @@ The input is given as a $G^1$ frame; the converted patch is of degree $nd+2(n-2)
 
 For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
 side instead of $s_i$, thereby reducing the overall degree to $d+3$.
-An example of four watertight trimmed patches with contours, mean curvature
-and isophote lines is shown below.
 \begin{figure}[h!]
   \includegraphics[width = 0.2139\textwidth]{images/trebol3-cnet.png}
   \hfill
@@ -343,6 +346,8 @@ and isophote lines is shown below.
   \includegraphics[width = 0.23\textwidth]{images/trebol3-mean-iso.jpg}
   \hfill
   \includegraphics[width = 0.23\textwidth]{images/trebol3-zebra.jpg}
+  \caption{A model with four trimmed patches shown with contours, mean curvature and
+    isophote lines.}
 \end{figure}
 
 \vspace{10pt}
@@ -365,15 +370,18 @@ square (Figure~\ref{fig:parameters}), so that the trimming curves will be inside
 surface, but if we lift this constraint, we can create a larger multi-sided domain,
 thereby separating the unit square from the singularities. This means that the actual ``trimmed''
 region will be outside the standard $[0,1]^2$ domain; this may not be supported by some
-applications, but the control structure will be close to the surface. The figure below shows
-the control net of an 8-sided Charrot--Gregory patch with default and enlarged domain,
-and isophote lines.
+applications, but the control structure will be close to the surface.
 \begin{figure}[h!]
-  \includegraphics[width = 0.34\textwidth]{images/8sided-1.png}
-  \hfill
-  \includegraphics[width = 0.34\textwidth]{images/8sided-2.png}
-  \hfill
-  \includegraphics[width = 0.3\textwidth]{images/8sided-3.png}
+  {
+    \hfill
+    \includegraphics[width = 0.3\textwidth]{images/8sided-1.png}
+    \hfill
+    \includegraphics[width = 0.3\textwidth]{images/8sided-2.png}
+    \hfill
+    \includegraphics[width = 0.265\textwidth]{images/8sided-3.png}
+    \hfill
+  }
+  \caption{An 8-sided Charrot--Gregory patch with default and enlarged domain, and isophote lines.}
 \end{figure}
 
 % Rotation
@@ -384,7 +392,7 @@ and isophote lines.
 %%   \label{fig:rotations}
 %% \end{figure}
 
-\begin{table}
+\begin{table}[h!]
   \centering
   \begin{tabular}{c|c|c|c|c}
     $n$ & S-patch~\cite{spatch1} & Warren~\cite{warren} & Kato~\cite{kato} & Charrot--Gregory~\cite{charrot} \\ \hline
@@ -439,8 +447,8 @@ This project has been supported by the Hungarian Scientific Research Fund (OTKA,
 %\bibitem{toric} Krasauskas, R.: Toric surface patches, Advances in Computational Mathematics, 17(1), 2002, 89--113. \ULurl{https://doi.org/10.1023/A:1015289823859}
 \bibitem{spatch1} Loop, Ch.~T.; DeRose, T.~D.: A multisided generalization of B\'ezier surfaces, ACM Transactions on Graphics, 8(3), 1989, 204--234. \ULurl{https://doi.org/10.1145/77055.77059}
 \bibitem{spatch2} Loop, Ch.~T.; DeRose, T.~D.: Generalized B-spline surfaces of arbitrary topology, ACM, 17th Conference on Computer Graphics and Interactive Techniques, 1990, 347--356.\\\ULurl{https://doi.org/10.1145/97879.97917}
-\bibitem{salvi-kepaf} Salvi, P.: $G^1$ hole filling with S-patches made easy, Proceedings of the 12th Conference of the Hungarian Association for Image Processing and Pattern Recognition, 2019, 1--8.
-\bibitem{salvi-wait} Salvi, P.: On the CAD-compatible conversion of S-patches, Proceedings of the Workshop on the Advances of Information Technology, 2019, 72--76.
+\bibitem{salvi-kepaf} Salvi, P.: $G^1$ hole filling with S-patches made easy, Proceedings of the 12th Conference of the Hungarian Association for Image Processing and Pattern Recognition, 2019, 1--8.\\\ULurl{https://arxiv.org/abs/1907.10537}
+\bibitem{salvi-wait} Salvi, P.: On the CAD-compatible conversion of S-patches, Proceedings of the Workshop on the Advances of Information Technology, 2019, 72--76. \ULurl{https://arxiv.org/abs/1907.10537}
 %\bibitem{transfinite} V\'arady, T.; Rockwood, A.; Salvi, P.: Transfinite surface interpolation over irregular $n$-sided domains, Computer-Aided Design, 43(11), 2011, 1330--1340. \ULurl{https://doi.org/10.1016/j.cad.2011.08.028}
 \bibitem{warren} Warren, J.: Creating multisided rational B\'ezier surfaces using base points, ACM Transactions on Graphics, 11(2), 1992, 127--139. \ULurl{https://doi.org/10.1145/130826.130828}
 
