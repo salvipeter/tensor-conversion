@@ -37,26 +37,282 @@
 
 \section{INTRODUCTION}
 \label{sec:intro}
-Blah blah blah \cite{DeRose:1993} and \cite{Loop:1990} and \cite{Salvi:2019:KEPAF}
-and \cite{Salvi:2019:WAIT}.
+The majority of aesthetic objects is represented by free-form shapes, and modeling these
+naturally involves multi-sided (i.e., non-four-sided) surfaces, as well.  The
+mathematical representation of such patches is still an active area in CAGD, and although
+a great variety of approaches have been published, none of the genuine $n$-sided
+formulations have been standardized so far.
 
-\section{INTERESTING DEVELOPMENTS}
-\label{sec:interesting}
+On the other hand, commercial CAD/CAM systems and related application programs only accept
+data in standard formats, such as tensor product NURBS surfaces. For this reason, it is a
+widely applied practice to convert multi-sided surfaces into a CAD-compatible
+representation either by (i)~approximating them with larger quadrilaterals,
+\emph{trimming} away the exterior part beyond the boundaries, or (ii)~\emph{splitting}
+them into smaller four-sided patches.
 
-\begin{figure}
-%\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[height=.25\textheight]{images/trebol3-cnet.png}
-  \caption{Many control points!}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[height=.25\textheight]{images/trebol3-zebra.jpg}
-  \caption{Nice isophotes!}
-\end{subfigure}
-\caption{Trebol model}
-\label{fig:trebol}
+Both techniques have their deficiencies. They only approximate the original multi-sided
+surface, and trimming -- in general -- cannot ensure even $C^0$ continuity between the
+adjacent patches. In the splitting scheme the subdividing curves in the interior
+weaken the overall continuity of the surface.
+
+Ideally, we would like to have an $n$-sided patch that:
+\begin{enumerate}[label=\roman*),leftmargin=3\parindent]
+\item can be used for design (has intuitive controls),
+\item can be attached to adjacent patches with $G^1$ or higher continuity,
+\item and can also be represented \emph{accurately} as a tensor product NURBS surface.
+\end{enumerate}
+
+The above problem can be resolved, if the multi-sided surfaces can be represented as rational
+polynomials of two parametric variables. Then they can be directly converted into
+NURBS form, without either changing the surfaces or harming continuity. The result will be
+a collection of \emph{watertight trimmed surfaces}.
+ 
+Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
+representation. Our goal in this paper is to review these and discuss the difficulties of
+the conversion process. We are going to provide further insights into specific
+computational and geometric problems, that have not been discussed elsewhere and are
+useful for analyzing the ``pros and cons'' of these representations.
+We will investigate four schemes, and show actual high-degree conversion examples with
+control grids.
+A general discussion will conclude the paper.
+
+\section{MULTI-SIDED SURFACES}
+\label{sec:multisided}
+
+Blah blah blah...
+
+\subsection{S-patch}
+The S-patch of Loop \& DeRose~\cite{Loop:1989} is a generalization of the B\'ezier triangle, or,
+more precisely, a B\'ezier simplex mapping from $(n-1)$D to 3D, where the $n$ coordinates of the
+domain are supplied by generalized barycentric coordinates. The \emph{depth} ($d$) of an S-patch
+is the number of deCasteljau steps it takes to evaluate a surface point, i.e., something similar
+to the degree of a B\'ezier triangle (but not the degree of the S-patch itself).
+S-patches have many nice properties, and are known to be convertable into tensor product
+rational B\'ezier surfaces of degree $d(n-2)$.
+
+One drawback of this representation is its large number of control points, which renders it
+inconvenient for interactive design. For example, a five-sided patch of depth 5 has 126 control
+points, while a 4-sided tensor product patch has only 36. A possible workaround is to use a
+$G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
+After increasing the depth by 3, these boundary constraints can be interpolated~\cite{Loop:1990},
+and the remaining interior control points can be set by some heuristic to generate a smooth
+surface~\cite{Salvi:2019:KEPAF}, see the figure below.
+\begin{figure}[h!]
+  {
+    \begin{subfigure}{0.3\textwidth}
+      \centering
+      \includegraphics[width = 0.95\textwidth]{images/5-5-bezier-ribbon.png}
+      \caption{$G^1$ frame}
+      \label{fig:spatch-ribbon}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+      \centering
+      \includegraphics[width = 0.95\textwidth]{images/5-5-cnet-ribbon.png}
+      \caption{Boundary control points}
+      \label{fig:spatch-cnet-ribbon}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+      \centering
+      \includegraphics[width = 0.95\textwidth]{images/5-5-cnet-full.png}
+      \caption{All control points}
+      \label{fig:spatch-cnet-full}
+    \end{subfigure}
+  }
+  \caption{Creating an S-patch from a $G^1$ frame.}
+  \label{fig:spatch}
+\end{figure}
+
+The CAD-compatible conversion presented in~\cite{Loop:1989} is a two-step process:
+first convert the surface into a
+four-sided S-patch, and then to a tensor product patch. The first step is based on the
+composition of B\'ezier simplexes, which has very high complexity.
+Even using an efficient algorithm~\cite{DeRose:1993}, converting a modest-sized S-patch
+still requires minutes of computation on today's machines~\cite{Salvi:2019:WAIT}.
+
+Here we propose an alternative conversion process. Since a B\'ezier simplex is just a polynomial,
+the only problem is how to express the generalized barycentric coordinates as a rational polynomial
+of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates over a regular $n$-sided
+polygon, the barycentric coordinates $\{\lambda_i\}$ are expressed as
+\begin{equation}
+  \label{eq:wachspress}
+  \lambda_i(u,v) = \prod_{\substack{j=1\\j\notin\{i-1,i\}}}^nh_j(u,v) \quad\bigg/\quad
+                   \sum_{k=1}^n\prod_{\substack{j=1\\j\notin\{k-1,k\}}}^nh_j(u,v),
+\end{equation}
+where the indexing is cyclic, and $h_j(u,v)$ is a distance function
+from the $j$-th side of the domain polygon. The implicit
+equation of the line containing a given side is suitable for this purpose,
+and is also a linear polynomial,
+so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$. We
+normalize the distances such that they take on the value 1 at vertices adjacent to the side.
+
+With this method, the B\'ezier control points of the tensor product representation
+can be located by straightforward computation, which takes only milliseconds.
+
+\subsection{Warren's Patch}
+Warren~\cite{Warren:1992} created multi-sided patches from B\'ezier triangles by assigning $0/0$
+\emph{base points} to some of the control points, essentially cutting off the corners, and thus
+creating 5- and 6-sided surfaces. A simple conversion to a (degenerate) tensor product form is
+also shown in the paper.
+
+A nice property of this patch is that the ``remaining'' control points define the behavior of the
+boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
+its position as a B\'ezier curve, the second its first derivatives etc.
+\begin{figure}[h!]
+  \begin{subfigure}{0.50\textwidth}
+    \centering
+    \includegraphics[width = 0.4\textwidth]{images/warren-cnet.png}
+    \caption{Control points}
+    \label{fig:warren-cnet}
+  \end{subfigure}
+  \begin{subfigure}{0.50\textwidth}
+    \centering
+    \includegraphics[width = 0.4\textwidth]{images/warren-quad.png}
+    \caption{Conversion to NURBS}
+    \label{fig:warren-cnet}
+  \end{subfigure}
+  \caption{Warren's 5-sided patch.}
+  \label{fig:warren}
+\end{figure}
+
+Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
+boundaries can be created from a triangle of degree $3d$, but due to its asymmetric construction,
+a 5-sided patch cannot have boundaries of the same degree. Moreover, using control points with zero
+weight is not a standard practice, and is not supported by many systems. Meshing
+also presents a problem, as a uniform grid on the domain would result in distorted triangles
+(the ``trimmed'' sides correspond to corners).
+
+\subsection{Kato's Patch}
+Kato~\cite{Kato:1991} proposed a surface defined as the transfinite interpolation of boundary
+curves with cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
+are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
+this representation uses two local parameters, a \emph{side parameter} $s_i$
+that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
+and a \emph{distance parameter} $h_i$ that vanishes on the base side $i$, see
+Figure~\ref{fig:parameters}.
+\begin{figure}[b!]
+  \begin{subfigure}{0.30\textwidth}
+    \includegraphics[width = \textwidth]{images/domain.pdf}
+    \caption{Domain}
+    \label{fig:domain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = \textwidth]{images/s-params.pdf}
+      \vspace*{-2mm}
+    \end{minipage}
+    \caption{$s_i$ isolines for two sides}
+    \label{fig:s}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.30\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = \textwidth]{images/h-params.pdf}
+      \vspace*{-2mm}
+    \end{minipage}
+    \caption{$h_i$ isolines for two sides}
+    \label{fig:h}
+  \end{subfigure}
+  \caption{Parameterization.}
+  \label{fig:parameters}
+\end{figure}
+
+The distance parameters can be computed the same way as in the creation of S-patches, and for side
+parameters we can use $s_i=h_{i-1}/(h_{i-1}+h_{i+1})$, which gives a rational polynomial
+representation.
+
+Kato's patch is easily extendable to handle $G^2$ continuity, if the side constraints have 3
+control rows (so the cross-degree $d^\perp$ is 2 instead of 1).
+Then the whole surface becomes a rational tensor product B\'ezier patch of
+degree $nd+(n-1)(d^\perp+1)+d^\perp$.
+
+\subsection{Charrot--Gregory Patch}
+The same idea can be used to convert Charrot--Gregory patches~\cite{Charrot:1984} that use
+only side parameters. (Note that on a regular domain the $s_i$ parameters defined above
+will be the same as the radial parameterization in the original paper.)
+The input is given as a $G^1$ frame; the converted patch is of degree $nd+2(n-2)$.
+
+For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
+side instead of $s_i$, thereby reducing the overall degree to $d+3$.
+\begin{figure}[h!]
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[height=.2\textheight]{images/trebol3-cnet.png}
+    \caption{Control points}
+    \label{fig:trebol-cnet}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[height=.207\textheight]{images/trebol3-contour.jpg}
+    \caption{Contours}
+    \label{fig:trebol-contours}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[height=.207\textheight]{images/trebol3-mean-iso.jpg}
+    \caption{Mean curvature}
+    \label{fig:trebol-mean}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[height=.207\textheight]{images/trebol3-zebra.jpg}
+    \caption{Zebra map}
+    \label{fig:trebol-zebra}
+  \end{subfigure}
+  \caption{Trebol model}
+  \label{fig:trebol}
+\end{figure}
+
+\section{DISCUSSION}
+One aspect of the tensor product conversion we have not touched on before is the \emph{quality}
+of the control net. Aside from Warren's patch, which has singular control points,
+all the other representations have singularities in or outside their domains.
+When a singular point is close to the domain of the tensor product patch (i.e., the unit square),
+the control points in the vicinity show erratic behavior.
+
+Kato's patch is singular at the corner vertices, and the S-patch is singular on the circle that goes
+through the intersections of the lines containing the domain edges; however, the Charrot--Gregory patch
+is singular only at these intersection points. Practically this means that excluding the triangular
+S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
+relatively far away), all of these converted tensor product surfaces are likely to have
+badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
+
+We present a solution to this problem. Normally the multi-sided domain is inside the unit
+square (Figure~\ref{fig:parameters}), so that the trimming curves will be inside the
+surface, but if we lift this constraint, we can create a larger multi-sided domain,
+thereby separating the unit square from the singularities. This means that the actual ``trimmed''
+region will be outside the standard $[0,1]^2$ domain; this may not be supported by some
+applications, but the control structure will be close to the surface.
+\begin{figure}[h!]
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/8sided-1.png}
+    \caption{Default domain}
+    \label{fig:8sided-default}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/8sided-2.png}
+    \caption{Enlarged domain}
+    \label{fig:8sided-enlarged}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \includegraphics[width=.883\textwidth]{images/8sided-3.png}
+    \caption{Isophote lines}
+    \label{fig:8sided-iso}
+  \end{subfigure}
+  \caption{An 8-sided Charrot--Gregory patch.}
+  \label{fig:8sided}
 \end{figure}
 
 \begin{table}[h!]
@@ -76,15 +332,31 @@ and \cite{Salvi:2019:WAIT}.
   \label{tab:degrees}
 \end{table}
 
-\subsection{Results}
+Table~\ref{tab:degrees} summarizes the degrees of all four representations.
+% Note that triangular S-patches and Warren patches are both B\'ezier triangles.
+It can be seen that these patches
+have relatively high degrees, in particular when the number of sides and the degree of the
+boundaries are raised. While Warren's patch outperforms the others in this respect,
+the use of base points somewhat limits its usability in CAD systems.
+Kato's surface always has singularities, and its degree is fairly high, but it is the only
+construction where $G^2$ continuity can be easily achieved. We found that while the
+Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
+computational cost in its multi-sided form, and have no control net quality problems for 5-
+and 6-sided configurations.
+
+\section{TEST CASES}
 Blah blah blah
 
 \section{CONCLUSIONS}
-
-Blah blah blah
+In the full paper we are going to give representation details, and
+further analyze the difficulties of the conversion process.
+The computational efficiency of the proposed procedures
+and the avoidance of wiggling control structures
+will be the focal part of our discussion,
+together with several comparative examples.
 
 \section*{ACKNOWLEDGEMENTS}
-Blah blah blah
+This project has been supported by the Hungarian Scientific Research Fund (OTKA, No.~124727).
 
 \section*{ORCID}
 \orcid{P\'eter Salvi}{0000-0003-2456-2051}
