@@ -128,7 +128,7 @@ the equation
 \begin{equation}
   \label{eq:spatch}
   S(\mathbf{\lambda})=\sum_{\mathbf{s}}P_\mathbf{s}\cdot B_\mathbf{s}^d(\mathbf{\lambda})
-  =\sum_{\mathbf{s}}P_\mathbf{s}\cdot {n\choose\mathbf{s}}\cdot\prod_{i=1}^n\lambda_i^{s_i},
+  =\sum_{\mathbf{s}}P_\mathbf{s}\cdot {d\choose\mathbf{s}}\cdot\prod_{i=1}^n\lambda_i^{s_i},
 \end{equation}
 where $B_\mathbf{s}^d(\mathbf{\lambda})$ are Bernstein polynomials with multinomial coefficients,
 and the sum is computed over all possible values of $\mathbf{s}$.
@@ -140,7 +140,7 @@ $G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
 After increasing the depth by 3, these boundary constraints can be interpolated~\cite{Loop:1990},
 and the remaining interior control points can be set by some heuristic to generate a smooth
 surface~\cite{Salvi:2019:KEPAF}, see Figure~\ref{fig:spatch}.
-\begin{figure}[h!]
+\begin{figure}
   {
     \begin{subfigure}{0.3\textwidth}
       \centering
@@ -204,9 +204,10 @@ normalize the distances such that they take on the value 1 at vertices adjacent 
 Formally, let
 \begin{equation}
   V_i=\left(\frac{1}{2}+\frac{1}{2}\cos(2\pi\cdot i/n),
-            \frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right)
+            \frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right),\quad i=1\dots n
 \end{equation}
-denote the vertices of the regular $n$-sided domain inside the $[0,1]\times[0,1]$ square.
+denote the vertices of the regular $n$-sided domain inside the $[0,1]\times[0,1]$ square,
+see an illustration in Figure~\ref{fig:domain}. % Yes, not the same orientation, get over it!
 Since a line $L$ is defined by the implicit equation $L=Au+Bv+C=0$, the coefficients can
 be unambiguously defined by three equations. We define $n$ lines
 $L_i$ ($i=1\dots n$) by the following constraints:
@@ -214,7 +215,37 @@ $L_i$ ($i=1\dots n$) by the following constraints:
   L_i(V_{i-1})&=L_i(V_i)=0, & L_i(V_{i-2})&=L_i(V_{i+1})=1.
 \end{align}
 (Note that because of the symmetry of the regular polygon, the above four equations take
-only three degrees of freedom.) The distance function is then defined as $h_i(u,v)=L_i(u,v)$.
+only three degrees of freedom.) The distance function is then defined as $h_i(u,v)=L_i(u,v)$,
+see constant parameter lines in Figure~\ref{fig:h}.
+\begin{figure}
+  \begin{subfigure}{0.30\textwidth}
+    \includegraphics[width = \textwidth]{images/domain.pdf}
+    \caption{Domain}
+    \label{fig:domain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.30\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = \textwidth]{images/h-params.pdf}
+      \vspace*{-2mm}
+    \end{minipage}
+    \caption{$h_i$ isolines for two sides}
+    \label{fig:h}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \begin{minipage}[b][5cm][b]{\textwidth}
+      \centering
+      \includegraphics[width = \textwidth]{images/s-params.pdf}
+      \vspace*{-2mm}
+    \end{minipage}
+    \caption{$s_i$ isolines for two sides}
+    \label{fig:s}
+  \end{subfigure}
+  \caption{Parameterization.}
+  \label{fig:parameters}
+\end{figure}
 
 \subsubsection{Conversion to NURBS}
 \label{subsubsec:conversion}
@@ -234,6 +265,7 @@ we still need to change from the power basis to the Bernstein basis.
 Assuming that the coefficients of a bi-$\delta$-degree polynomial $p(u,v)$
 are given in a matrix $M$ such that
 \begin{equation}
+  \label{eq:power}
   p(u,v)=
   \left[\begin{array}{ccccc}1&u&u^2&\dots&u^\delta\end{array}\right]
   M
@@ -248,6 +280,7 @@ the upper triangle matrix with elements
 \end{equation}
 Then the same polynomial is expressed as
 \begin{equation}
+  \label{eq:bernstein}
   p(u,v)=
   \left[\begin{array}{cccc}B_0^\delta(u)&B_1^\delta(u)&\dots&B_\delta^\delta(u)\end{array}\right]
   N
@@ -264,35 +297,56 @@ can be located by straightforward computation, which takes only milliseconds.
 \label{subsec:warren}
 Warren~\cite{Warren:1992} created multi-sided patches from B\'ezier triangles by assigning $0/0$
 \emph{base points} to some of the control points, essentially cutting off the corners, and thus
-creating 5- and 6-sided surfaces. A simple conversion to a (degenerate) tensor product form is
-also shown in the paper.
+creating 5- and 6-sided surfaces, see an example in Figure~\ref{fig:warren-cnet}.
+We can characterize Warren's patch with the number $m_i$ of control rows
+``trimmed'' from each corner, i.e.,
+\begin{equation}
+  \begin{aligned}
+    P_\mathbf{s}&=0/0, & \mathrm{when}\ &
+    s_2+s_3<m_1\ \mathrm{or}\ s_3+s_1<m_2\ \mathrm{or}\ s_1+s_2<m_3.
+  \end{aligned}
+\end{equation}
+For example, in Figure~\ref{fig:warren-cnet} two control rows are cut from two corners,
+so $m_1=2$, $m_2=2$ and $m_3=0$.
 
-A nice property of this patch is that the ``remaining'' control points define the behavior of the
-boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
-its position as a B\'ezier curve, the second its first derivatives etc.
-\begin{figure}[h!]
+\begin{figure}
   \begin{subfigure}{0.50\textwidth}
     \centering
-    \includegraphics[width = 0.4\textwidth]{images/warren-cnet.png}
+    \includegraphics[width = 0.5\textwidth]{images/warren-cnet.png}
     \caption{Control points}
     \label{fig:warren-cnet}
   \end{subfigure}
   \begin{subfigure}{0.50\textwidth}
     \centering
-    \includegraphics[width = 0.4\textwidth]{images/warren-quad.png}
+    \includegraphics[width = 0.5\textwidth]{images/warren-quad.png}
     \caption{Conversion to NURBS}
-    \label{fig:warren-cnet}
+    \label{fig:warren-quad}
   \end{subfigure}
   \caption{Warren's 5-sided patch.}
   \label{fig:warren}
 \end{figure}
+A simple NURBS conversion is also shown in the paper,
+using the degenerate transformation
+\begin{align}
+  \lambda_1&=(1-u)v, & \lambda_2&=uv, & \lambda_3&=1-v.
+\end{align}
+Applying this to Eq.~(\ref{eq:spatch}) results in a tensor product surface; its control points
+can be computed using Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
+Figure~\ref{fig:warren-quad} shows an example; note that the control points outside the
+patch boundaries are actually base points and are drawn here only for better comprehension
+of the control net structure.
 
-Note, however, that not all degree configurations are available. A 6-sided patch with degree-$d$
-boundaries can be created from a triangle of degree $3d$, but due to its asymmetric construction,
+A nice property of this patch is that the ``remaining'' control points define the behavior of the
+boundary in the same way as in a normal B\'ezier triangle, i.e., the first control row defines
+its position as a B\'ezier curve, the second its first derivatives etc.
+
+It is important to see that not all degree configurations are available.
+A 6-sided patch with degree-$d$ boundaries can be created from a triangle of degree $3d$,
+but due to its asymmetric construction,
 a 5-sided patch cannot have boundaries of the same degree. Moreover, using control points with zero
 weight is not a standard practice, and is not supported by many systems. Meshing
-also presents a problem, as a uniform grid on the domain would result in distorted triangles
-(the ``trimmed'' sides correspond to corners).
+also presents a problem, as a uniform grid on the domain would result in distorted triangles,
+since the ``trimmed'' boundaries correspond to corners of the domain triangle.
 
 \subsection{Kato's Patch}
 \label{subsec:kato}
@@ -303,35 +357,6 @@ this representation uses two local parameters, a \emph{side parameter} $s_i$
 that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
 and a \emph{distance parameter} $h_i$ that vanishes on the base side $i$, see
 Figure~\ref{fig:parameters}.
-\begin{figure}[b!]
-  \begin{subfigure}{0.30\textwidth}
-    \includegraphics[width = \textwidth]{images/domain.pdf}
-    \caption{Domain}
-    \label{fig:domain}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{0.3\textwidth}
-    \begin{minipage}[b][5cm][b]{\textwidth}
-      \centering
-      \includegraphics[width = \textwidth]{images/s-params.pdf}
-      \vspace*{-2mm}
-    \end{minipage}
-    \caption{$s_i$ isolines for two sides}
-    \label{fig:s}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{0.30\textwidth}
-    \begin{minipage}[b][5cm][b]{\textwidth}
-      \centering
-      \includegraphics[width = \textwidth]{images/h-params.pdf}
-      \vspace*{-2mm}
-    \end{minipage}
-    \caption{$h_i$ isolines for two sides}
-    \label{fig:h}
-  \end{subfigure}
-  \caption{Parameterization.}
-  \label{fig:parameters}
-\end{figure}
 
 The distance parameters can be computed the same way as in the creation of S-patches, and for side
 parameters we can use $s_i=h_{i-1}/(h_{i-1}+h_{i+1})$, which gives a rational polynomial
@@ -351,7 +376,7 @@ The input is given as a $G^1$ frame; the converted patch is of degree $nd+2(n-2)
 
 For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
 side instead of $s_i$, thereby reducing the overall degree to $d+3$.
-\begin{figure}[h!]
+\begin{figure}
   \begin{subfigure}{.24\textwidth}
     \centering
     \includegraphics[height=.2\textheight]{images/trebol3-cnet.png}
@@ -404,7 +429,7 @@ surface, but if we lift this constraint, we can create a larger multi-sided doma
 thereby separating the unit square from the singularities. This means that the actual ``trimmed''
 region will be outside the standard $[0,1]^2$ domain; this may not be supported by some
 applications, but the control structure will be close to the surface.
-\begin{figure}[h!]
+\begin{figure}
   \begin{subfigure}{.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/8sided-1.png}
@@ -429,7 +454,7 @@ applications, but the control structure will be close to the surface.
   \label{fig:8sided}
 \end{figure}
 
-\begin{table}[h!]
+\begin{table}
   \centering
   \begin{tabular}{c|c|c|c|c}
     $n$ & S-patch~\cite{Loop:1989} & Warren~\cite{Warren:1992} & Kato~\cite{Kato:1991} & Charrot--Gregory~\cite{Charrot:1984} \\ \hline
