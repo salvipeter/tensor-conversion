@@ -28,7 +28,26 @@
 \correspondingAuthor{P\'eter Salvi}{salvi@iit.bme.hu}
 
 \abstract{
-  Blah blah blah
+We investigate genuine multi-sided surface representations that can be
+converted into standard tensor product format, such as NURBS.  Multi-sided
+patches offer versatility in shape design, and permit smooth, watertight connections
+between adjacent patches using prescribed cross-derivatives; however, they can hardly be
+utilized by the majority of CAD/CAM systems, which are capable to handle only
+standard data formats.
+On the other hand, tensor product surfaces are sometimes too rigid for shape design,
+and trimmed patches can only be smoothly connected using user-defined tolerances.
+% Tensor product surfaces are more rigid for shape design,
+% and smoothly connecting trimmed surface patches is tolerance driven and
+% generally requires extra effort.
+This motivates searching for schemes that benefit from both representations.
+
+We analyze four multi-sided surface representations that allow precise
+conversion into tensor product format, namely S-patches, Warren's patch,
+Kato's patch and a variant of the Charrot--Gregory patch. We compare these schemes
+from various aspects; in particular, we deal with surface equations, singularities,
+degrees of the converted surfaces, the control structure built and the computational
+efficiency of the conversion. Several examples help to gain deeper insights into
+the problem.
 }
 
 \keywords{multi-sided surfaces, trimmed surfaces, S-patch, Charrot--Gregory patch} 
@@ -70,18 +89,28 @@ a collection of \emph{watertight trimmed surfaces}.
 Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
 representation. Our goal in this paper is to review these and discuss the difficulties of
 the conversion process. We are going to provide further insights into specific
-computational and geometric problems, that have not been discussed elsewhere and are
+computational and geometric problems that have not been discussed elsewhere and are
 useful for analyzing the ``pros and cons'' of these representations.
-We will investigate four schemes, and show actual high-degree conversion examples with
-control grids.
-A general discussion will conclude the paper.
+
+The paper is structured as follows. In Section~\ref{sec:multisided},
+we review four natively multi-sided schemes, and investigate their conversions to NURBS.
+In Section~\ref{sec:discussion}, issues of the conversion process are discussed in details,
+with emphasis on the quality of the generated control network, and its relation to singularities.
+Some more complex test examples and comparisons follow in Section~\ref{sec:tests},
+showing actual high-degree examples with control grids,
+and a summary of our findings concludes the paper.
 
 \section{MULTI-SIDED SURFACES}
 \label{sec:multisided}
+In the following, we are going to review four multi-sided representations:
+the S-patch~\cite{Loop:1989}, and the surface schemes of Warren~\cite{Warren:1992},
+Kato~\cite{Kato:1991}, and Charrot \& Gregory~\cite{Charrot:1984}.
+Our conversion approach is presented in
+Sections~\ref{subsubsec:parameters}--\ref{subsubsec:conversion}
+specifically for S-patches, but it will be adapted in later sections to other representations.
 
-Blah blah blah...
-
-\subsection{S-patch}
+\subsection{S-Patch}
+\label{subsec:spatch}
 The S-patch of Loop \& DeRose~\cite{Loop:1989} is a generalization of the B\'ezier triangle, or,
 more precisely, a B\'ezier simplex mapping from $(n-1)$D to 3D, where the $n$ coordinates of the
 domain are supplied by generalized barycentric coordinates. The \emph{depth} ($d$) of an S-patch
@@ -90,13 +119,27 @@ to the degree of a B\'ezier triangle (but not the degree of the S-patch itself).
 S-patches have many nice properties, and are known to be convertable into tensor product
 rational B\'ezier surfaces of degree $d(n-2)$.
 
+An $n$-sided S-patch is defined over a regular $n$-gon, parameterized by generalized
+barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_N)$~\cite{Hormann:2017}.
+Its control
+points $\{P_\mathbf{s}\}$ are labeled by $n$ non-negative integers $\mathbf{s}=(s_1,\dots,s_n)$,
+whose sum is the depth of the surface. Then points on the surface are given by
+the equation
+\begin{equation}
+  \label{eq:spatch}
+  S(\mathbf{\lambda})=\sum_{\mathbf{s}}P_\mathbf{s}\cdot B_\mathbf{s}^d(\mathbf{\lambda})
+  =\sum_{\mathbf{s}}P_\mathbf{s}\cdot {n\choose\mathbf{s}}\cdot\prod_{i=1}^n\lambda_i^{s_i},
+\end{equation}
+where $B_\mathbf{s}^d(\mathbf{\lambda})$ are Bernstein polynomials with multinomial coefficients,
+and the sum is computed over all possible values of $\mathbf{s}$.
+
 One drawback of this representation is its large number of control points, which renders it
 inconvenient for interactive design. For example, a five-sided patch of depth 5 has 126 control
 points, while a 4-sided tensor product patch has only 36. A possible workaround is to use a
 $G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
 After increasing the depth by 3, these boundary constraints can be interpolated~\cite{Loop:1990},
 and the remaining interior control points can be set by some heuristic to generate a smooth
-surface~\cite{Salvi:2019:KEPAF}, see the figure below.
+surface~\cite{Salvi:2019:KEPAF}, see Figure~\ref{fig:spatch}.
 \begin{figure}[h!]
   {
     \begin{subfigure}{0.3\textwidth}
@@ -109,7 +152,7 @@ surface~\cite{Salvi:2019:KEPAF}, see the figure below.
     \begin{subfigure}{0.3\textwidth}
       \centering
       \includegraphics[width = 0.95\textwidth]{images/5-5-cnet-ribbon.png}
-      \caption{Boundary control points}
+      \caption{Control points by $G^1$ constraints}
       \label{fig:spatch-cnet-ribbon}
     \end{subfigure}
     \hfill
@@ -127,30 +170,91 @@ surface~\cite{Salvi:2019:KEPAF}, see the figure below.
 The CAD-compatible conversion presented in~\cite{Loop:1989} is a two-step process:
 first convert the surface into a
 four-sided S-patch, and then to a tensor product patch. The first step is based on the
-composition of B\'ezier simplexes, which has very high complexity.
-Even using an efficient algorithm~\cite{DeRose:1993}, converting a modest-sized S-patch
+composition of B\'ezier simplexes~\cite{DeRose:1988}, which has very high complexity.
+Even using a more efficient algorithm~\cite{DeRose:1993}, converting a modest-sized S-patch
 still requires minutes of computation on today's machines~\cite{Salvi:2019:WAIT}.
 
+\subsubsection{Parameterization Using Implicit Line Equations}
+\label{subsubsec:parameters}
 Here we propose an alternative conversion process. Since a B\'ezier simplex is just a polynomial,
 the only problem is how to express the generalized barycentric coordinates as a rational polynomial
-of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates over a regular $n$-sided
-polygon, the barycentric coordinates $\{\lambda_i\}$ are expressed as
+of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates,
+$\{\lambda_i\}$ can be expressed as
 \begin{equation}
   \label{eq:wachspress}
   \lambda_i(u,v) = \prod_{\substack{j=1\\j\notin\{i-1,i\}}}^nh_j(u,v) \quad\bigg/\quad
                    \sum_{k=1}^n\prod_{\substack{j=1\\j\notin\{k-1,k\}}}^nh_j(u,v),
 \end{equation}
 where the indexing is cyclic, and $h_j(u,v)$ is a distance function
-from the $j$-th side of the domain polygon. The implicit
-equation of the line containing a given side is suitable for this purpose,
+from the $j$-th side of the domain polygon. For the sake of brevity,
+we will use the notation
+\begin{equation}
+  H_J^k(u,v)=\prod_{\substack{j=1\\j\notin{J}}}^nh_j^k(u,v),
+\end{equation}
+so $\lambda_i(u,v)=H_{i-1,i}^1(u,v)/\sum_{k=1}^nH_{k-1,k}^1(u,v)$.
+
+The distance function should vanish at the base domain edge, and increase monotonically
+as we get farther from it.
+The implicit
+equation of the line containing the base edge is suitable for this purpose,
 and is also a linear polynomial,
 so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$. We
 normalize the distances such that they take on the value 1 at vertices adjacent to the side.
+
+Formally, let
+\begin{equation}
+  V_i=\left(\frac{1}{2}+\frac{1}{2}\cos(2\pi\cdot i/n),
+            \frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right)
+\end{equation}
+denote the vertices of the regular $n$-sided domain inside the $[0,1]\times[0,1]$ square.
+Since a line $L$ is defined by the implicit equation $L=Au+Bv+C=0$, the coefficients can
+be unambiguously defined by three equations. We define $n$ lines
+$L_i$ ($i=1\dots n$) by the following constraints:
+\begin{align}
+  L_i(V_{i-1})&=L_i(V_i)=0, & L_i(V_{i-2})&=L_i(V_{i+1})=1.
+\end{align}
+(Note that because of the symmetry of the regular polygon, the above four equations take
+only three degrees of freedom.) The distance function is then defined as $h_i(u,v)=L_i(u,v)$.
+
+\subsubsection{Conversion to NURBS}
+\label{subsubsec:conversion}
+With the above definition of generalized barycentric coordinates,
+the patch equation~(\ref{eq:spatch}) becomes a rational vector polynomial in $u$ and $v$.
+Since $|\mathbf{s}|=\sum_{i=1}^ns_i=d$, all terms of the sum have the same denominator,
+\begin{equation}
+  \left(\sum_{k=1}^nH_{k-1,k}^1(u,v)\right)^d,
+\end{equation}
+which is a polynomial of degree $d(n-2)$. It is easy to see that the rational degree $\delta$ of
+the whole patch is also the same.
+
+This means that we can represent an $n$-sided S-patch of depth $d$ by a rational B\'ezier
+surface of $\delta\times\delta$ degrees. In order to determine the control point positions,
+we still need to change from the power basis to the Bernstein basis.
+
+Assuming that the coefficients of a bi-$\delta$-degree polynomial $p(u,v)$
+are given in a matrix $M$ such that
+\begin{equation}
+  p(u,v)=
+  \left[\begin{array}{ccccc}1&u&u^2&\dots&u^\delta\end{array}\right]
+  M
+  \left[\begin{array}{ccccc}1&v&v^2&\dots&v^\delta\end{array}\right]^\top,
+\end{equation}
+the B\'ezier coefficients are computed as $C^\top MC$, where $C=\{c_{ij}\}$ is
+the upper triangle matrix with elements
+\begin{equation}
+  \begin{aligned}
+    c_{ij}&={j\choose i}\bigg/{\delta\choose i}, & i,j&=0\dots\delta, & i&\leq j.
+  \end{aligned}
+\end{equation}
+The control points are then computed by calculating the coefficients for the numerator and
+denominator of Eq.~(\ref{eq:spatch}) separately, and assigning them to homogeneous coordinates
+(with the latter acting as the weight).
 
 With this method, the B\'ezier control points of the tensor product representation
 can be located by straightforward computation, which takes only milliseconds.
 
 \subsection{Warren's Patch}
+\label{subsec:warren}
 Warren~\cite{Warren:1992} created multi-sided patches from B\'ezier triangles by assigning $0/0$
 \emph{base points} to some of the control points, essentially cutting off the corners, and thus
 creating 5- and 6-sided surfaces. A simple conversion to a (degenerate) tensor product form is
@@ -184,6 +288,7 @@ also presents a problem, as a uniform grid on the domain would result in distort
 (the ``trimmed'' sides correspond to corners).
 
 \subsection{Kato's Patch}
+\label{subsec:kato}
 Kato~\cite{Kato:1991} proposed a surface defined as the transfinite interpolation of boundary
 curves with cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
 are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
@@ -231,6 +336,7 @@ Then the whole surface becomes a rational tensor product B\'ezier patch of
 degree $nd+(n-1)(d^\perp+1)+d^\perp$.
 
 \subsection{Charrot--Gregory Patch}
+\label{subsec:charrot}
 The same idea can be used to convert Charrot--Gregory patches~\cite{Charrot:1984} that use
 only side parameters. (Note that on a regular domain the $s_i$ parameters defined above
 will be the same as the radial parameterization in the original paper.)
@@ -271,6 +377,7 @@ side instead of $s_i$, thereby reducing the overall degree to $d+3$.
 \end{figure}
 
 \section{DISCUSSION}
+\label{sec:discussion}
 One aspect of the tensor product conversion we have not touched on before is the \emph{quality}
 of the control net. Aside from Warren's patch, which has singular control points,
 all the other representations have singularities in or outside their domains.
@@ -345,6 +452,7 @@ computational cost in its multi-sided form, and have no control net quality prob
 and 6-sided configurations.
 
 \section{TEST CASES}
+\label{sec:tests}
 Blah blah blah
 
 \section{CONCLUSIONS}
