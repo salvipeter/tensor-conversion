@@ -239,16 +239,23 @@ are given in a matrix $M$ such that
   M
   \left[\begin{array}{ccccc}1&v&v^2&\dots&v^\delta\end{array}\right]^\top,
 \end{equation}
-the B\'ezier coefficients are computed as $C^\top MC$, where $C=\{c_{ij}\}$ is
+the B\'ezier coefficients are computed as $N=C^\top MC$, where $C=\{c_{ij}\}$ is
 the upper triangle matrix with elements
 \begin{equation}
   \begin{aligned}
     c_{ij}&={j\choose i}\bigg/{\delta\choose i}, & i,j&=0\dots\delta, & i&\leq j.
   \end{aligned}
 \end{equation}
-The control points are then computed by calculating the coefficients for the numerator and
-denominator of Eq.~(\ref{eq:spatch}) separately, and assigning them to homogeneous coordinates
-(with the latter acting as the weight).
+Then the same polynomial is expressed as
+\begin{equation}
+  p(u,v)=
+  \left[\begin{array}{cccc}B_0^\delta(u)&B_1^\delta(u)&\dots&B_\delta^\delta(u)\end{array}\right]
+  N
+  \left[\begin{array}{cccc}B_0^\delta(v)&B_1^\delta(v)&\dots&B_\delta^\delta(v)\end{array}\right]^\top.
+\end{equation}
+Control point positions and the corresponding weights are computed as homogeneous coordinates,
+by calculating the coefficients for the numerator and denominator of Eq.~(\ref{eq:spatch})
+separately, and assigning the latter as the extra \emph{weight} coordinate.
 
 With this method, the B\'ezier control points of the tensor product representation
 can be located by straightforward computation, which takes only milliseconds.
