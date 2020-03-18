@@ -1,6 +1,7 @@
 \documentclass[9pt,academicons]{article}
 
 \usepackage{CADA}
+\usepackage{calrsfs}
 \usepackage{color}
 \usepackage[table]{xcolor}
 \definecolor{light-gray}{gray}{0.8}
@@ -311,13 +312,14 @@ For example, in Figure~\ref{fig:warren-cnet} two control rows are cut from two c
 so $m_1=2$, $m_2=2$ and $m_3=0$.
 
 \begin{figure}
-  \begin{subfigure}{0.50\textwidth}
+  \begin{subfigure}{0.49\textwidth}
     \centering
     \includegraphics[width = 0.5\textwidth]{images/warren-cnet.png}
     \caption{Control points}
     \label{fig:warren-cnet}
   \end{subfigure}
-  \begin{subfigure}{0.50\textwidth}
+  \hfill
+  \begin{subfigure}{0.49\textwidth}
     \centering
     \includegraphics[width = 0.5\textwidth]{images/warren-quad.png}
     \caption{Conversion to NURBS}
@@ -391,13 +393,38 @@ In particular, using a $G^1$ frame ($d^\perp=1$), the degree will be $nd+2n-1$.
 
 \subsection{Charrot--Gregory Patch}
 \label{subsec:charrot}
-The same idea can be used to convert Charrot--Gregory patches~\cite{Charrot:1984} that use
-only side parameters. (Note that on a regular domain the $s_i$ parameters defined above
+The Charrot--Gregory patch~\cite{Charrot:1984} combines corner interpolants, but it can
+also be formulated equivalently using ribbon surfaces~\cite{Salvi:2014}.
+Let $I_{i-1,i}(s_{i-1},s_i)$ denote the corner interpolant based on sides $i-1$ and $i$,
+parameterized by the corresponding side parameters.
+(Note that on a regular domain the $s_i$ parameters defined above
 will be the same as the radial parameterization in the original paper.)
-The input is given as a $G^1$ frame; the converted patch is of degree $nd+2(n-2)$.
 
-For triangular surfaces, we can use the $h_{i-1}$ parameter as a side parameter for the $i$-th
-side instead of $s_i$, thereby reducing the overall degree to $d+3$.
+The corner interpolant can be written as
+\begin{equation}
+  I_{i-1,i}(s_{i-1},s_i)=R_{i-1}(s_{i-1},s_i)+R_i(s_i,1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_i),
+\end{equation}
+where $Q_{i-1,i}(s_{i-1},s_i)$ is a correction patch defined by
+\begin{equation}
+  Q_{i-1,i}(s_{i-1},s_i)=P_{00}^i+s_id(P_{10}^i-P_{00}^i)+(1-s_{i-1})d(P_{01}^i-P_{00}^i)
+  +s_i(1-s_{i-1})d^2(P_{11}^i-P_{10}^i-P_{01}^i+P_{00}^i).
+\end{equation}
+
+Finally, the Charrot--Gregory surface itself is formulated as
+\begin{equation}
+  S_\mathrm{CG}(u,v)=\sum_{i=1}^n I_{i-1,i}(s_{i-1}(u,v),s_i(u,v))\Gamma_{i-1,i}(u,v),
+\end{equation}
+where $\Gamma_{i-1,i}(u,v)$ is the blending function
+\begin{equation}
+  \Gamma_{i-1,i}(u,v)=H_{i-1,i}^2(u,v)\big/\sum_{k=1}^nH_{k-1,k}^2(u,v).
+\end{equation}
+
+Conversion is done the same way as before; the converted patch is of degree $nd+2(n-2)$,
+see details in Appendix~\ref{app:charrot}.
+Note that the degree is relatively high because of the rational parameterization.
+For triangular surfaces, we can use distance parameters instead,
+thereby reducing the overall degree to $d+3$, see Appendix~\ref{app:triangular}.
+Figure~\ref{fig:trebol} shows an example with one 6-sided and three 3-sided surfaces.
 \begin{figure}
   \begin{subfigure}{.24\textwidth}
     \centering
@@ -408,21 +435,21 @@ side instead of $s_i$, thereby reducing the overall degree to $d+3$.
   \hfill
   \begin{subfigure}{.24\textwidth}
     \centering
-    \includegraphics[height=.207\textheight]{images/trebol3-contour.jpg}
+    \includegraphics[height=.193\textheight]{images/trebol3-contour.jpg}
     \caption{Contours}
     \label{fig:trebol-contours}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.24\textwidth}
     \centering
-    \includegraphics[height=.207\textheight]{images/trebol3-mean-iso.jpg}
+    \includegraphics[height=.2\textheight]{images/trebol3-mean-iso.jpg}
     \caption{Mean curvature}
     \label{fig:trebol-mean}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.24\textwidth}
     \centering
-    \includegraphics[height=.207\textheight]{images/trebol3-zebra.jpg}
+    \includegraphics[height=.2\textheight]{images/trebol3-zebra.jpg}
     \caption{Zebra map}
     \label{fig:trebol-zebra}
   \end{subfigure}
@@ -528,7 +555,7 @@ This project has been supported by the Hungarian Scientific Research Fund (OTKA,
 \section{CONVERSION EQUATIONS FOR KATO'S PATCH}
 \label{app:kato}
 The blending functions have the same denominators, but the side parameters do not.
-Introducing the notation $\mathcal{L}_i=L_{i-1}+L_{i+1}$, and omitting the $(u,v)$
+Introducing the notation $\mathcal{L}_i=L_{i-1}+L_{i+1}$, and omitting the
 parameters for brevity, the patch equation becomes
 \begin{equation}
   S_\mathrm{Kato}=
@@ -557,7 +584,42 @@ according to Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
 
 \section{CONVERSION EQUATIONS FOR THE CHARROT--GREGORY PATCH}
 \label{app:charrot}
-Blabla
+Similarly to Appendix~\ref{app:kato}, straightforward calculation leads to the form
+\begin{equation}
+  S_\mathrm{CG}= \frac{1}{\sum_{i=1}^nH_{i-1,i}^2}\cdot \frac{1}{\prod_{i=1}^n\mathcal{L}_i^d}\cdot
+  \sum_{i=1}^n\left[\hat{R}_{i-1}+\hat{R}_i-\hat{Q}_{i-1,i}\right]
+  \cdot H_{i-1,i}^2
+  \cdot\prod_{\substack{r=1\\r\neq i-1,i}}^n\mathcal{L}_r^d,
+\end{equation}
+where
+\begin{align}
+  \hat{R}_{i-1}=&\sum_{j=0}^d
+  \left[P_{j0}^{i-1}\mathcal{L}_i+L_{i-1}d(P_{j1}^{i-1}-P_{j0}^{i-1})\right]\cdot
+  {d\choose j}L_{i-2}^jL_i^{d-j}\mathcal{L}_i^{d-1},\\
+  \hat{R}_i=&\sum_{j=0}^d
+  \left[P_{j0}^i\mathcal{L}_{i-1}+L_id(P_{j1}^i-P_{j0}^i)\right]\cdot
+  {d\choose j}L_{i-1}^jL_{i+1}^{d-j}\mathcal{L}_{i-1}^{d-1},\\
+  \begin{split}
+    \hat{Q}_{i-1,i}=&
+    \big[P_{00}^i\mathcal{L}_{i-1}\mathcal{L}_i+L_{i-1}d(P_{10}^i-P_{00}^i)\mathcal{L}_{i-1}+
+      L_id(P_{01}^i-P_{00}^i)\mathcal{L}_i+\\
+      &\ \,L_{i-1}L_id^2(P_{11}^i-P_{10}^i-P_{01}^i+P_{00}^i)\big]\cdot
+    \mathcal{L}_{i-1}^{d-1}\mathcal{L}_i^{d-1}.
+  \end{split}
+\end{align}
+
+\section{CONVERSION EQUATIONS FOR THE CHARROT--GREGORY PATCH (TRIANGULAR CASE)}
+\label{app:triangular}
+Substituting $h_{i-1}$ and $h_i$ for $s_i$ and $1-s_{i-1}$, respectively, the patch equation becomes
+\begin{equation}
+  S_\mathrm{CG_\triangle}= \frac{1}{\sum_{i=1}^3H_{i-1,i}^2(u,v)}\cdot
+  \sum_{i=1}^3\left[R_{i-1}(1-h_i,h_{i-1})+R_i(h_{i-1},h_i)-Q_{i-1,i}(1-h_i,h_{i-1})\right]
+  \cdot H_{i-1,i}^2,
+\end{equation}
+which is directly convertable to tensor product form. While this is of a much lower degree
+than the original parameterization, it cannot be used for $n>3$, because then
+$h_i$ may take on value larger than $1$, and thus the ribbons would be evaluated outside
+the $[0,1]$ interval, which can seriously harm surface quality.
 
 \referenceSection
 \bibliographystyle{CADA}
