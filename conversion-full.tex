@@ -189,6 +189,7 @@ where the indexing is cyclic, and $h_j(u,v)$ is a distance function
 from the $j$-th side of the domain polygon. For the sake of brevity,
 we will use the notation
 \begin{equation}
+  \label{eq:prod-h}
   H_J^k(u,v)=\prod_{\substack{j=1\\j\notin{J}}}^nh_j^k(u,v),
 \end{equation}
 so $\lambda_i(u,v)=H_{i-1,i}^1(u,v)/\sum_{k=1}^nH_{k-1,k}^1(u,v)$.
@@ -351,21 +352,42 @@ since the ``trimmed'' boundaries correspond to corners of the domain triangle.
 \subsection{Kato's Patch}
 \label{subsec:kato}
 Kato~\cite{Kato:1991} proposed a surface defined as the transfinite interpolation of boundary
-curves with cross-derivatives. When these boundary constraints are given as a $G^1$ frame (and hence
-are polynomial), the whole patch may become polynomial. The tricky part is the parameterization:
-this representation uses two local parameters, a \emph{side parameter} $s_i$
+curves with cross-derivatives:
+\begin{equation}
+  S_\mathrm{Kato}(u,v)=\sum_{i=1}^nR_i(s_i(u,v),h_i(u,v))\Gamma_i^{d^\perp}(u,v),
+\end{equation}
+where $\Gamma_i^{d^\perp}(u,v)$ is a singular blending function (see below), and
+$R_i(s_i,h_i)$ is a quadrilateral \emph{ribbon} smoothly interpolating the $i$-th side.
+The cross-degree of the ribbon
+(and thus the number of cross-derivative constraints) is denoted by $d^\perp$.
+
+Aside from the \emph{distance parameter} $h_i$, defined as in Section~\ref{subsubsec:parameters},
+this representation also uses a \emph{side parameter} $s_i$
 that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
-and a \emph{distance parameter} $h_i$ that vanishes on the base side $i$, see
-Figure~\ref{fig:parameters}.
+see Figure~\ref{fig:s}.
+One such function is
+\begin{equation}
+  s_i(u,v)=\frac{L_{i-1}(u,v)}{L_{i-1}(u,v)+L_{i+1}(u,v)},
+\end{equation}
+which gives a rational polynomial parameterization.
 
-The distance parameters can be computed the same way as in the creation of S-patches, and for side
-parameters we can use $s_i=h_{i-1}/(h_{i-1}+h_{i+1})$, which gives a rational polynomial
-representation.
+The blending function is given as
+\begin{equation}
+  \Gamma_i^{d^\perp}(u,v)=H_i^{d^\perp+1}(u,v)\big/\sum_{k=1}^nH_k^{d^\perp+1}(u,v),
+\end{equation}
+with $H_i^{d^\perp+1}(u,v)$ defined as in Eq.~(\ref{eq:prod-h}).
+Note that the denominator vanishes for the corner points of the domain polygon,
+but the surface is well-defined there.
 
-Kato's patch is easily extendable to handle $G^2$ continuity, if the side constraints have 3
-control rows (so the cross-degree $d^\perp$ is 2 instead of 1).
-Then the whole surface becomes a rational tensor product B\'ezier patch of
-degree $nd+(n-1)(d^\perp+1)+d^\perp$.
+When the ribbons are given as B\'ezier surfaces of the form
+\begin{equation}
+  R_i(s_i,h_i)=\sum_{j=0}^d\sum_{k=0}^{d^\perp}P_{j,k}^iB_j^d(s_i)B_k^{d^\perp}(h_i),
+\end{equation}
+with $P_{j,k}^i$ denoting its control points,
+the whole patch becomes a rational polynomial, and can be converted to
+a tensor product B\'ezier patch with rational degree $nd+(n-1)(d^\perp+1)+d^\perp$,
+see Appendix~\ref{app:kato} for the details.
+In particular, using a $G^1$ frame ($d^\perp=1$), the degree will be $nd+2n-1$.
 
 \subsection{Charrot--Gregory Patch}
 \label{subsec:charrot}
@@ -501,6 +523,41 @@ This project has been supported by the Hungarian Scientific Research Fund (OTKA,
 \section*{ORCID}
 \orcid{P\'eter Salvi}{0000-0003-2456-2051}
 \orcid{Tam\'as V\'arady}{0000-0001-9547-6498}
+
+\appendix
+\section{CONVERSION EQUATIONS FOR KATO'S PATCH}
+\label{app:kato}
+The blending functions have the same denominators, but the side parameters do not.
+Introducing the notation $\mathcal{L}_i=L_{i-1}+L_{i+1}$, and omitting the $(u,v)$
+parameters for brevity, the patch equation becomes
+\begin{equation}
+  S_\mathrm{Kato}=
+  \frac{1}{\sum_{i=1}^nH_i^{d^\perp+1}}\cdot
+  \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{d^\perp}
+  P_{j,k}^i\cdot
+  {d\choose j}\frac{L_{i-1}^j}{\mathcal{L}_i^j}\frac{L_{i+1}^{d-j}}{\mathcal{L}_i^{d-j}}\cdot
+  {d^\perp\choose k}L_i^k(1-L_i)^{d^\perp-k}
+  \cdot H_i^{d^\perp+1}.
+\end{equation}
+Dividing and multiplying the equation with $\prod_{i=1}^n\mathcal{L}_i^d$, we arrive at the form
+\begin{align}
+  \begin{split}
+    S_\mathrm{Kato}=
+    &\frac{1}{\sum_{i=1}^nH_i^{d^\perp+1}}\cdot
+    \frac{1}{\prod_{i=1}^n\mathcal{L}_i^d}\cdot
+    \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{d^\perp}
+    P_{j,k}^i\cdot\\
+    &\left[{d\choose j}\cdot L_{i-1}^jL_{i+1}^{d-j}\prod_{\substack{r=1\\r\neq i}}^n\mathcal{L}_r^d\right]
+    \cdot {d^\perp\choose k}L_i^k(1-L_i)^{d^\perp-k}
+    \cdot H_i^{d^\perp+1}.
+  \end{split}
+\end{align}
+With the numerator and denominator separated, the tensor product conversion can be done
+according to Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
+
+\section{CONVERSION EQUATIONS FOR THE CHARROT--GREGORY PATCH}
+\label{app:charrot}
+Blabla
 
 \referenceSection
 \bibliographystyle{CADA}
