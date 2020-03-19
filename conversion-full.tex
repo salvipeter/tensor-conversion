@@ -122,7 +122,7 @@ S-patches have many nice properties, and are known to be convertable into tensor
 rational B\'ezier surfaces of degree $d(n-2)$.
 
 An $n$-sided S-patch is defined over a regular $n$-gon, parameterized by generalized
-barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_N)$~\cite{Hormann:2017}.
+barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_N)$~\cite{Floater:2015}.
 Its control
 points $\{P_\mathbf{s}\}$ are labeled by $n$ non-negative integers $\mathbf{s}=(s_1,\dots,s_n)$,
 whose sum is the depth of the surface. Then points on the surface are defined by
@@ -480,28 +480,53 @@ all the other representations have singularities in or outside their domains.
 When a singular point is close to the domain of the tensor product patch (i.e., the unit square),
 the control points in the vicinity show erratic behavior.
 
-Kato's patch is singular at the corner vertices, and the S-patch is singular on the circle that goes
-through the intersections of the lines containing the domain edges; however, the Charrot--Gregory patch
-is singular only at these intersection points. Practically this means that excluding the triangular
-S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
-relatively far away), all of these converted tensor product surfaces are likely to have
-badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
+S-patches are singular on the circle that goes
+through the intersections of the lines containing the domain edges,
+as the denominator of Wachspress coordinates becomes zero on the
+\emph{adjoint curve} of the domain~\cite{Floater:2015}.
+The Charrot--Gregory patch is singular at lines parallel to the edges,
+touching the adjoint circle at the intersection points, since
+the denominator of $s_i$ vanishes.
+Kato's patch also has these singularities, while it is also singular at the corners of the domain,
+where the denominator of the blending function vanishes.
+
+Figure~\ref{fig:singularities} illustrates this for 5-sided and 8-sided domains.
+Here the blue rectangle represents the domain of the tensor product surface;
+the dashed circle shows the singularities of S-patches,
+while the red lines are the singularities of Charrot--Gregory and Kato patches.
+The effect of these singularities depend on their proximity to the unit square
+-- consequently quite disastrous for the 8-sided case,
+see Figure~\ref{fig:8sided-default}.
 \begin{figure}
-  \centering
-  \includegraphics[width=0.45\textwidth]{images/singularities.pdf}
+  \begin{subfigure}{.45\textwidth}
+    \includegraphics[width=\textwidth]{images/singularities.pdf}
+    \caption{5-sided domain}
+    \label{fig:singularities5}
+  \end{subfigure}
   \hfill
-  \includegraphics[width=0.45\textwidth]{images/singularities2.pdf}
-  \caption{Singularities around a 5-sided and an 8-sided domain.}
+  \begin{subfigure}{.45\textwidth}
+    \includegraphics[width=\textwidth]{images/singularities2.pdf}
+    \caption{8-sided domain}
+    \label{fig:singularities8}
+  \end{subfigure}
+  \caption{Singularities around the domain.}
   \label{fig:singularities}
 \end{figure}
 
+Practically this means that excluding the triangular
+S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
+relatively far away), all of these converted tensor product surfaces are likely to have
+badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
+
 We present a solution to this problem. Normally the multi-sided domain is inside the unit
-square (Figure~\ref{fig:domain}), so that the trimming curves will be inside the
+square, so that the trimming curves will be inside the
 surface, but if we lift this constraint, we can create a larger multi-sided domain,
 thereby separating the unit square from the singularities. This means that the actual ``trimmed''
 region will be outside the standard $[0,1]\times[0,1]$ domain; this may not be supported by some
 applications, but the control structure will be close to the surface.
-An example with an 8-sided patch is shown in Figure~\ref{fig:8sided}.
+An example with an 8-sided patch is presented in Figure~\ref{fig:8sided-enlarged};
+the green rectangle in Figure~\ref{fig:singularities8} shows
+the unit square relative to the enlarged domain.
 \begin{figure}
   \begin{subfigure}{.3\textwidth}
     \centering
@@ -527,54 +552,84 @@ An example with an 8-sided patch is shown in Figure~\ref{fig:8sided}.
   \label{fig:8sided}
 \end{figure}
 
-\begin{figure}
-  \begin{subfigure}{.3\textwidth}
+\begin{figure}[!ht]
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/00.png}
     \caption{$\phi=0^\circ$}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{.3\textwidth}
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/10.png}
     \caption{$\phi=10^\circ$}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{.3\textwidth}
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/20.png}
     \caption{$\phi=20^\circ$}
   \end{subfigure}
-
-  \begin{subfigure}{.3\textwidth}
+  \hfill
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/30.png}
     \caption{$\phi=30^\circ$}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}{.3\textwidth}
+
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/40.png}
     \caption{$\phi=40^\circ$}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{.3\textwidth}
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/50.png}
     \caption{$\phi=50^\circ$}
   \end{subfigure}
-
-  \begin{subfigure}{.3\textwidth}
+  \hfill
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/60.png}
     \caption{$\phi=60^\circ$}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{.3\textwidth}
+  \begin{subfigure}{.24\textwidth}
     \includegraphics[width=\textwidth]{images/rotations/70.png}
     \caption{$\phi=70^\circ$}
   \end{subfigure}
+
+  \begin{subfigure}{.48\textwidth}
+    \centering
+    \includegraphics[width=.5\textwidth]{images/rotations/75-optimal.png}
+    \caption{$\phi\approx 75^\circ$ (optimal)}
+  \end{subfigure}
   \hfill
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/80.png}
+  \begin{subfigure}{.48\textwidth}
+    \centering
+    \includegraphics[width=.5\textwidth]{images/rotations/80.png}
     \caption{$\phi=80^\circ$}
   \end{subfigure}
+
   \caption{The effect of rotating a 5-sided domain.}
   \label{fig:rotations}
 \end{figure}
+Rotating the domain, instead of scaling it, may also have a beneficial effect
+on the control grid. However, in our experience, rotation of the domain in itself
+is not enough to deal with 7- or 8-sided surfaces.
+Figure~\ref{fig:rotations} shows several rotations of a 5-sided domain.
+We can define the optimal rotation as one that minimizes the functional
+\begin{equation}
+  E = \sum_{i=0}^d\sum_{j=1}^{d-1}\left\|\frac{Q_{i,j-1}+Q_{i,j+1}}{2}-Q_{i,j}\right\|^2 +
+  \sum_{i=1}^{d-1}\sum_{j=0}^d\left\|\frac{Q_{i-1,j}+Q_{i+1,j}}{2}-Q_{i,j}\right\|^2,
+\end{equation}
+where $Q_{i,j}$ are the control points of the bi-$d$-degree tensor product surface,
+essentially selecting the most flat control structure.
+
+Table~\ref{tab:degrees} summarizes the degrees of all four representations.
+It can be seen that these patches
+have relatively high degrees, in particular when the number of sides and the degree of the
+boundaries are raised. While Warren's patch outperforms the others in this respect,
+the use of base points somewhat limits its usability in CAD systems.
+Kato's surface always has singularities, and its degree is fairly high, but it is the only
+construction where $G^2$ continuity can be easily achieved. We found that while the
+Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
+computational cost in its multi-sided form, and have no control net quality problems for 5-
+and 6-sided configurations.
 
 \begin{table}
   \centering
@@ -592,18 +647,6 @@ An example with an 8-sided patch is shown in Figure~\ref{fig:8sided}.
     when the surface is generated by a degree-$d$ $G^1$ frame.}
   \label{tab:degrees}
 \end{table}
-
-Table~\ref{tab:degrees} summarizes the degrees of all four representations.
-% Note that triangular S-patches and Warren patches are both B\'ezier triangles.
-It can be seen that these patches
-have relatively high degrees, in particular when the number of sides and the degree of the
-boundaries are raised. While Warren's patch outperforms the others in this respect,
-the use of base points somewhat limits its usability in CAD systems.
-Kato's surface always has singularities, and its degree is fairly high, but it is the only
-construction where $G^2$ continuity can be easily achieved. We found that while the
-Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
-computational cost in its multi-sided form, and have no control net quality problems for 5-
-and 6-sided configurations.
 
 \section{TEST CASES}
 \label{sec:tests}
