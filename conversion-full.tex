@@ -143,21 +143,21 @@ and the remaining interior control points can be set by some heuristic to genera
 surface~\cite{Salvi:2019:KEPAF}, see Figure~\ref{fig:spatch}.
 \begin{figure}
   {
-    \begin{subfigure}{0.3\textwidth}
+    \begin{subfigure}{0.32\textwidth}
       \centering
       \includegraphics[width = 0.95\textwidth]{images/5-5-bezier-ribbon.png}
       \caption{$G^1$ frame}
       \label{fig:spatch-ribbon}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{0.3\textwidth}
+    \begin{subfigure}{0.32\textwidth}
       \centering
       \includegraphics[width = 0.95\textwidth]{images/5-5-cnet-ribbon.png}
       \caption{Control points by $G^1$ constraints}
       \label{fig:spatch-cnet-ribbon}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{0.3\textwidth}
+    \begin{subfigure}{0.32\textwidth}
       \centering
       \includegraphics[width = 0.95\textwidth]{images/5-5-cnet-full.png}
       \caption{All control points}
@@ -389,7 +389,7 @@ When the ribbons are given as B\'ezier surfaces of the form
 with $P_{j,k}^i$ denoting its control points,
 the whole patch becomes a rational polynomial, and can be converted to
 a tensor product B\'ezier patch with rational degree $nd+(n-1)(d^\perp+1)+d^\perp$,
-see Appendix~\ref{app:kato} for the details.
+see Appendix~\ref{app:conversion-eqs} for the details.
 In particular, using a $G^1$ frame ($d^\perp=1$), the degree will be $nd+2n-1$.
 
 \subsection{Charrot--Gregory Patch}
@@ -422,7 +422,7 @@ where $\Gamma_{i-1,i}(u,v)$ is the blending function
 \end{equation}
 
 Conversion is done the same way as before; the converted patch is of degree $nd+2(n-2)$,
-see details in Appendix~\ref{app:charrot}.
+see details in Appendix~\ref{app:conversion-eqs}.
 Note that the degree is relatively high because of the rational parameterization.
 For triangular surfaces, we can use distance parameters instead,
 thereby reducing the overall degree to $d+3$, see Appendix~\ref{app:triangular}.
@@ -554,8 +554,14 @@ This project has been supported by the Hungarian Scientific Research Fund (OTKA,
 \orcid{Tam\'as V\'arady}{0000-0001-9547-6498}
 
 \appendix
-\section{CONVERSION EQUATIONS FOR KATO'S PATCH}
-\label{app:kato}
+\section{CONVERSION EQUATIONS}
+\label{app:conversion-eqs}
+The following appendices show the patch equations
+with the numerator and denominator separated,
+so the tensor product conversion can be done
+according to Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
+
+\subsection*{Kato's Patch}
 The blending functions have the same denominators, but the side parameters do not.
 Introducing the notation $\mathcal{L}_i=L_{i-1}+L_{i+1}$, and omitting the
 parameters for brevity, the patch equation becomes
@@ -581,12 +587,9 @@ Dividing and multiplying the equation with $\prod_{i=1}^n\mathcal{L}_i^d$, we ar
     \cdot H_i^{d^\perp+1}.
   \end{split}
 \end{align}
-With the numerator and denominator separated, the tensor product conversion can be done
-according to Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
 
-\section{CONVERSION EQUATIONS FOR THE CHARROT--GREGORY PATCH}
-\label{app:charrot}
-Similarly to Appendix~\ref{app:kato}, straightforward calculation leads to the form
+\subsection*{Charrot--Gregory Patch}
+Similarly to Kato's patch, straightforward calculation leads to the form
 \begin{equation}
   S_\mathrm{CG}= \frac{1}{\sum_{i=1}^nH_{i-1,i}^2}\cdot \frac{1}{\prod_{i=1}^n\mathcal{L}_i^d}\cdot
   \sum_{i=1}^n\left[\hat{R}_{i-1}+\hat{R}_i-\hat{Q}_{i-1,i}\right]
@@ -610,7 +613,7 @@ where
   \end{split}
 \end{align}
 
-\section{CONVERSION EQUATIONS FOR THE CHARROT--GREGORY PATCH (TRIANGULAR CASE)}
+\section{TRIANGULAR CHARROT--GREGORY PATCH}
 \label{app:triangular}
 Substituting $h_{i-1}$ and $h_i$ for $s_i$ and $1-s_{i-1}$, respectively, the patch equation becomes
 \begin{equation}
@@ -620,7 +623,7 @@ Substituting $h_{i-1}$ and $h_i$ for $s_i$ and $1-s_{i-1}$, respectively, the pa
 \end{equation}
 which is directly convertable to tensor product form. While this is of a much lower degree
 than the original parameterization, it cannot be used for $n>3$, because then
-$h_i$ may take on value larger than $1$, and thus the ribbons would be evaluated outside
+$h_i$ may take on values larger than $1$, and thus the ribbons would be evaluated outside
 the $[0,1]$ interval, which can seriously harm surface quality.
 
 \referenceSection
