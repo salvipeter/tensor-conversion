@@ -71,7 +71,7 @@ representation either by (i)~approximating them with larger quadrilaterals,
 them into smaller four-sided patches.
 
 Both techniques have their deficiencies. They only approximate the original multi-sided
-surface, and trimming -- in general -- cannot ensure even $C^0$ continuity between the
+surface, and trimming -- in general -- cannot ensure even precise $C^0$ continuity between the
 adjacent patches. In the splitting scheme the subdividing curves in the interior
 weaken the overall continuity of the surface.
 
@@ -108,14 +108,15 @@ the S-patch~\cite{Loop:1989}, and the surface schemes of Warren~\cite{Warren:199
 Kato~\cite{Kato:1991}, and Charrot \& Gregory~\cite{Charrot:1984}.
 Our conversion approach is presented in
 Sections~\ref{subsubsec:parameters}--\ref{subsubsec:conversion}
-specifically for S-patches, but it will be adapted in later sections to other representations.
+specifically for S-patches, but it will be adapted to other representations in
+Sections~\ref{subsec:kato} and~\ref{subsec:charrot}.
 
 \subsection{S-Patch}
 \label{subsec:spatch}
 The S-patch of Loop \& DeRose~\cite{Loop:1989} is a generalization of the B\'ezier triangle, or,
 more precisely, a B\'ezier simplex mapping from $(n-1)$D to 3D, where the $n$ coordinates of the
 domain are supplied by generalized barycentric coordinates. The \emph{depth} ($d$) of an S-patch
-is the number of deCasteljau steps it takes to evaluate a surface point, i.e., something similar
+is the number of the deCasteljau steps required to evaluate a surface point, i.e., something similar
 to the degree of a B\'ezier triangle (but not the degree of the S-patch itself).
 S-patches have many nice properties, and are known to be convertable into tensor product
 rational B\'ezier surfaces of degree $d(n-2)$.
@@ -124,7 +125,7 @@ An $n$-sided S-patch is defined over a regular $n$-gon, parameterized by general
 barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_N)$~\cite{Hormann:2017}.
 Its control
 points $\{P_\mathbf{s}\}$ are labeled by $n$ non-negative integers $\mathbf{s}=(s_1,\dots,s_n)$,
-whose sum is the depth of the surface. Then points on the surface are given by
+whose sum is the depth of the surface. Then points on the surface are defined by
 the equation
 \begin{equation}
   \label{eq:spatch}
@@ -193,7 +194,8 @@ we will use the notation
   \label{eq:prod-h}
   H_J^k(u,v)=\prod_{\substack{j=1\\j\notin{J}}}^nh_j^k(u,v),
 \end{equation}
-so $\lambda_i(u,v)=H_{i-1,i}^1(u,v)/\sum_{k=1}^nH_{k-1,k}^1(u,v)$.
+where $J$ is an index set to exclude certain terms.
+Then $\lambda_i(u,v)=H_{i-1,i}^1(u,v)/\sum_{k=1}^nH_{k-1,k}^1(u,v)$.
 
 The distance function should vanish at the base domain edge, and increase monotonically
 as we get farther from it.
@@ -217,7 +219,10 @@ $L_i$ ($i=1\dots n$) by the following constraints:
   L_i(V_{i-1})&=L_i(V_i)=0, & L_i(V_{i-2})&=L_i(V_{i+1})=1.
 \end{align}
 (Note that because of the symmetry of the regular polygon, the above four equations take
-only three degrees of freedom.) The distance function is then defined as $h_i(u,v)=L_i(u,v)$,
+only three degrees of freedom.) The distance function is then defined as
+\begin{equation}
+  h_i(u,v)=L_i(u,v),
+\end{equation}
 see constant parameter lines in Figure~\ref{fig:h}.
 \begin{figure}
   \begin{subfigure}{0.30\textwidth}
@@ -261,7 +266,7 @@ which is a polynomial of degree $d(n-2)$. It is easy to see that the rational de
 the whole patch is also the same.
 
 This means that we can represent an $n$-sided S-patch of depth $d$ by a rational B\'ezier
-surface of $\delta\times\delta$ degrees. In order to determine the control point positions,
+surface of $\delta\times\delta$ degrees. In order to determine the positions of the control points,
 we still need to change from the power basis to the Bernstein basis.
 
 Assuming that the coefficients of a bi-$\delta$-degree polynomial $p(u,v)$
@@ -329,7 +334,7 @@ so $m_1=2$, $m_2=2$ and $m_3=0$.
   \label{fig:warren}
 \end{figure}
 A simple NURBS conversion is also shown in the paper,
-using the degenerate transformation
+using a degenerate transformation
 \begin{align}
   \lambda_1&=(1-u)v, & \lambda_2&=uv, & \lambda_3&=1-v.
 \end{align}
@@ -344,9 +349,16 @@ boundary in the same way as in a normal B\'ezier triangle, i.e., the first contr
 its position as a B\'ezier curve, the second its first derivatives etc.
 
 It is important to see that not all degree configurations are available.
-A 6-sided patch with degree-$d$ boundaries can be created from a triangle of degree $3d$,
-but due to its asymmetric construction,
-a 5-sided patch cannot have boundaries of the same degree. Moreover, using control points with zero
+The example in Figure~\ref{fig:warren}, for example, has boundary curves with the
+following degrees, starting from the bottom side: $[4,2,6,6,2]$. In the common case
+when all boundaries have the same degree, a 6-sided patch is easily created from 
+a triangle of degree $3d$, but due to its asymmetric construction,
+a 5-sided patch always has edge curves of different degrees.
+A $3d$-degree triangle suffices here, as well, but some of the boundaries need to be
+degree elevated. For example, a 5-sided quintic patch, generated from a 15-degree
+B\'ezier triangle, will actually have two 10-degree curves.
+
+Moreover, using control points with zero
 weight is not a standard practice, and is not supported by many systems. Meshing
 also presents a problem, as a uniform grid on the domain would result in distorted triangles,
 since the ``trimmed'' boundaries correspond to corners of the domain triangle.
@@ -356,12 +368,12 @@ since the ``trimmed'' boundaries correspond to corners of the domain triangle.
 Kato~\cite{Kato:1991} proposed a surface defined as the transfinite interpolation of boundary
 curves with cross-derivatives:
 \begin{equation}
-  S_\mathrm{Kato}(u,v)=\sum_{i=1}^nR_i(s_i(u,v),h_i(u,v))\Gamma_i^{d^\perp}(u,v),
+  S_\mathrm{Kato}(u,v)=\sum_{i=1}^nR_i(s_i(u,v),h_i(u,v))\Gamma_i^{e}(u,v),
 \end{equation}
-where $\Gamma_i^{d^\perp}(u,v)$ is a singular blending function (see below), and
+where $\Gamma_i^{e}(u,v)$ is a singular blending function (see below), and
 $R_i(s_i,h_i)$ is a quadrilateral \emph{ribbon} smoothly interpolating the $i$-th side.
 The cross-degree of the ribbon
-(and thus the number of cross-derivative constraints) is denoted by $d^\perp$.
+(and thus the number of cross-derivative constraints) is denoted by $e$.
 
 Aside from the \emph{distance parameter} $h_i$, defined as in Section~\ref{subsubsec:parameters},
 this representation also uses a \emph{side parameter} $s_i$
@@ -375,22 +387,22 @@ which gives a rational polynomial parameterization.
 
 The blending function is given as
 \begin{equation}
-  \Gamma_i^{d^\perp}(u,v)=H_i^{d^\perp+1}(u,v)\big/\sum_{k=1}^nH_k^{d^\perp+1}(u,v),
+  \Gamma_i^{e}(u,v)=H_i^{e+1}(u,v)\big/\sum_{k=1}^nH_k^{e+1}(u,v),
 \end{equation}
-with $H_i^{d^\perp+1}(u,v)$ defined as in Eq.~(\ref{eq:prod-h}).
+with $H_i^{e+1}(u,v)$ defined as in Eq.~(\ref{eq:prod-h}).
 Note that the denominator vanishes for the corner points of the domain polygon,
 but the surface is well-defined there.
 
 When the ribbons are given as B\'ezier surfaces of the form
 \begin{equation}
   \label{eq:ribbon}
-  R_i(s_i,h_i)=\sum_{j=0}^d\sum_{k=0}^{d^\perp}P_{j,k}^iB_j^d(s_i)B_k^{d^\perp}(h_i),
+  R_i(s_i,h_i)=\sum_{j=0}^d\sum_{k=0}^{e}P_{j,k}^iB_j^d(s_i)B_k^{e}(h_i),
 \end{equation}
 with $P_{j,k}^i$ denoting its control points,
 the whole patch becomes a rational polynomial, and can be converted to
-a tensor product B\'ezier patch with rational degree $nd+(n-1)(d^\perp+1)+d^\perp$,
+a tensor product B\'ezier patch with rational degree $nd+(n-1)(e+1)+e$,
 see Appendix~\ref{app:conversion-eqs} for the details.
-In particular, using a $G^1$ frame ($d^\perp=1$), the degree will be $nd+2n-1$.
+In particular, using a $G^1$ frame ($e=1$), the degree will be $nd+2n-1$.
 
 \subsection{Charrot--Gregory Patch}
 \label{subsec:charrot}
@@ -405,7 +417,7 @@ The corner interpolant can be written as
 \begin{equation}
   I_{i-1,i}(s_{i-1},s_i)=R_{i-1}(s_{i-1},s_i)+R_i(s_i,1-s_{i-1})-Q_{i-1,i}(s_{i-1},s_i),
 \end{equation}
-where $R_{i-1}$ and $R_i$ are linear ribbons (Eq.~(\ref{eq:ribbon}) with $d^\perp=1$),
+where $R_{i-1}$ and $R_i$ are linear ribbons (Eq.~(\ref{eq:ribbon}) with $e=1$),
 and $Q_{i-1,i}$ is a correction patch defined by
 \begin{equation}
   Q_{i-1,i}(s_{i-1},s_i)=P_{00}^i+s_id(P_{10}^i-P_{00}^i)+(1-s_{i-1})d(P_{01}^i-P_{00}^i)
@@ -475,10 +487,10 @@ relatively far away), all of these converted tensor product surfaces are likely 
 badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
 
 We present a solution to this problem. Normally the multi-sided domain is inside the unit
-square (Figure~\ref{fig:parameters}), so that the trimming curves will be inside the
+square (Figure~\ref{fig:domain}), so that the trimming curves will be inside the
 surface, but if we lift this constraint, we can create a larger multi-sided domain,
 thereby separating the unit square from the singularities. This means that the actual ``trimmed''
-region will be outside the standard $[0,1]^2$ domain; this may not be supported by some
+region will be outside the standard $[0,1]\times[0,1]$ domain; this may not be supported by some
 applications, but the control structure will be close to the surface.
 \begin{figure}
   \begin{subfigure}{.3\textwidth}
@@ -567,24 +579,24 @@ Introducing the notation $\mathcal{L}_i=L_{i-1}+L_{i+1}$, and omitting the
 parameters for brevity, the patch equation becomes
 \begin{equation}
   S_\mathrm{Kato}=
-  \frac{1}{\sum_{i=1}^nH_i^{d^\perp+1}}\cdot
-  \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{d^\perp}
+  \frac{1}{\sum_{i=1}^nH_i^{e+1}}\cdot
+  \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{e}
   P_{j,k}^i\cdot
   {d\choose j}\frac{L_{i-1}^j}{\mathcal{L}_i^j}\frac{L_{i+1}^{d-j}}{\mathcal{L}_i^{d-j}}\cdot
-  {d^\perp\choose k}L_i^k(1-L_i)^{d^\perp-k}
-  \cdot H_i^{d^\perp+1}.
+  {e\choose k}L_i^k(1-L_i)^{e-k}
+  \cdot H_i^{e+1}.
 \end{equation}
 Dividing and multiplying the equation with $\prod_{i=1}^n\mathcal{L}_i^d$, we arrive at the form
 \begin{align}
   \begin{split}
     S_\mathrm{Kato}=
-    &\frac{1}{\sum_{i=1}^nH_i^{d^\perp+1}}\cdot
+    &\frac{1}{\sum_{i=1}^nH_i^{e+1}}\cdot
     \frac{1}{\prod_{i=1}^n\mathcal{L}_i^d}\cdot
-    \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{d^\perp}
+    \sum_{i=1}^n\sum_{j=0}^d\sum_{k=0}^{e}
     P_{j,k}^i\cdot\\
     &\left[{d\choose j}\cdot L_{i-1}^jL_{i+1}^{d-j}\prod_{\substack{r=1\\r\neq i}}^n\mathcal{L}_r^d\right]
-    \cdot {d^\perp\choose k}L_i^k(1-L_i)^{d^\perp-k}
-    \cdot H_i^{d^\perp+1}.
+    \cdot {e\choose k}L_i^k(1-L_i)^{e-k}
+    \cdot H_i^{e+1}.
   \end{split}
 \end{align}
 
@@ -624,7 +636,7 @@ Substituting $h_{i-1}$ and $h_i$ for $s_i$ and $1-s_{i-1}$, respectively, the pa
 which is directly convertable to tensor product form. While this is of a much lower degree
 than the original parameterization, it cannot be used for $n>3$, because then
 $h_i$ may take on values larger than $1$, and thus the ribbons would be evaluated outside
-the $[0,1]$ interval, which can seriously harm surface quality.
+the $[0,1]$ interval, which can damage surface quality.
 
 \referenceSection
 \bibliographystyle{CADA}
