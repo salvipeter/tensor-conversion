@@ -355,8 +355,9 @@ when all boundaries have the same degree, a 6-sided patch is easily created from
 a triangle of degree $3d$, but due to its asymmetric construction,
 a 5-sided patch always has edge curves of different degrees.
 A $3d$-degree triangle suffices here, as well, but some of the boundaries need to be
-degree elevated. For example, a 5-sided quintic patch, generated from a 15-degree
-B\'ezier triangle, will actually have two 10-degree curves.
+degree elevated. For example, a 5-sided quintic patch can be generated from a 15-degree
+B\'ezier triangle by cutting 5 control rows from two corners, resulting in boundaries of
+degrees $[5,5,10,10,5]$, so two boundary curves need to be elevated to degree 10.
 
 Moreover, using control points with zero
 weight is not a standard practice, and is not supported by many systems. Meshing
@@ -485,6 +486,14 @@ is singular only at these intersection points. Practically this means that exclu
 S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
 relatively far away), all of these converted tensor product surfaces are likely to have
 badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.45\textwidth]{images/singularities.pdf}
+  \hfill
+  \includegraphics[width=0.45\textwidth]{images/singularities2.pdf}
+  \caption{Singularities around a 5-sided and an 8-sided domain.}
+  \label{fig:singularities}
+\end{figure}
 
 We present a solution to this problem. Normally the multi-sided domain is inside the unit
 square (Figure~\ref{fig:domain}), so that the trimming curves will be inside the
@@ -492,6 +501,7 @@ surface, but if we lift this constraint, we can create a larger multi-sided doma
 thereby separating the unit square from the singularities. This means that the actual ``trimmed''
 region will be outside the standard $[0,1]\times[0,1]$ domain; this may not be supported by some
 applications, but the control structure will be close to the surface.
+An example with an 8-sided patch is shown in Figure~\ref{fig:8sided}.
 \begin{figure}
   \begin{subfigure}{.3\textwidth}
     \centering
@@ -515,6 +525,55 @@ applications, but the control structure will be close to the surface.
   \end{subfigure}
   \caption{An 8-sided Charrot--Gregory patch.}
   \label{fig:8sided}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/00.png}
+    \caption{$\phi=0^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/10.png}
+    \caption{$\phi=10^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/20.png}
+    \caption{$\phi=20^\circ$}
+  \end{subfigure}
+
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/30.png}
+    \caption{$\phi=30^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/40.png}
+    \caption{$\phi=40^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/50.png}
+    \caption{$\phi=50^\circ$}
+  \end{subfigure}
+
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/60.png}
+    \caption{$\phi=60^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/70.png}
+    \caption{$\phi=70^\circ$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\textwidth]{images/rotations/80.png}
+    \caption{$\phi=80^\circ$}
+  \end{subfigure}
+  \caption{The effect of rotating a 5-sided domain.}
+  \label{fig:rotations}
 \end{figure}
 
 \begin{table}
