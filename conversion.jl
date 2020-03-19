@@ -6,7 +6,7 @@ using LinearAlgebra
 
 exponent = 2
 ribbon_multiplier = 1.0
-large_domain = true
+large_domain = false
 rotation = 0                    # in degrees
 
 const Real = Float64 # BigFloat
@@ -633,6 +633,55 @@ function test(filename, resolution = 15, surftype = :gregory; multiplier = 1.0)
     for i in 1:n
         write_ribbon(ribbons, "$filename-$i.obj", i - 1, resolution)
     end
+end
+
+function rotation_test(filename)
+    ribbons = read_ribbons("$filename.gbp")
+    n = ribbons.n
+    for r in 0:10:80
+        global rotation = r
+        surf = gregory(ribbons)
+        tsurf = tensor(surf)
+        write_cnet(tsurf, "$filename-cnet-$r.obj")
+    end
+    global rotation = 0
+end
+
+function net_energy(surf)
+    result = 0
+    d = size(surf, 1) - 1
+    for i in 0:d, j in 1:d-1
+        p = surf[i+1,j+1,1:3] / surf[i+1,j+1,4]
+        pl = surf[i+1,j,1:3] / surf[i+1,j,4]
+        pr = surf[i+1,j+2,1:3] / surf[i+1,j+2,4]
+        result += norm(p - (pl + pr) / 2)^2
+    end
+    for i in 1:d-1, j in 0:d
+        p = surf[i+1,j+1,1:3] / surf[i+1,j+1,4]
+        pl = surf[i,j+1,1:3] / surf[i,j+1,4]
+        pr = surf[i+2,j+1,1:3] / surf[i+2,j+1,4]
+        result += norm(p - (pl + pr) / 2)^2
+    end
+    result
+end
+
+function rotation_search(filename, resolution)
+    ribbons = read_ribbons("$filename.gbp")
+    n = ribbons.n
+    f = []
+    for r in range(0, stop=90, length=resolution)
+        global rotation = r
+        surf = gregory(ribbons)
+        tsurf = tensor(surf)
+        push!(f, net_energy(tsurf))
+    end
+    r = range(0, stop=90, length=resolution)[findmin(f)[2]]
+    global rotation = r
+    surf = gregory(ribbons)
+    tsurf = tensor(surf)
+    write_cnet(tsurf, "$filename-cnet-$r.obj")
+    global rotation = 0
+    r
 end
 
 function test_CAD(filename, surftype = :gregory)
