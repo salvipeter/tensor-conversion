@@ -624,7 +624,6 @@ construction where $G^2$ continuity can be easily achieved. We found that while 
 Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
 computational cost in its multi-sided form, and have no control net quality problems for
 the most frequent 5- and 6-sided configurations.
-
 \begin{table}
   \centering
   \begin{tabular}{c|c|c|c|c}
@@ -644,33 +643,26 @@ the most frequent 5- and 6-sided configurations.
 
 \section{TEST CASES}
 \label{sec:tests}
-Blah blah blah
-\begin{figure}
-  {
-    \hfill
-    \begin{subfigure}{.3\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{images/cagd86/cg3.png}
-      \caption{3-sided Charrot--Gregory patch}
-      \label{fig:cagd86-3-cg}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{.3\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{images/cagd86/cg2.png}
-      \caption{5-sided Charrot--Gregory patch}
-      \label{fig:cagd86-5-cg}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{.3\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{images/cagd86/cg1.png}
-      \caption{6-sided Charrot--Gregory patch}
-      \label{fig:cagd86-6-cg}
-    \end{subfigure}
-    \hfill
-  }
+In this section we will show the NURBS conversion of more complex objects.
+Since the tensor product surface is exactly the same as the multi-sided original,
+there is little point in investigating the quality of the patches;
+we are going to concentrate on the control net quality instead.
+The domain-scaling method outlined above always generates nice control structures,
+so a comparison using default domains is more informative.
+All images in this section were created by a commercially available CAD system,
+Rhinoceros 3D~\cite{Rhino3D}.
 
+The model in Figure~\ref{fig:cagd86}, defined by quintic $G^1$ frames,
+has three 3-sided, two 4-sided, a 5-sided and a 6-sided surface.
+The triangular S-patch shown in Fig.~\ref{fig:cagd86-3-sp} has a more regular
+control net than its counterpart in Fig.~\ref{fig:cagd86-3-cg},
+but the 5-sided patch in Fig.~\ref{fig:cagd86-5-sp}
+shows some outliers compared to Fig.~\ref{fig:cagd86-5-cg},
+and the 6-sided S-patch in Fig.~\ref{fig:cagd86-6-sp} has some
+control points close to infinity, causing numerical evaluation errors
+in the bottom-left corner, while the control net
+in Fig.~\ref{fig:cagd86-6-cg} is, while somewhat deviating, still managable.
+\begin{figure}[!ht]
   {
     \hfill
     \begin{subfigure}{.3\textwidth}
@@ -695,8 +687,78 @@ Blah blah blah
     \end{subfigure}
     \hfill
   }
+
+  {
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg3.png}
+      \caption{3-sided Charrot--Gregory patch}
+      \label{fig:cagd86-3-cg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg2.png}
+      \caption{5-sided Charrot--Gregory patch}
+      \label{fig:cagd86-5-cg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg1.png}
+      \caption{6-sided Charrot--Gregory patch}
+      \label{fig:cagd86-6-cg}
+    \end{subfigure}
+    \hfill
+  }
   \caption{Control networks of Charrot--Gregory surfaces and S-patches.}
   \label{fig:cagd86}
+\end{figure}
+
+We find similar results in Figure~\ref{fig:dolphin}, where a dolphin model
+is shown, also defined by quintic $G^1$ frames. The two 6-sided S-patches are
+not evaluated correctly due to the erratic control points.
+One of the Charrot--Gregory patches also stretches far near the corners,
+but is still within the limits of exact evaluation.
+\begin{figure}[!ht]
+  {
+    \hfill
+    \begin{subfigure}{.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/dolphin/spatch1.png}
+      \caption{6-sided S-patch (head)}
+      \label{fig:dolphin-3-sp}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/dolphin/spatch2.png}
+      \caption{6-sided S-patch (body)}
+      \label{fig:dolphin-5-sp}
+    \end{subfigure}
+    \hfill
+  }
+
+  {
+    \hfill
+    \begin{subfigure}{.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/dolphin/cg1.png}
+      \caption{6-sided Charrot--Gregory patch (head)}
+      \label{fig:dolphin-3-cg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/dolphin/cg2.png}
+      \caption{6-sided Charrot--Gregory patch (body)}
+      \label{fig:dolphin-5-cg}
+    \end{subfigure}
+    \hfill
+  }
+  \caption{Dolphin model.}
+  \label{fig:dolphin}
 \end{figure}
 
 \section{CONCLUSIONS}
