@@ -483,7 +483,7 @@ the control points in the vicinity show erratic behavior.
 S-patches are singular on the circle that goes
 through the intersections of the lines containing the domain edges,
 as the denominator of Wachspress coordinates becomes zero on the
-\emph{adjoint curve} of the domain~\cite{Floater:2015}.
+\emph{adjoint curve} of the domain, see details in~\cite{Floater:2015}.
 The Charrot--Gregory patch is singular at lines parallel to the edges,
 touching the adjoint circle at the intersection points, since
 the denominator of $s_i$ vanishes.
@@ -513,10 +513,16 @@ see Figure~\ref{fig:8sided-default}.
   \label{fig:singularities}
 \end{figure}
 
-Practically this means that excluding the triangular
-S-patch (which is not rational) and the Charrot--Gregory patch for $n\leq6$ (where singularities are
-relatively far away), all of these converted tensor product surfaces are likely to have
-badly oscillating control points (possibly tending to infinity), which may lead to numerical issues.
+We can summarize the effect of singularities on the different surface representations
+as follows.
+The triangular S-patch, which is not rational, has a
+stable control structure, while for $n=5$ and $n=6$ some control points may
+lie far from the multi-sided surface. For $n\geq 7$ the converted tensor product
+surfaces are likely to have badly oscillating control points (possibly tending to infinity),
+which may lead to numerical issues. The situation is better for the
+Charrot--Gregory patch, where reliable control nets can be generated for $n\leq 6$.
+The control grid of Kato's patch, and the above surfaces with more than 6 sides,
+can hardly be used when converted to NURBS form.
 
 We present a solution to this problem. Normally the multi-sided domain is inside the unit
 square, so that the trimming curves will be inside the
@@ -553,64 +559,52 @@ the unit square relative to the enlarged domain.
 \end{figure}
 
 \begin{figure}[!ht]
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/00.png}
-    \caption{$\phi=0^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/10.png}
-    \caption{$\phi=10^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/20.png}
-    \caption{$\phi=20^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/30.png}
-    \caption{$\phi=30^\circ$}
-  \end{subfigure}
+  {
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \includegraphics[width=\textwidth]{images/rotations/00.png}
+      \caption{$\phi=0^\circ$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \includegraphics[width=\textwidth]{images/rotations/20.png}
+      \caption{$\phi=20^\circ$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \includegraphics[width=\textwidth]{images/rotations/40.png}
+      \caption{$\phi=40^\circ$}
+    \end{subfigure}
+    \hfill
+  }
 
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/40.png}
-    \caption{$\phi=40^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/50.png}
-    \caption{$\phi=50^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/60.png}
-    \caption{$\phi=60^\circ$}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.24\textwidth}
-    \includegraphics[width=\textwidth]{images/rotations/70.png}
-    \caption{$\phi=70^\circ$}
-  \end{subfigure}
-
-  \begin{subfigure}{.48\textwidth}
-    \centering
-    \includegraphics[width=.5\textwidth]{images/rotations/75-optimal.png}
-    \caption{$\phi\approx 75^\circ$ (optimal)}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.48\textwidth}
-    \centering
-    \includegraphics[width=.5\textwidth]{images/rotations/80.png}
-    \caption{$\phi=80^\circ$}
-  \end{subfigure}
+  {
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \includegraphics[width=\textwidth]{images/rotations/60.png}
+      \caption{$\phi=60^\circ$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/rotations/75-optimal.png}
+      \caption{$\phi\approx 75^\circ$ (optimal)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.28\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/rotations/80.png}
+      \caption{$\phi=80^\circ$}
+    \end{subfigure}
+    \hfill
+  }
 
   \caption{The effect of rotating a 5-sided domain.}
   \label{fig:rotations}
 \end{figure}
 Rotating the domain, instead of scaling it, may also have a beneficial effect
 on the control grid. However, in our experience, rotation of the domain in itself
-is not enough to deal with 7- or 8-sided surfaces.
+is not sufficient to deal with 7- or 8-sided surfaces.
 Figure~\ref{fig:rotations} shows several rotations of a 5-sided domain.
 We can define the optimal rotation as one that minimizes the functional
 \begin{equation}
@@ -618,18 +612,18 @@ We can define the optimal rotation as one that minimizes the functional
   \sum_{i=1}^{d-1}\sum_{j=0}^d\left\|\frac{Q_{i-1,j}+Q_{i+1,j}}{2}-Q_{i,j}\right\|^2,
 \end{equation}
 where $Q_{i,j}$ are the control points of the bi-$d$-degree tensor product surface,
-essentially selecting the most flat control structure.
+essentially selecting the most smooth control structure.
 
 Table~\ref{tab:degrees} summarizes the degrees of all four representations.
 It can be seen that these patches
 have relatively high degrees, in particular when the number of sides and the degree of the
 boundaries are raised. While Warren's patch outperforms the others in this respect,
-the use of base points somewhat limits its usability in CAD systems.
+the use of base points limits its usability in CAD systems.
 Kato's surface always has singularities, and its degree is fairly high, but it is the only
 construction where $G^2$ continuity can be easily achieved. We found that while the
 Charrot--Gregory patch has a slightly higher degree than the S-patch, it has much lower
-computational cost in its multi-sided form, and have no control net quality problems for 5-
-and 6-sided configurations.
+computational cost in its multi-sided form, and have no control net quality problems for
+the most frequent 5- and 6-sided configurations.
 
 \begin{table}
   \centering
@@ -651,6 +645,59 @@ and 6-sided configurations.
 \section{TEST CASES}
 \label{sec:tests}
 Blah blah blah
+\begin{figure}
+  {
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg3.png}
+      \caption{3-sided Charrot--Gregory patch}
+      \label{fig:cagd86-3-cg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg2.png}
+      \caption{5-sided Charrot--Gregory patch}
+      \label{fig:cagd86-5-cg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/cg1.png}
+      \caption{6-sided Charrot--Gregory patch}
+      \label{fig:cagd86-6-cg}
+    \end{subfigure}
+    \hfill
+  }
+
+  {
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/spatch3.png}
+      \caption{3-sided S-patch}
+      \label{fig:cagd86-3-sp}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/spatch2.png}
+      \caption{5-sided S-patch}
+      \label{fig:cagd86-5-sp}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.3\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cagd86/spatch1.png}
+      \caption{6-sided S-patch}
+      \label{fig:cagd86-6-sp}
+    \end{subfigure}
+    \hfill
+  }
+  \caption{Control networks of Charrot--Gregory surfaces and S-patches.}
+  \label{fig:cagd86}
+\end{figure}
 
 \section{CONCLUSIONS}
 In the full paper we are going to give representation details, and
