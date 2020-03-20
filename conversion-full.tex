@@ -716,9 +716,55 @@ in Fig.~\ref{fig:cagd86-6-cg} is, while somewhat deviating, still managable.
   \label{fig:cagd86}
 \end{figure}
 
-We find similar results in Figure~\ref{fig:dolphin}, where a dolphin model
-is shown, also defined by quintic $G^1$ frames. The two 6-sided S-patches are
-not evaluated correctly due to the erratic control points.
+We find similar results in the ``Pocket'' model (Figure~\ref{fig:pocket}),
+where the surfaces were defined by cubic $G^1$ frames, and thus of a lower degree.
+In this case the irregularities in the control net of the 6-sided S-patch
+did not lead to evaluation problems.
+\begin{figure}[!ht]
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/spatch3.png}
+    \caption{3-sided S-patch}
+    \label{fig:pocket-3-sp}
+  \end{subfigure}
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/spatch2.png}
+    \caption{5-sided S-patch}
+    \label{fig:pocket-5-sp}
+  \end{subfigure}
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/spatch1.png}
+    \caption{6-sided S-patch}
+    \label{fig:pocket-6-sp}
+  \end{subfigure}
+
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/cg3.png}
+    \caption{3-sided Charrot--Gregory patch}
+    \label{fig:pocket-3-cg}
+  \end{subfigure}
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/cg2.png}
+    \caption{5-sided Charrot--Gregory patch}
+    \label{fig:pocket-5-cg}
+  \end{subfigure}
+  \begin{subfigure}{.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/pocket/cg1.png}
+    \caption{6-sided Charrot--Gregory patch}
+    \label{fig:pocket-6-cg}
+  \end{subfigure}
+  \caption{``Pocket'' model.}
+  \label{fig:pocket}
+\end{figure}
+
+Finally, in Figure~\ref{fig:dolphin}, a dolphin model
+is shown, defined by quintic $G^1$ frames. The two 6-sided S-patches are
+not evaluated correctly here due to the erratic control points.
 One of the Charrot--Gregory patches also stretches far near the corners,
 but is still within the limits of exact evaluation.
 \begin{figure}[!ht]
