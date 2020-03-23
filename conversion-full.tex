@@ -32,11 +32,11 @@
 We investigate genuine multi-sided surface representations that can be
 converted into standard tensor product format, such as NURBS.  Multi-sided
 patches offer versatility in shape design, and permit smooth, watertight connections
-between adjacent patches using prescribed cross-derivatives; however, they can hardly be
-utilized by the majority of CAD/CAM systems, which are capable to handle only
+between adjacent patches using prescribed cross-derivatives; however, they can seldom be
+utilized by the majority of CAD/CAM systems, which handle only
 standard data formats.
-On the other hand, tensor product surfaces are sometimes too rigid for shape design,
-and trimmed patches can only be smoothly connected using user-defined tolerances.
+Furthermore, tensor product surfaces are sometimes too rigid for shape design,
+and trimmed patches can only be smoothly connected up to user-defined tolerances.
 % Tensor product surfaces are more rigid for shape design,
 % and smoothly connecting trimmed surface patches is tolerance driven and
 % generally requires extra effort.
@@ -57,23 +57,22 @@ the problem.
 
 \section{INTRODUCTION}
 \label{sec:intro}
-The majority of aesthetic objects is represented by free-form shapes, and modeling these
-naturally involves multi-sided (i.e., non-four-sided) surfaces, as well.  The
+The majority of aesthetic objects are represented by free-form shapes, and modeling these
+naturally involves multi-sided (i.e., non-four-sided) surfaces.  The
 mathematical representation of such patches is still an active area in CAGD, and although
 a great variety of approaches have been published, none of the genuine $n$-sided
 formulations have been standardized so far.
 
 On the other hand, commercial CAD/CAM systems and related application programs only accept
-data in standard formats, such as tensor product NURBS surfaces. For this reason, it is a
-widely applied practice to convert multi-sided surfaces into a CAD-compatible
-representation either by (i)~approximating them with larger quadrilaterals,
+data in standard formats, such as tensor product NURBS surfaces. For this reason, a
+widely applied practice is to convert multi-sided surfaces into a CAD-compatible
+representation either by (i)~approximating them with larger quadrilaterals and
 \emph{trimming} away the exterior part beyond the boundaries, or (ii)~\emph{splitting}
 them into smaller four-sided patches.
-
 Both techniques have their deficiencies. They only approximate the original multi-sided
-surface, and trimming -- in general -- cannot ensure even precise $C^0$ continuity between the
+surface, and in general, trimming cannot even ensure precise $C^0$ continuity between
 adjacent patches. In the splitting scheme the subdividing curves in the interior
-weaken the overall continuity of the surface.
+reduce the overall continuity of the surface.
 
 Ideally, we would like to have an $n$-sided patch that:
 \begin{enumerate}[label=\roman*),leftmargin=3\parindent]
@@ -87,14 +86,14 @@ polynomials of two parametric variables. Then they can be directly converted int
 NURBS form, without either changing the surfaces or harming continuity. The result will be
 a collection of \emph{watertight trimmed surfaces}.
  
-Some of the well-known multi-sided schemes allow computing a trimmed bi-parametric
+Some of the well-known multi-sided schemes allow computing a trimmed rational bi-parametric
 representation. Our goal in this paper is to review these and discuss the difficulties of
 the conversion process. We are going to provide further insights into specific
 computational and geometric problems that have not been discussed elsewhere and are
 useful for analyzing the ``pros and cons'' of these representations.
 
 The paper is structured as follows. In Section~\ref{sec:multisided},
-we review four natively multi-sided schemes, and investigate their conversions to NURBS.
+we review four pure multi-sided schemes, and investigate their conversions to tensor product NURBS.
 In Section~\ref{sec:discussion}, issues of the conversion process are discussed in details,
 with emphasis on the quality of the generated control network, and its relation to singularities.
 Some more complex test examples and comparisons follow in Section~\ref{sec:tests},
@@ -116,13 +115,14 @@ Sections~\ref{subsec:kato} and~\ref{subsec:charrot}.
 The S-patch of Loop \& DeRose~\cite{Loop:1989} is a generalization of the B\'ezier triangle, or,
 more precisely, a B\'ezier simplex mapping from $(n-1)$D to 3D, where the $n$ coordinates of the
 domain are supplied by generalized barycentric coordinates. The \emph{depth} ($d$) of an S-patch
-is the number of the deCasteljau steps required to evaluate a surface point, i.e., something similar
+is the number of \emph{de Casteljau} steps required to evaluate a surface point, i.e.,
+something similar
 to the degree of a B\'ezier triangle (but not the degree of the S-patch itself).
 S-patches have many nice properties, and are known to be convertable into tensor product
 rational B\'ezier surfaces of degree $d(n-2)$.
 
 An $n$-sided S-patch is defined over a regular $n$-gon, parameterized by generalized
-barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_N)$~\cite{Floater:2015}.
+barycentric coordinates $\mathbf{\lambda}=(\lambda_1,\dots,\lambda_n)$~\cite{Floater:2015}.
 Its control
 points $\{P_\mathbf{s}\}$ are labeled by $n$ non-negative integers $\mathbf{s}=(s_1,\dots,s_n)$,
 whose sum is the depth of the surface. Then points on the surface are defined by
@@ -138,10 +138,12 @@ and the sum is computed over all possible values of $\mathbf{s}$.
 One drawback of this representation is its large number of control points, which renders it
 inconvenient for interactive design. For example, a five-sided patch of depth 5 has 126 control
 points, while a 4-sided tensor product patch has only 36. A possible workaround is to use a
-$G^1$ \emph{frame} for design that defines the tangent planes at the boundaries.
+$G^1$ \emph{frame} (Fig.~\ref{fig:spatch-ribbon})
+for design that defines the tangent planes at the boundaries.
 After increasing the depth by 3, these boundary constraints can be interpolated~\cite{Loop:1990},
 and the remaining interior control points can be set by some heuristic to generate a smooth
-surface~\cite{Salvi:2019:KEPAF}, see Figure~\ref{fig:spatch}.
+surface~\cite{Salvi:2019:KEPAF}, see
+Figures~\ref{fig:spatch-cnet-ribbon}--\ref{fig:spatch-cnet-full}.
 \begin{figure}
   {
     \begin{subfigure}{0.32\textwidth}
@@ -173,21 +175,22 @@ The CAD-compatible conversion presented in~\cite{Loop:1989} is a two-step proces
 first convert the surface into a
 four-sided S-patch, and then to a tensor product patch. The first step is based on the
 composition of B\'ezier simplexes~\cite{DeRose:1988}, which has very high complexity.
-Even using a more efficient algorithm~\cite{DeRose:1993}, converting a modest-sized S-patch
+Even using a more efficient simplex composition
+algorithm~\cite{DeRose:1993}, converting a modest-sized S-patch
 still requires minutes of computation on today's machines~\cite{Salvi:2019:WAIT}.
 
 \subsubsection{Parameterization Using Implicit Line Equations}
 \label{subsubsec:parameters}
-Here we propose an alternative conversion process. Since a B\'ezier simplex is just a polynomial,
+Here we propose an alternative conversion process. Since a B\'ezier simplex is polynomial,
 the only problem is how to express the generalized barycentric coordinates as a rational polynomial
-of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates,
+of the $(u,v)$ parameters on the 2D domain. Using Wachspress coordinates~\cite{Floater:2015},
 $\{\lambda_i\}$ can be expressed as
 \begin{equation}
   \label{eq:wachspress}
   \lambda_i(u,v) = \prod_{\substack{j=1\\j\notin\{i-1,i\}}}^nh_j(u,v) \quad\bigg/\quad
                    \sum_{k=1}^n\prod_{\substack{j=1\\j\notin\{k-1,k\}}}^nh_j(u,v),
 \end{equation}
-where the indexing is cyclic, and $h_j(u,v)$ is a distance function
+where the indexing is cyclic, and $h_j(u,v)$ is a \emph{distance function}
 from the $j$-th side of the domain polygon. For the sake of brevity,
 we will use the notation
 \begin{equation}
@@ -203,7 +206,7 @@ The implicit
 equation of the line containing the base edge is suitable for this purpose,
 and is also a linear polynomial,
 so the Wachspress coordinates can be expressed as rational polynomials of degree $n-2$. We
-normalize the distances such that they take on the value 1 at vertices adjacent to the side.
+normalize the distances so they take on the value 1 at the vertices adjacent to the side.
 
 Formally, let
 \begin{equation}
@@ -211,14 +214,14 @@ Formally, let
             \frac{1}{2}+\frac{1}{2}\sin(2\pi\cdot i/n)\right),\quad i=1\dots n
 \end{equation}
 denote the vertices of the regular $n$-sided domain inside the $[0,1]\times[0,1]$ square,
-see an illustration in Figure~\ref{fig:domain}. % Yes, not the same orientation, get over it!
-Since a line $L$ is defined by the implicit equation $L=Au+Bv+C=0$, the coefficients can
+see Figure~\ref{fig:domain}. % Yes, not the same orientation, get over it!
+Since a line $L$ is defined by the implicit equation $L(u,v)=Au+Bv+C=0$, the coefficients can
 be unambiguously defined by three equations. We define $n$ lines
 $L_i$ ($i=1\dots n$) by the following constraints:
 \begin{align}
   L_i(V_{i-1})&=L_i(V_i)=0, & L_i(V_{i-2})&=L_i(V_{i+1})=1.
 \end{align}
-(Note that because of the symmetry of the regular polygon, the above four equations take
+(Note that because of the symmetry of the regular polygon, the above four equations constrain
 only three degrees of freedom.) The distance function is then defined as
 \begin{equation}
   h_i(u,v)=L_i(u,v),
@@ -269,7 +272,7 @@ This means that we can represent an $n$-sided S-patch of depth $d$ by a rational
 surface of $\delta\times\delta$ degrees. In order to determine the positions of the control points,
 we still need to change from the power basis to the Bernstein basis.
 
-Assuming that the coefficients of a bi-$\delta$-degree polynomial $p(u,v)$
+Assuming that the coefficients of a bi-degree $\delta$ polynomial $p(u,v)$
 are given in a matrix $M$ such that
 \begin{equation}
   \label{eq:power}
@@ -279,7 +282,7 @@ are given in a matrix $M$ such that
   \left[\begin{array}{ccccc}1&v&v^2&\dots&v^\delta\end{array}\right]^\top,
 \end{equation}
 the B\'ezier coefficients are computed as $N=C^\top MC$, where $C=\{c_{ij}\}$ is
-the upper triangle matrix with elements
+the upper triangular matrix with elements
 \begin{equation}
   \begin{aligned}
     c_{ij}&={j\choose i}\bigg/{\delta\choose i}, & i,j&=0\dots\delta, & i&\leq j.
@@ -334,13 +337,13 @@ so $m_1=2$, $m_2=2$ and $m_3=0$.
   \label{fig:warren}
 \end{figure}
 A simple NURBS conversion is also shown in the paper,
-using a degenerate transformation
+using the degenerate transformation
 \begin{align}
   \lambda_1&=(1-u)v, & \lambda_2&=uv, & \lambda_3&=1-v.
 \end{align}
 Applying this to Eq.~(\ref{eq:spatch}) results in a tensor product surface; its control points
 can be computed using Eqs.~(\ref{eq:power}--\ref{eq:bernstein}).
-Figure~\ref{fig:warren-quad} shows an example; note that the control points outside the
+Figure~\ref{fig:warren-quad} shows an example. Note that the control points outside the
 patch boundaries are actually base points and are drawn here only for better comprehension
 of the control net structure.
 
@@ -359,7 +362,7 @@ degree elevated. For example, a 5-sided quintic patch can be generated from a 15
 B\'ezier triangle by cutting 5 control rows from two corners, resulting in boundaries of
 degrees $[5,5,10,10,5]$, so two boundary curves need to be elevated to degree 10.
 
-Moreover, using control points with zero
+In addition, using control points with zero
 weight is not a standard practice, and is not supported by many systems. Meshing
 also presents a problem, as a uniform grid on the domain would result in distorted triangles,
 since the ``trimmed'' boundaries correspond to corners of the domain triangle.
@@ -376,7 +379,7 @@ $R_i(s_i,h_i)$ is a quadrilateral \emph{ribbon} smoothly interpolating the $i$-t
 The cross-degree of the ribbon
 (and thus the number of cross-derivative constraints) is denoted by $e$.
 
-Aside from the \emph{distance parameter} $h_i$, defined as in Section~\ref{subsubsec:parameters},
+Aside from the distance parameter $h_i$, defined as in Section~\ref{subsubsec:parameters},
 this representation also uses a \emph{side parameter} $s_i$
 that takes on values from 0 to 1 as it sweeps from one adjacent side to the other,
 see Figure~\ref{fig:s}.
@@ -399,7 +402,7 @@ When the ribbons are given as B\'ezier surfaces of the form
   \label{eq:ribbon}
   R_i(s_i,h_i)=\sum_{j=0}^d\sum_{k=0}^{e}P_{j,k}^iB_j^d(s_i)B_k^{e}(h_i),
 \end{equation}
-with $P_{j,k}^i$ denoting its control points,
+with $P_{j,k}^i$ denoting the control points,
 the whole patch becomes a rational polynomial, and can be converted to
 a tensor product B\'ezier patch with rational degree $nd+(n-1)(e+1)+e$,
 see Appendix~\ref{app:conversion-eqs} for the details.
@@ -434,7 +437,8 @@ where $\Gamma_{i-1,i}(u,v)$ is the blending function
   \Gamma_{i-1,i}(u,v)=H_{i-1,i}^2(u,v)\big/\sum_{k=1}^nH_{k-1,k}^2(u,v).
 \end{equation}
 
-Conversion is done the same way as before; the converted patch is of degree $nd+2(n-2)$,
+Conversion is done the same way as in Section~\ref{subsubsec:conversion};
+the converted patch is of degree $nd+2(n-2)$,
 see details in Appendix~\ref{app:conversion-eqs}.
 Note that the degree is relatively high because of the rational parameterization.
 For triangular surfaces, we can use distance parameters instead,
@@ -468,7 +472,7 @@ Figure~\ref{fig:trebol} shows an example with one 6-sided and three 3-sided surf
     \caption{Zebra map}
     \label{fig:trebol-zebra}
   \end{subfigure}
-  \caption{Trebol model}
+  \caption{Trebol model.}
   \label{fig:trebol}
 \end{figure}
 
@@ -537,14 +541,14 @@ the unit square relative to the enlarged domain.
   \begin{subfigure}{.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/8sided-1.png}
-    \caption{Default domain}
+    \caption{Control net (default domain)}
     \label{fig:8sided-default}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/8sided-2.png}
-    \caption{Enlarged domain}
+    \caption{Control net (enlarged domain)}
     \label{fig:8sided-enlarged}
   \end{subfigure}
   \hfill
@@ -561,17 +565,17 @@ the unit square relative to the enlarged domain.
 \begin{figure}[!ht]
   {
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \includegraphics[width=\textwidth]{images/rotations/00.png}
       \caption{$\phi=0^\circ$}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \includegraphics[width=\textwidth]{images/rotations/20.png}
       \caption{$\phi=20^\circ$}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \includegraphics[width=\textwidth]{images/rotations/40.png}
       \caption{$\phi=40^\circ$}
     \end{subfigure}
@@ -580,18 +584,18 @@ the unit square relative to the enlarged domain.
 
   {
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \includegraphics[width=\textwidth]{images/rotations/60.png}
       \caption{$\phi=60^\circ$}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \centering
       \includegraphics[width=\textwidth]{images/rotations/75-optimal.png}
       \caption{$\phi\approx 75^\circ$ (optimal)}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{.28\textwidth}
+    \begin{subfigure}{.26\textwidth}
       \centering
       \includegraphics[width=\textwidth]{images/rotations/80.png}
       \caption{$\phi=80^\circ$}
@@ -608,11 +612,11 @@ is not sufficient to deal with 7- or 8-sided surfaces.
 Figure~\ref{fig:rotations} shows several rotations of a 5-sided domain.
 We can define the optimal rotation as one that minimizes the functional
 \begin{equation}
-  E = \sum_{i=0}^d\sum_{j=1}^{d-1}\left\|\frac{Q_{i,j-1}+Q_{i,j+1}}{2}-Q_{i,j}\right\|^2 +
-  \sum_{i=1}^{d-1}\sum_{j=0}^d\left\|\frac{Q_{i-1,j}+Q_{i+1,j}}{2}-Q_{i,j}\right\|^2,
+  E = \sum_{i=0}^\delta\sum_{j=1}^{\delta-1}\left\|\frac{Q_{i,j-1}+Q_{i,j+1}}{2}-Q_{i,j}\right\|^2 +
+  \sum_{i=1}^{\delta-1}\sum_{j=0}^\delta\left\|\frac{Q_{i-1,j}+Q_{i+1,j}}{2}-Q_{i,j}\right\|^2,
 \end{equation}
-where $Q_{i,j}$ are the control points of the bi-$d$-degree tensor product surface,
-essentially selecting the most smooth control structure.
+where $Q_{i,j}$ are the control points of the bi-degree $\delta$ tensor product surface,
+essentially selecting the smoothest control structure.
 
 Table~\ref{tab:degrees} summarizes the degrees of all four representations.
 It can be seen that these patches
@@ -763,9 +767,9 @@ in Fig.~\ref{fig:cagd86-6-cg}, deviating to some extent, is still managable.
 \end{figure}
 
 We find similar results in the ``Pocket'' model (Figure~\ref{fig:pocket}),
-where the surfaces were defined by cubic $G^1$ frames, and thus of a lower degree.
+where the surfaces were defined by cubic $G^1$ frames, and are of a lower degree.
 In this case the irregularities in the control net of the 6-sided S-patch
-did not lead to any evaluation problem.
+did not lead to any evaluation problems.
 
 Finally, in Figure~\ref{fig:dolphin}, a dolphin model
 is shown, defined by quintic $G^1$ frames. The two 6-sided S-patches are
@@ -817,7 +821,7 @@ We have described and analyzed four genuine multi-sided surface representations
 that can be converted into standard, tensor product (rational B\'ezier) form.
 The conversion generally leads to high-degree patches, and the
 control points of the resulting surfaces may oscillate, due to singularities,
-to a degree that prevents practical usability in industrial CAD/CAM systems.
+to an extent that prevents practical usability in industrial CAD/CAM systems.
 
 We have investigated the occurrence of singularities for these schemes,
 and introduced a technique to avoid nonsense control structures.
