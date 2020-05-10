@@ -33,14 +33,14 @@ We investigate genuine multi-sided surface representations that can be
 converted into standard tensor product format, such as NURBS.  Multi-sided
 patches offer versatility in shape design, and permit smooth, watertight connections
 between adjacent patches using prescribed cross-derivatives; however, they can seldom be
-utilized by the majority of CAD/CAM systems, which handle only
-standard data formats.
-Furthermore, tensor product surfaces are sometimes too rigid for shape design,
+utilized by the majority of CAD/CAM systems, which handle surfaces
+only in standard data formats.
+Tensor product surfaces, on the other hand, may be too rigid for shape design,
 and trimmed patches can only be smoothly connected up to user-defined tolerances.
 % Tensor product surfaces are more rigid for shape design,
 % and smoothly connecting trimmed surface patches is tolerance driven and
 % generally requires extra effort.
-This motivates searching for schemes that benefit from both representations.
+This motivates the search for schemes that benefit from both representations.
 
 We analyze four multi-sided surface representations that allow precise
 conversion into tensor product format, namely S-patches, Warren's patch,
@@ -70,7 +70,7 @@ representation either by (i)~approximating them with larger quadrilaterals and
 \emph{trimming} away the exterior part beyond the boundaries, or (ii)~\emph{splitting}
 them into smaller four-sided patches.
 Both techniques have their deficiencies. They only approximate the original multi-sided
-surface, and in general, trimming cannot even ensure precise $C^0$ continuity between
+surface, and in general, trimming cannot ensure even precise $C^0$ continuity between
 adjacent patches. In the splitting scheme the subdividing curves in the interior
 reduce the overall continuity of the surface.
 
@@ -137,7 +137,7 @@ and the sum is computed over all possible values of $\mathbf{s}$.
 
 One drawback of this representation is its large number of control points, which renders it
 inconvenient for interactive design. For example, a five-sided patch of depth 5 has 126 control
-points, while a 4-sided tensor product patch has only 36. A possible workaround is to use a
+points, while a 4-sided quintic tensor product patch has only 36. A possible workaround is to use a
 $G^1$ \emph{frame} (Fig.~\ref{fig:spatch-ribbon})
 for design that defines the tangent planes at the boundaries.
 After increasing the depth by 3, these boundary constraints can be interpolated~\cite{Loop:1990},
@@ -306,10 +306,11 @@ can be located by straightforward computation, which takes only milliseconds.
 \subsection{Warren's Patch}
 \label{subsec:warren}
 Warren~\cite{Warren:1992} created multi-sided patches from B\'ezier triangles by assigning $0/0$
-\emph{base points} to some of the control points, essentially cutting off the corners, and thus
-creating 5- and 6-sided surfaces, see an example in Figure~\ref{fig:warren-cnet}.
+\emph{base points} to some of the control points, essentially cutting off corners, and thus
+creating 5- and 6-sided surfaces; see an example in Figure~\ref{fig:warren-cnet}.
 We can characterize Warren's patch with the number $m_i$ of control rows
-``trimmed'' from each corner, i.e.,
+``trimmed'' from each corner. Using the indices $\mathbf{s}=(s_1,s_2,s_3)$
+introduced in Section~\ref{subsec:spatch},
 \begin{equation}
   \begin{aligned}
     P_\mathbf{s}&=0/0, & \mathrm{when}\ &
@@ -828,7 +829,7 @@ and introduced a technique to avoid nonsense control structures.
 Using the proposed exact conversion procedures one can build watertight
 and smoothly connected models with trimmed surface patches.
 
-The algorithms presented in this paper have their deficiencies; however, our
+All four schemes presented in this paper have their deficiencies; however, our
 practical experience would assign some advantage to Charrot--Gregory
 patches. We are going to continue searching for other patch representations
 that possess both multi-sided shape control and low-degree tensor product form.
