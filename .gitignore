@@ -9,3 +9,5 @@
 *.nav
 *.toc
 *.snm
+presentation/*.png
+presentation/*.mp4
