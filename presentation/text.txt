@@ -1,0 +1,127 @@
+Slide 1:
+
+I am Peter Salvi from the Budapest University of Technology and Economics. This presentation is about the conversion of genuine multi-sided surfaces to rational polynomials.
+
+Slide 2:
+
+First I am going to talk about the motivation behind this research, then introduce our parameterization method through the example of S-patches. Next I am going to briefly review three other multi-sided surface representations convertable to NURBS, and move on to discuss the quality of the resulting control networks. This will be followed by a discussion of the singularities of each scheme, and their connection to the quality of the control network. I will conclude the talk with some test results.
+
+Slide 3:
+
+The majority of surfaces that appear in geometric modeling is four-sided. However, in free-form design, multi-sided patches - or more precisely, non-four-sided patches - arise naturally. The mathematical representation of these surfaces is still an active research area.
+
+There are three main approaches. The most popular one is trimming, where trimming curves cut off parts of a larger quadrilateral surface. This representation has several problems. It is asymmetrical, since some boundaries are genuine boundary curves, while others are trimming curves. Generally it cannot ensure exact continuity to adjacent surfaces - even C0 continuity is approximate. The trimmed parts of the four-sided surface are under-defined and may cause problems when fitting or modifying the surface.
+
+Another approach is the central split, where an n-sided patch is represented by n quadrilateral surfaces. This reduces the continuity, and seamlines may appear in the interior.
+
+Finally, we can use natively multi-sided representations, which have very intuitive controls, and can be connected with G1- or G2-continuity. These, however, are not standardized, and CAD softwares do not support them. Typically these are approximated by four-sided surfaces, using trimming or splitting, before exporting them to standard formats.
+
+So the question is: can we convert natively multi-sided patches into NURBS _exactly_, without any approximation error?
+
+Slide 4:
+
+In the following I am going to present four multi-sided representations: the S-patch, Warren's patch, Kato's patch, and the Charrot-Gregory patch, and present our method to convert these into rational tensor product Bezier surfaces. Then I will discuss its problems, and show some workarounds.
+
+Slide 5:
+
+So let us start with S-patches.
+
+Slide 6:
+
+The S-patch is a generalization of the Bezier triangle, using multinomial coefficients. It retains all the nice properties of Bezier triangles, so for example it can be evaluated with a recursive method similar to de Casteljau's algorithm. The number of required steps is called the _depth_ of the S-patch. It is actually an (n-1)-dimensional Bezier simplex applied after a generalized barycentric mapping on a regular polygonal domain.
+
+If we look at its equation, we can see that it is polynomial, except for the barycentric coordinates, which are known to be rational, except for triangular domains.
+
+Slide 7:
+
+As a side note, we should also mention a drawback of the S-patch, as well. It has a high number of control points - too many for interactive design. For example, a five-sided surface of depth 5 has 126 control points, while the four-sided quintic Bezier patch has only 36.
+
+A possible solution is to use a G1 frame, as seen on the left figure. This is essentially a collection of Bezier surfaces that are linear in the cross-direction. It defines C0 and G1 boundary constraints, which can be interpolated by an S-patch of depth degree + 3; the interior control points can be placed by solving a global system of equations, so that a smooth surface will be created.
+
+Slide 8:
+
+Let us return to the conversion process. We have seen that the S-patch is polynomial, except for the generalized barycentric coordinates. Our problem can be formulated like this: how can we express lambda-i as rational polynomials in (u,v), the coordinates of the domain plane? If we can answer this, the rest is trivial.
+
+The original S-patch paper describes the outline of a method based on the composition of Bezier simplexes, but it has too high complexity, even for today's computers.
+
+On the other hand, if we look at Wachspress coordinates, they are defined as a rational function of distances from the edges of the domain. The problem is now reduced to finding a good distance function. A nice choice is the implicit line equation of the domain edge, since it can be interpreted as a linear signed distance function. We normalize it to take 1 at the adjacent vertices, as shown in the figure.
+
+With that, the whole S-patch can be written as a rational polynomial in (u,v), from which it is easy to convert to tensor product Bezier form.
+
+Slide 9:
+
+Next let us look at other multi-sided schemes.
+
+Slide 10:
+
+Warren's patch is an interesting variation on the Bezier triangle, where some control points are given zero rational weights. These are called base points, and they can be used to practically cut off corners of the triangular patch, creating five- or six-sided ones. The control points on these new boundaries define connectivity in the same way as they do for normal Bezier triangles, which is a very practical, and somewhat surprising property. Converting the barycentric coordinates to polynomials in (u,v) is simple, as well.
+
+Using base points, however, is not standard, and CAD softwares are not expected to handle them. It is also hard to create good quality meshes, because of the distorted parameterization, where corners of the domain correspond to edges in 3D.
+
+Slide 11:
+
+Kato proposed a patch created as the blended sum of side interpolant surfaces, also called ribbons. Each ribbon has its own local parameterization, with a side and a distance parameter; and the side parameter can be derived from the distance parameters of adjacent ribbons. The blends also use the distance parameter internally, and we can define that the same way as before.
+
+A nice feature of Kato's patch is that it is easy to achieve G2 or higher continuity with adjacent surfaces. Its rational degree is high, however, because of its rational parameterization. Also, the blending function is singular at the corners, and while it is well-defined there, this singularity causes other problems, as we will see later.
+
+Slide 12:
+
+Our last multi-sided scheme is the well-known Charrot-Gregory patch. It is similar to Kato's patch, but uses corner interpolants that are parameterized only by side parameters. The same side parameters can be used here as for Kato's patch, and it is easy to see that for a regular domain this will exactly be the same mapping as the radial parameterization in the original paper.
+
+For triangular patches we can lower the rational degree by using distance parameters instead of side parameters. On the right we can see the tensor product control net of one 6-sided and three 3-sided surfaces.
+
+Slide 13:
+
+Now that we have seen the various multi-sided surface schemes, let us examine the quality of the generated control nets.
+
+Slide 14:
+
+Our experiments showed that control points with footpoints near singularities invariably become erratic, so it is important to know where these occur. Looking at the figure on the right, the S-patch is singular on the dashed circle, and the Charrot-Gregory patch is singular on the red lines. The other two representations are always singular, since Warren's patch uses base points, while Kato's patch uses singular blending functions.
+
+The blue square represents the domain of the tensor product surface, i.e., the unit square. The closer this square is to singularities, the worse the control net quality gets. For five- and six-sided surfaces the singularities are relatively far, but for more sides, the control points start to oscillate wildly. Rotating the multi-sided domain may help with smaller fluctuations, but does not solve the problem.
+
+Slide 15:
+
+A better idea is to use a larger multi-sided domain. Look at the figure on the right. Here the green square represents the unit square relative to the enlarged 8-sided domain, while the blue square is the unit square relative to the default 8-sided domain.
+
+The default domain is not only close to singularities, but also contains them, resulting in a nonsense control net shown in the bottom left.
+
+The enlarged domain, on the other hand, generates a very regular control network, shown in the middle. Note, however, that the trimming curves are outside the unit square, which is not standard, and it may or may not be supported by commercial systems. Rhinoceros 3D, for example, has partial support: it can correctly visualize these surfaces, but some procedures, like contouring, do not work well.
+
+Slide 16:
+
+Let us see a comparison. Since the conversion is exact, the only meaningful comparison is of control net quality with the default domain. We are going to look at S-patches and Charrot-Gregory patches converted to NURBS, and loaded into Rhino 3D.
+
+Slide 17:
+
+Here we see a model with mean curvature map and isolines. The control points of a 3-sided patch are also shown. The three-sided S-patch is just a Bezier triangle, and it has a very regular control network.
+
+Slide 18:
+
+This is a six-sided surface. Control points of the converted S-patch near the corners oscillate, to the extent that it causes evaluation problems. Some control points of the Charrot-Gregory patch also deviate far from the surface, but still between acceptable limits.
+
+Slide 19:
+
+Here we can see the same effect on a lower degree example, although the oscillation of the control points is not so bad in this case, so it does not cause any problems.
+
+Slide 20:
+
+Another six-sided surface. The converted Charrot-Gregory patch has protruding control points at the corners, but within the limits of exact evaluation, while in the case of the S-patch numerical problems arise.
+
+Slide 21:
+
+Let us sum up by looking at a table comparing the different methods.
+
+Slide 22:
+
+Here we can see the rational degrees of all four schemes.
+
+Warren's patch is the lowest, by far, but it cannot be used for patches with more than 6 sides, and it uses control points with zero rational weights.
+
+With Kato's patch, it is easy to connect surfaces with G2 or higher continuity, but it has singularities in all domain corners, so it will have a low-quality control grid.
+
+We have found that the Charrot-Gregory patch has a usable control net even for 6-sided surfaces, in contrast with the S-patch, whose control points sometimes oscillate even for 5-sided patches.
+
+In summary, we have shown a simple and fast conversion method based on implicit line equations, and investigated the control net quality of four natively multi-sided representations. We also proposed a solution to the singularity problem using larger multi-sided domains.
+
+For future work, we are planning to look for new low-degree multi-sided schemes with intuitive shape control.
