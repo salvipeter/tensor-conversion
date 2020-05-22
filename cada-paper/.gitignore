@@ -1,0 +1,13 @@
+*~
+*.pdf
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.zip
+*.nav
+*.toc
+*.snm
+presentation/*.png
+presentation/*.mp4
