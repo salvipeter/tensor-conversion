@@ -93,5 +93,5 @@ int main(int argc, char **argv) {
   }
 
   model.AddModelGeometryComponent(&brep, nullptr);  
-  model.Write(argv[2], 0, &error_log);
+  model.Write(argv[2], 6 /* Rhino version */, &error_log);
 }

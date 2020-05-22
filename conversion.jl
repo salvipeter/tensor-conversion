@@ -665,29 +665,32 @@ function net_energy(surf)
     result
 end
 
-function rotation_search(filename, resolution)
+function rotation_search(filename, resolution, surftype = :gregory)
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
     f = []
     for r in range(0, stop=90, length=resolution)
         global rotation = r
-        surf = gregory(ribbons)
+        surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
         tsurf = tensor(surf)
         push!(f, net_energy(tsurf))
     end
     r = range(0, stop=90, length=resolution)[findmin(f)[2]]
     global rotation = r
-    surf = gregory(ribbons)
+    surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
     tsurf = tensor(surf)
     write_cnet(tsurf, "$filename-cnet-$r.obj")
     global rotation = 0
     r
 end
 
-function test_CAD(filename, surftype = :gregory)
+function test_CAD(filename, surftype = :gregory; multiplier = 1.0)
+    @assert multiplier == 1.0 || surftype == :gregory "Multipliers are only for Gregory patches"
     ribbons = read_ribbons("$filename.gbp")
     n = ribbons.n
+    global ribbon_multiplier = multiplier
     surf = surftype == :gregory ? gregory(ribbons) : kato(ribbons)
+    ribbon_multiplier = 1.0
     tsurf = tensor(surf)
     write_bezier(ribbons, tsurf, "$filename.bzr")
 end
@@ -721,6 +724,7 @@ function read_spatch(filename)
         result = SPatch(n, d, Dict())
         for _ in 1:size
             line = split(readline(f))
+            isempty(line) && continue
             index = read_numbers(line[1:n], Int)
             point = read_numbers(line[n+1:end], Float64)
             result[index] = point
@@ -751,6 +755,13 @@ function spatch_test(filename, resolution = 15)
     write_cnet(tsurf, "$filename-spatch-tensor-cnet.obj")
     write_surface(evaltensor, tsurf, surf.n, resolution, "$filename-spatch-tensor.obj")
     write_surface(evaltensor, tsurf, 0, resolution, "$filename-spatch-tensor-full.obj")
+end
+
+function spatch_test_CAD(filename)
+    ribbons = read_ribbons("$filename.gbp")
+    surf = read_spatch("$filename.sp")
+    tsurf = tensor(spatch(surf))
+    write_bezier(ribbons, tsurf, "$filename.bzr")
 end
 
 
