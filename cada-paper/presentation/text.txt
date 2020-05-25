@@ -4,7 +4,7 @@ I am Peter Salvi from the Budapest University of Technology and Economics. This 
 
 Slide 2:
 
-First I am going to talk about the motivation behind this research, then introduce our parameterization method through the example of S-patches. Next I am going to briefly review three other multi-sided surface representations convertable to NURBS, and move on to discuss the quality of the resulting control networks. This will be followed by a discussion of the singularities of each scheme, and their connection to the quality of the control network. I will conclude the talk with some test results.
+First I am going to talk about the motivation behind this research, then introduce our parameterization method through the example of S-patches. Next I am going to briefly review three other multi-sided surface representations convertable to NURBS. This will be followed by a discussion of the singularities of each scheme, and their connection to the quality of the control network. I will conclude the talk with some test results.
 
 Slide 3:
 
@@ -30,7 +30,7 @@ Slide 6:
 
 The S-patch is a generalization of the Bezier triangle, using multinomial coefficients. It retains all the nice properties of Bezier triangles, so for example it can be evaluated with a recursive method similar to de Casteljau's algorithm. The number of required steps is called the _depth_ of the S-patch. It is actually an (n-1)-dimensional Bezier simplex applied after a generalized barycentric mapping on a regular polygonal domain.
 
-If we look at its equation, we can see that it is polynomial, except for the barycentric coordinates, which are known to be rational, except for triangular domains.
+If we look at its equation, we can see that it is polynomial, except for the barycentric coordinates, which are known to be rational, unless the domain is triangular.
 
 Slide 7:
 
